@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>0x00  关于搭建博客的一些心得 | 幻想乡</title>
+  <title>0x05 在蓝鲸打卡所学到的基本操作（Web篇） | 幻想乡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="第一篇文章自然是讲讲我在搭博客所获得的收获了（其实是遇到各种各样的BUG）。第一，hexo，node.js是不要求与教程相同的版本的，虽然有些功能不同但是大体上不会影响你博客的搭建的。第二，千万别把你的Blog文件夹建立在需要管理员权限的地方，如果这样做了，在hexo deploy时会什么信息都不会返回的。第三，在搭建博客时，别想着急于求成，毕竟一个好看的博客是人家花了很久才搭出来的，先把基础框架">
+  <meta name="description" content="神奇的php在CTF中的各种花式操作总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP的">
+<meta name="keywords" content="Web">
 <meta property="og:type" content="article">
-<meta property="og:title" content="0x00  关于搭建博客的一些心得">
-<meta property="og:url" content="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/index.html">
+<meta property="og:title" content="0x05 在蓝鲸打卡所学到的基本操作（Web篇）">
+<meta property="og:url" content="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/index.html">
 <meta property="og:site_name" content="幻想乡">
-<meta property="og:description" content="第一篇文章自然是讲讲我在搭博客所获得的收获了（其实是遇到各种各样的BUG）。第一，hexo，node.js是不要求与教程相同的版本的，虽然有些功能不同但是大体上不会影响你博客的搭建的。第二，千万别把你的Blog文件夹建立在需要管理员权限的地方，如果这样做了，在hexo deploy时会什么信息都不会返回的。第三，在搭建博客时，别想着急于求成，毕竟一个好看的博客是人家花了很久才搭出来的，先把基础框架">
+<meta property="og:description" content="神奇的php在CTF中的各种花式操作总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP的">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-03-07T10:13:14.408Z">
+<meta property="og:image" content="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228014416-o5qwfk1w95w4cg4w/fa0d48f5062b57cd_img12?e=1522226342&token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:RCiij74XzbwZ_Exuwm86X76V6xA=">
+<meta property="og:updated_time" content="2018-04-06T10:33:11.923Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="0x00  关于搭建博客的一些心得">
-<meta name="twitter:description" content="第一篇文章自然是讲讲我在搭博客所获得的收获了（其实是遇到各种各样的BUG）。第一，hexo，node.js是不要求与教程相同的版本的，虽然有些功能不同但是大体上不会影响你博客的搭建的。第二，千万别把你的Blog文件夹建立在需要管理员权限的地方，如果这样做了，在hexo deploy时会什么信息都不会返回的。第三，在搭建博客时，别想着急于求成，毕竟一个好看的博客是人家花了很久才搭出来的，先把基础框架">
+<meta name="twitter:title" content="0x05 在蓝鲸打卡所学到的基本操作（Web篇）">
+<meta name="twitter:description" content="神奇的php在CTF中的各种花式操作总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP的">
+<meta name="twitter:image" content="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228014416-o5qwfk1w95w4cg4w/fa0d48f5062b57cd_img12?e=1522226342&token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:RCiij74XzbwZ_Exuwm86X76V6xA=">
   
     <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
   
@@ -68,12 +71,12 @@
   </div>
 </div>
 
-        <section id="main"><article id="post-0x00 关于搭建博客的一些心得" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-0x05-在蓝鲸打卡所学到的基本操作（Web篇）" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/02/28/0x00 关于搭建博客的一些心得/" class="article-date">
-  <time class="post-time" datetime="2018-02-28T10:48:26.000Z" itemprop="datePublished">
-    <span class="post-month">2月</span><br/>
-    <span class="post-day">28</span>
+    <a href="/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" class="article-date">
+  <time class="post-time" datetime="2018-03-22T13:19:11.000Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">22</span>
   </time>
 </a>
    
@@ -85,12 +88,16 @@
         
   
     <h1 class="article-title" itemprop="name">
-      0x00  关于搭建博客的一些心得
+      0x05 在蓝鲸打卡所学到的基本操作（Web篇）
     </h1>
   
 
         <div>
           
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
           
               
 
@@ -100,30 +107,32 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>第一篇文章自然是讲讲我在搭博客所获得的收获了（其实是遇到各种各样的BUG）。<br>第一，hexo，node.js是不要求与教程相同的版本的，虽然有些功能不同但是大体上不会影响你博客的搭建的。<br>第二，千万别把你的Blog文件夹建立在需要管理员权限的地方，如果这样做了，在hexo deploy时会什么信息都不会返回的。<br>第三，在搭建博客时，别想着急于求成，毕竟一个好看的博客是人家花了很久才搭出来的，先把基础框架搭好，在想着逐步去完善自己的博客。<br>第四，遇到问题先百度，别去问你的室友（除非他非常好心），要不然你收到的回答是：“百度啊” “CNM百度啊”<br>“滚去百度啊”。  </p>
-<p>#最后附上我参考的链接<br>[基础教程][<a href="http://www.cnblogs.com/fengxiongZz/p/7707219.html]" target="_blank" rel="noopener">http://www.cnblogs.com/fengxiongZz/p/7707219.html]</a><br>[主题更换][<a href="https://www.jianshu.com/p/469e985288b3?from=jiantop.com]" target="_blank" rel="noopener">https://www.jianshu.com/p/469e985288b3?from=jiantop.com]</a>  </p>
+        <h3 id="神奇的php在CTF中的各种花式操作"><a href="#神奇的php在CTF中的各种花式操作" class="headerlink" title="神奇的php在CTF中的各种花式操作"></a>神奇的php在CTF中的各种花式操作</h3><p>总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP的题目。</p>
+<h4 id="变量覆盖"><a href="#变量覆盖" class="headerlink" title="变量覆盖"></a>变量覆盖</h4><p>在我们所学的编程语言中，例如C,C++,Java等语言，如果我们需要使用一个变量，必须先定义这个变量，而在一些高级语言也就是PHP，Python等语言中是可以不必定义变量的，也就是说我们可以不必定义一个变量（也就是先初始化）直接赋值。方便之余也带了一些潜在的危害。<br>在网络交互时使用PHP时，即使没有$x=$_Get[‘x’]这个语句我们依旧可以通过get传参这个变量名从而覆盖原变量的值。具体一些函数例如Extract()，$$使用不当之类引起的变量覆盖问题就不细谈了,直接看实例吧:<br><img src="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228014416-o5qwfk1w95w4cg4w/fa0d48f5062b57cd_img12?e=1522226342&amp;token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:RCiij74XzbwZ_Exuwm86X76V6xA=" alt=""><br>分析所得到的源代码，发现要求我们通过file_get_contents()函数输入一个文件，这个通过php://input这个函数通过POST数据来进行赋值，所以题目Payload为  </p>
+<blockquote>
+<p>   ?vs=s878926199a&amp;Ff=php://input    </p>
+</blockquote>
+<p>然后把s214587387aPOST传参给Ff完成使得两者相等得到Flag。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjfpiy39o0000aove1k976kdj" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjfpiy3f50001aove4rle0m3d" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">
-        
-          0x01 在蓝鲸打卡所学到的基本操作（Crypto篇）
-        
-      </div>
-    </a>
   
+    <a href="/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">0x04 在蓝鲸打卡所学到的基本操作(Web篇)</div>
+    </a>
   
 </nav>
 
