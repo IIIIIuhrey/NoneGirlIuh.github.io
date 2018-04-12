@@ -13,22 +13,13 @@
 <meta property="og:site_name" content="幻想乡">
 <meta property="og:description" content="##Web题目由于知识太过杂乱就不按照时间顺序来归纳了 等量登入这一次的题目是关于Hash函数漏洞的，计算hash的函数比如md5(),sha1()这两种是最为常见也是在代码审计中容易考到的。由于函数本身的缺陷以及在比较变量时候的不严谨，所以可以被大手子们上演各种花式操作来绕过。弱类型比较：强类型比较：在代码审计中，碰到MD5()函数类型的比较就可以考虑0e开头的MD5值来进行构造，在碰到sha1">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228122127-17i8isi2xhuoo0ww/d553146c8866932b_img4?e=1520779917&token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:xSqAtRQ52UK7t8Q6T2MJ5WOnNes=">
-<meta property="og:image" content="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228122127-17i8isi2xhuoo0ww/d553146c8866932b_img7?e=1520779917&token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:m8d3nL9wzmSrRYfGoeBphWydLRw=">
-<meta property="og:image" content="http://yoursite.com/images/0x03.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/1.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/2.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/3.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/4.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/5.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/6.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/7.jpg">
-<meta property="og:image" content="http://yoursite.com/images/1/8.jpg">
-<meta property="og:updated_time" content="2018-03-17T07:00:24.781Z">
+<meta property="og:image" content="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/images/3/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/images/3/2.jpg">
+<meta property="og:updated_time" content="2018-04-11T15:19:09.965Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="0x03 在蓝鲸打卡所学到的基本操作（Web篇）">
 <meta name="twitter:description" content="##Web题目由于知识太过杂乱就不按照时间顺序来归纳了 等量登入这一次的题目是关于Hash函数漏洞的，计算hash的函数比如md5(),sha1()这两种是最为常见也是在代码审计中容易考到的。由于函数本身的缺陷以及在比较变量时候的不严谨，所以可以被大手子们上演各种花式操作来绕过。弱类型比较：强类型比较：在代码审计中，碰到MD5()函数类型的比较就可以考虑0e开头的MD5值来进行构造，在碰到sha1">
-<meta name="twitter:image" content="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228122127-17i8isi2xhuoo0ww/d553146c8866932b_img4?e=1520779917&token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:xSqAtRQ52UK7t8Q6T2MJ5WOnNes=">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/images/3/1.jpg">
   
     <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
   
@@ -55,9 +46,9 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>7</strong><br>文章</div></a>
       <a href="/categories"><div><strong>1</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>3</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -118,12 +109,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>##Web题目由于知识太过杂乱就不按照时间顺序来归纳了</p>
-<h3 id="等量登入"><a href="#等量登入" class="headerlink" title="等量登入"></a>等量登入</h3><p>这一次的题目是关于Hash函数漏洞的，计算hash的函数比如md5(),sha1()这两种是最为常见也是在代码审计中容易考到的。由于函数本身的缺陷以及在比较变量时候的不严谨，所以可以被大手子们上演各种花式操作来绕过。<br>弱类型比较：<br><img src="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228122127-17i8isi2xhuoo0ww/d553146c8866932b_img4?e=1520779917&amp;token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:xSqAtRQ52UK7t8Q6T2MJ5WOnNes=" alt=""><br>强类型比较：<br><img src="http://ese5a1b0c1d60t.pri.qiqiuyun.net/course-activity-18/20180228122127-17i8isi2xhuoo0ww/d553146c8866932b_img7?e=1520779917&amp;token=ExRD5wolmUnwwITVeSEXDQXizfxTRp7vnaMKJbO-:m8d3nL9wzmSrRYfGoeBphWydLRw=" alt=""><br>在代码审计中，碰到MD5()函数类型的比较就可以考虑0e开头的MD5值来进行构造，在碰到sha1()函数则可以考虑用数组的方式来进行构造，总的来说，理解函数的用法再来使用这个漏洞就行了。<br>日常吐槽：星期五，大黄，狗骑驴，狗逼三人竟然背着我去做头发？？？？oh!这可太不幸了。。看大黄做头发一脸兴奋的样子。<br><img src="/images/0x03.jpg" alt=""><br>ps:最近来了一只小可爱，激发了大老爷们的慈母心：<br><img src="/images/1/1.jpg" alt=""><img src="/images/1/2.jpg" alt=""><img src="/images/1/3.jpg" alt=""><img src="/images/1/4.jpg" alt=""><img src="/images/1/5.jpg" alt=""><img src="/images/1/6.jpg" alt=""><img src="/images/1/7.jpg" alt=""><img src="/images/1/8.jpg" alt=""><br>写在最后：这两天的N1CTF，在各位大佬的疯狂吊打下，我深深明白了自己的水平是有多菜，靠着浮躁的心态去学习怎么也不可能成为一个真正的大手子，脚踏实地吧，朋友，一蹴而就是不可能的，平庸的人只有努力学习经验才能成长。</p>
+<h3 id="等量登入"><a href="#等量登入" class="headerlink" title="等量登入"></a>等量登入</h3><p>这一次的题目是关于Hash函数漏洞的，计算hash的函数比如md5(),sha1()这两种是最为常见也是在代码审计中容易考到的。由于函数本身的缺陷以及在比较变量时候的不严谨，所以可以被大手子们上演各种花式操作来绕过。<br>弱类型比较：<br><img src="./images/3/1.jpg" alt=""><br>强类型比较：<br><img src="./images/3/2.jpg" alt=""><br>在代码审计中，碰到MD5()函数类型的比较就可以考虑0e开头的MD5值来进行构造，在碰到sha1()函数则可以考虑用数组的方式来进行构造，总的来说，理解函数的用法再来使用这个漏洞就行了。  </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjfpiy3fo0007aove0b7u3spl" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjfv743mb00054kvelpio9wnh" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -200,9 +191,9 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>7</strong><br>文章</div></a>
       <a href="/categories"><div><strong>1</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>3</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
     </div>
 
 
@@ -240,7 +231,7 @@
 
   
 </aside>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=28160230&auto=1&height=66"></iframe>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29047169&auto=1&height=66"></iframe>
         
       </div>
       <footer id="footer">
