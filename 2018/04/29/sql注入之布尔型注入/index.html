@@ -5,21 +5,21 @@
   
   <title>sql注入之布尔型注入 | 幻想乡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是ture或者falseasc">
+  <meta name="description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是t">
 <meta name="keywords" content="Web sql注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sql注入之布尔型注入">
 <meta property="og:url" content="http://yoursite.com/2018/04/29/sql注入之布尔型注入/index.html">
 <meta property="og:site_name" content="幻想乡">
-<meta property="og:description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是ture或者falseasc">
+<meta property="og:description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是t">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/04/29/sql注入之布尔型注入/images/8/1.png">
 <meta property="og:image" content="http://yoursite.com/2018/04/29/sql注入之布尔型注入/images/8/2.png">
 <meta property="og:image" content="http://yoursite.com/2018/04/29/sql注入之布尔型注入/images/8/3.png">
-<meta property="og:updated_time" content="2018-04-29T07:03:36.644Z">
+<meta property="og:updated_time" content="2018-04-30T08:38:40.102Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入之布尔型注入">
-<meta name="twitter:description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是ture或者falseasc">
+<meta name="twitter:description" content="布尔型注入在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑第一种思路—-布尔型注入。简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。exists():用于检查子查询是否有返回数据。结果是t">
 <meta name="twitter:image" content="http://yoursite.com/2018/04/29/sql注入之布尔型注入/images/8/1.png">
   
     <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
@@ -47,7 +47,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>9</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -105,7 +105,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="布尔型注入"><a href="#布尔型注入" class="headerlink" title="布尔型注入"></a>布尔型注入</h2><p>在过滤了union，仅存select这个关键词的时候，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑<strong>第一种思路—-布尔型注入</strong>。<br>简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。<br>exists():用于检查子查询是否有返回数据。结果是ture或者false<br>ascii():把字符转化成ascii码<br>substr():substr（string string，num start，num length）截断一部分字符串，偏移从1开始，并不是0<br>count():记录出现的次数<br>接下来在实例中讲解一下布尔型注入的基本思路<br><img src="./images/8/1.png" alt=""><br>这里可以试试我们的联合查询是否可以得到我们想要的结果<img src="./images/8/2.png" alt="">在这里发现并不行，根本没有回显位，所以联合查询的方式肯定是不行的。所以我们考虑使用布尔型注入来试试。试了一个最基本的判断。</p>
+        <h2 id="布尔型注入"><a href="#布尔型注入" class="headerlink" title="布尔型注入"></a>布尔型注入</h2><p>在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑<strong>第一种思路—-布尔型注入</strong>。<br>简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。<br>exists():用于检查子查询是否有返回数据。结果是ture或者false<br>ascii():把字符转化成ascii码<br>substr():substr（string string，num start，num length）截断一部分字符串，偏移从1开始，并不是0<br>count():记录出现的次数<br>接下来在实例中讲解一下布尔型注入的基本思路<br><img src="./images/8/1.png" alt=""><br>这里可以试试我们的联合查询是否可以得到我们想要的结果<img src="./images/8/2.png" alt="">在这里发现并不行，根本没有回显位，所以联合查询的方式肯定是不行的。所以我们考虑使用布尔型注入来试试。试了一个最基本的判断。</p>
 <blockquote>
 <p><a href="http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+" target="_blank" rel="noopener">http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+</a>  </p>
 </blockquote>
@@ -125,12 +125,12 @@
 <blockquote>
 <p>[‘fgd’, ‘Artgr’, ‘das’, ‘dddddddddddd’, ‘AAAAAA’, ‘vAdcvAcv’]  </p>
 </blockquote>
-<p>这是最基本的流程，在一些细节的地方还需要多多去尝试，bypass的手段还需要练习。</p>
+<p>这是最基本的流程，在一些细节的地方还需要多多去尝试，bypass的手段还需要练习。   </p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjgkc7pr9000erkve2yuzvz6o" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjgmggw7l000ndovefysd06ba" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -140,6 +140,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2018/04/30/sql注入之时间盲注/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          sql注入之时间盲注
+        
+      </div>
+    </a>
   
   
     <a href="/2018/04/21/关于sql注入的一些学习心得/" id="article-nav-older" class="article-nav-link-wrap">
@@ -198,7 +207,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>9</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
