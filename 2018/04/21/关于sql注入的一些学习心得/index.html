@@ -14,7 +14,7 @@
 <meta property="og:description" content="写在前面说实话，很久以前就有着想归纳sql注入的冲动了，但是自己的实力不够，对mysql不太了解，对于一些sql注入的题目也是一知半解，久而久之就开始对sql注入产生了逃避以及厌恶之情，最近慢慢的才发现，不会sql注入那和我吉他不会大横按一样，所以我最近恶补了一些sql注入方面的知识，写在这里一方面是为了分享一下自己的学习心得，另一方面，则是为我自己做个笔记。 sql基础知识初入sql注入呢，我们">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/images/7/1.png">
-<meta property="og:updated_time" content="2018-04-29T04:50:48.850Z">
+<meta property="og:updated_time" content="2018-05-01T14:52:20.922Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于sql注入的一些学习心得">
 <meta name="twitter:description" content="写在前面说实话，很久以前就有着想归纳sql注入的冲动了，但是自己的实力不够，对mysql不太了解，对于一些sql注入的题目也是一知半解，久而久之就开始对sql注入产生了逃避以及厌恶之情，最近慢慢的才发现，不会sql注入那和我吉他不会大横按一样，所以我最近恶补了一些sql注入方面的知识，写在这里一方面是为了分享一下自己的学习心得，另一方面，则是为我自己做个笔记。 sql基础知识初入sql注入呢，我们">
@@ -45,7 +45,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -141,7 +141,7 @@
 </blockquote>
 <p>注意id我们需要赋一个数据库不存在的值，这样才能显示我们要查的内容，不然的话，原来的数据可能会覆盖掉我们查询的内容。此刻回显的数字即为显示位。<br><strong>4</strong> 这个时候我们就可以利用显示位和联合查询来依次爆破数据库名，表名，列名，字段了(以2为显示位)。  </p>
 <blockquote>
-<p>xxxx/?id=-1’ union select 1，database()….. –+<br>xxxx/?id=-1’ union select 1,table_name… from information_schema.tables where table_schema=’库名’ –+<br>xxxx/?id=-1’ union select 1,column_name… from information_schema.columns where table_name=’表名’ –+<br>xxxx/?id=-1’ union select 1,列名… from 表名 –+  </p>
+<p>xxxx/?id=-1’ union select 1，database()….. –+  或者 union select 1,schema_name… from information_schema.schemata –+<br>xxxx/?id=-1’ union select 1,table_name… from information_schema.tables where table_schema=’库名’ –+<br>xxxx/?id=-1’ union select 1,column_name… from information_schema.columns where table_name=’表名’ –+<br>xxxx/?id=-1’ union select 1,列名… from 表名 –+  </p>
 </blockquote>
 <p>由于在查询的时候会有很多表名列名，但是返回的数据只有一条，那我们怎么办呢?<br><strong>第一</strong>我们可以使用<strong>limit m,1</strong>这个语句，作用是限制查询为第m+1条数据，我们可以通过多次查询出所有结果，或者还可以使用<strong>limit n offset m</strong>，这个语句则是查询第m条数据之后的n条数据。<br><strong>第二</strong>我们可以使用concat()，以及group_concat()或是concat_ws()函数来把所查询的内容连接成字符串输出。  </p>
 <h3 id="这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http-www-cnblogs-com-joy-nick-p-5774462-html"><a href="#这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http-www-cnblogs-com-joy-nick-p-5774462-html" class="headerlink" title="这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http://www.cnblogs.com/joy-nick/p/5774462.html"></a>这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：<a href="http://www.cnblogs.com/joy-nick/p/5774462.html" target="_blank" rel="noopener">http://www.cnblogs.com/joy-nick/p/5774462.html</a></h3><p><strong>接下来是一些过滤了关键词但是可以注入的其他方式。</strong></p>
@@ -154,7 +154,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjgmggw73000gdovem4a4jsch" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjgpwn9fi000fjkve0scebo6t" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -231,7 +231,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>10</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>

