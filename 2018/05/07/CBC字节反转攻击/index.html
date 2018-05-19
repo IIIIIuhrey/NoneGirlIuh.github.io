@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>CBC字节反转攻击 | 幻想乡</title>
+  <title>CBC字节反转攻击 | Iuhrey的幻想乡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
 <meta name="keywords" content="Web">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CBC字节反转攻击">
 <meta property="og:url" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/index.html">
-<meta property="og:site_name" content="幻想乡">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/1.png">
@@ -25,7 +25,7 @@
 <meta name="twitter:description" content="前言最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。   CBC加解密原理这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，都是前一部分加密的字符用于后一部分加密，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特">
 <meta name="twitter:image" content="http://yoursite.com/2018/05/07/CBC字节反转攻击/images/11/1.png">
   
-    <link rel="alternate" href="/atom.xml" title="幻想乡" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
   
     <link rel="icon" href="source/images/favicon.ico" />
@@ -50,7 +50,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
@@ -125,7 +125,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjgxv1x2n0007y0ve96o3obwl" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjhdm0y2u000iosven8trqxa0" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -135,6 +135,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2018/05/17/入侵后台的一次尝试/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Getshell第二次尝试
+        
+      </div>
+    </a>
   
   
     <a href="/2018/05/01/sql注入之报错注入/" id="article-nav-older" class="article-nav-link-wrap">
@@ -161,7 +170,7 @@
     <div class="widget-wrap">
   <h3 class="widget-title"></h3>
   <div class="widget">
-    <h1 class="blog-title">幻想乡</h1>
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
     <h2 class="blog-subtitle"></h2>
     <ul class="blog-link">
      
@@ -193,7 +202,7 @@
     <h2 class="author">NoneGirl_Iuh</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>12</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>14</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
