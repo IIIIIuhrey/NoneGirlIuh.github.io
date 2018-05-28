@@ -13,12 +13,12 @@
 <meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="写在前面说实话，很久以前就有着想归纳sql注入的冲动了，但是自己的实力不够，对mysql不太了解，对于一些sql注入的题目也是一知半解，久而久之就开始对sql注入产生了逃避以及厌恶之情，最近慢慢的才发现，不会sql注入那和我吉他不会大横按一样，所以我最近恶补了一些sql注入方面的知识，写在这里一方面是为了分享一下自己的学习心得，另一方面，则是为我自己做个笔记。 sql基础知识初入sql注入呢，我们">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/images/7/1.png">
-<meta property="og:updated_time" content="2018-05-01T14:52:20.922Z">
+<meta property="og:image" content="http://yoursite.com/2018/04/21/images/7/1.png">
+<meta property="og:updated_time" content="2018-05-28T11:48:47.833Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于sql注入的一些学习心得">
 <meta name="twitter:description" content="写在前面说实话，很久以前就有着想归纳sql注入的冲动了，但是自己的实力不够，对mysql不太了解，对于一些sql注入的题目也是一知半解，久而久之就开始对sql注入产生了逃避以及厌恶之情，最近慢慢的才发现，不会sql注入那和我吉他不会大横按一样，所以我最近恶补了一些sql注入方面的知识，写在这里一方面是为了分享一下自己的学习心得，另一方面，则是为我自己做个笔记。 sql基础知识初入sql注入呢，我们">
-<meta name="twitter:image" content="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/images/7/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/21/images/7/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -149,7 +149,7 @@
 <blockquote>
 <p>%df%27  </p>
 </blockquote>
-<p>来构造一个’闭合语句的，因为GBK编码是双字节编码，也就是说，如果我们构造了与%5c相关的编码，那么前两个编码会被识别为一个字符也就是汉字，然后我们的%27就被独立了出来，这是一个实例<img src="./images/7/1.png" alt="">这样就成功绕过了转义语句构造出了我们需要的’<br>接着跟着流程走就行了，但是值得注意的一点是在后面这句查询语句<strong>where table_schema=’表名’</strong>应该使用<strong>where table_schema =数据库十六进制</strong>来代替。  </p>
+<p>来构造一个’闭合语句的，因为GBK编码是双字节编码，也就是说，如果我们构造了与%5c相关的编码，那么前两个编码会被识别为一个字符也就是汉字，然后我们的%27就被独立了出来，这是一个实例<img src="../images/7/1.png" alt="">这样就成功绕过了转义语句构造出了我们需要的’<br>接着跟着流程走就行了，但是值得注意的一点是在后面这句查询语句<strong>where table_schema=’表名’</strong>应该使用<strong>where table_schema =数据库十六进制</strong>来代替。  </p>
 
       
     </div>

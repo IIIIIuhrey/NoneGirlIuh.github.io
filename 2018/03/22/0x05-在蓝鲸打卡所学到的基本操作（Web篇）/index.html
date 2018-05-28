@@ -13,12 +13,12 @@
 <meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="#神奇的php在CTF中的各种花式操作总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/images/5/1.jpg">
-<meta property="og:updated_time" content="2018-04-11T15:36:24.176Z">
+<meta property="og:image" content="http://yoursite.com/2018/03/22/images/5/1.jpg">
+<meta property="og:updated_time" content="2018-05-28T11:47:42.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="0x05 在蓝鲸打卡所学到的基本操作（Web篇）">
 <meta name="twitter:description" content="#神奇的php在CTF中的各种花式操作总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP">
-<meta name="twitter:image" content="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/images/5/1.jpg">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/22/images/5/1.jpg">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -108,7 +108,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>#神奇的php在CTF中的各种花式操作<br>总所周知，php是一门强大的脚本语言，主要用于后端开发，在Web方面主要是作为网页与数据库交互的桥梁，也就是说，后端人员通过php来处理表单提供的数据来与数据库匹配，然后决定下一步的操作，也可以作为用户使用网站储存文件的钥匙，不过这一般都是攻击者用来盗取网站信息的工具，这也侧面说明php的功能十分的强大，用好了就可以对网站为所欲为。今天主要归纳几道涉及到PHP的题目。</p>
-<h4 id="变量覆盖"><a href="#变量覆盖" class="headerlink" title="变量覆盖"></a>变量覆盖</h4><p>在我们所学的编程语言中，例如C,C++,Java等语言，如果我们需要使用一个变量，必须先定义这个变量，而在一些高级语言也就是PHP，Python等语言中是可以不必定义变量的，也就是说我们可以不必定义一个变量（也就是先初始化）直接赋值。方便之余也带了一些潜在的危害。<br>在网络交互时使用PHP时，即使没有$x=$_Get[‘x’]这个语句我们依旧可以通过get传参这个变量名从而覆盖原变量的值。具体一些函数例如Extract()，$$使用不当之类引起的变量覆盖问题就不细谈了,直接看实例吧:<br><img src="./images/5/1.jpg" alt=""><br>分析所得到的源代码，发现要求我们通过file_get_contents()函数输入一个文件，这个通过php://input这个函数通过POST数据来进行赋值，所以题目Payload为  </p>
+<h4 id="变量覆盖"><a href="#变量覆盖" class="headerlink" title="变量覆盖"></a>变量覆盖</h4><p>在我们所学的编程语言中，例如C,C++,Java等语言，如果我们需要使用一个变量，必须先定义这个变量，而在一些高级语言也就是PHP，Python等语言中是可以不必定义变量的，也就是说我们可以不必定义一个变量（也就是先初始化）直接赋值。方便之余也带了一些潜在的危害。<br>在网络交互时使用PHP时，即使没有$x=$_Get[‘x’]这个语句我们依旧可以通过get传参这个变量名从而覆盖原变量的值。具体一些函数例如Extract()，$$使用不当之类引起的变量覆盖问题就不细谈了,直接看实例吧:<br><img src="../images/5/1.jpg" alt=""><br>分析所得到的源代码，发现要求我们通过file_get_contents()函数输入一个文件，这个通过php://input这个函数通过POST数据来进行赋值，所以题目Payload为  </p>
 <blockquote>
 <p>   ?vs=s878926199a&amp;Ff=php://input    </p>
 </blockquote>
