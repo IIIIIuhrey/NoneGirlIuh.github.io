@@ -5,13 +5,13 @@
   
   <title>xss挑战赛的Payload(上) | Iuhrey的幻想乡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS训练平台。里面有共计21道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;gt;alert(1)&amp;lt;/script">
+  <meta name="description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个xss.tv，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;g">
 <meta name="keywords" content="XSS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="xss挑战赛的Payload(上)">
 <meta property="og:url" content="http://yoursite.com/2018/06/04/xss挑战赛的Payload(上)/index.html">
 <meta property="og:site_name" content="Iuhrey的幻想乡">
-<meta property="og:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS训练平台。里面有共计21道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;gt;alert(1)&amp;lt;/script">
+<meta property="og:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个xss.tv，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;g">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2018/06/04/images/14/1.png">
 <meta property="og:image" content="http://yoursite.com/2018/06/04/images/14/2.png">
@@ -22,10 +22,10 @@
 <meta property="og:image" content="http://yoursite.com/2018/06/04/images/14/7.png">
 <meta property="og:image" content="http://yoursite.com/2018/06/04/images/14/8.png">
 <meta property="og:image" content="http://yoursite.com/2018/06/04/images/14/9.png">
-<meta property="og:updated_time" content="2018-07-11T03:49:13.299Z">
+<meta property="og:updated_time" content="2018-07-12T17:05:23.452Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="xss挑战赛的Payload(上)">
-<meta name="twitter:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS训练平台。里面有共计21道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;gt;alert(1)&amp;lt;/script">
+<meta name="twitter:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个xss.tv，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;g">
 <meta name="twitter:image" content="http://yoursite.com/2018/06/04/images/14/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
@@ -53,7 +53,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>17</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>18</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
@@ -115,7 +115,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS训练平台。里面有共计21道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。  </p>
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个<strong>xss.tv</strong>，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。  </p>
 <h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p><img src="../images/14/1.png" alt=""><br>打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
 <p>很容易过关跳转到第二关。</p>
 <h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>审查元素<br><img src="../images/14/2.png" alt=""><br>发现输入的字符被嵌入进了<strong>value=””</strong>，可以考虑闭合构造弹出提示框，然后注释掉后面的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt; //</span><br></pre></td></tr></table></figure></p>
@@ -139,7 +139,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/04/xss挑战赛的Payload(上)/" data-id="cjjgkpwhw000xz8ve3g92narx" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/04/xss挑战赛的Payload(上)/" data-id="cjjit4fif0012d8ve8zu89ot0" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -149,6 +149,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2018/07/11/xss挑战赛的Payload(下)/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          xss挑战赛的Payload(下)
+        
+      </div>
+    </a>
   
   
     <a href="/2018/06/01/关于xss的一些学习心得/" id="article-nav-older" class="article-nav-link-wrap">
@@ -207,7 +216,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>17</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>18</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>8</strong><br>标签</div></a>
     </div>
@@ -255,7 +264,7 @@
 
   
 </aside>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=22817222&auto=1&height=66"></iframe>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
         
       </div>
       <footer id="footer">
