@@ -13,16 +13,16 @@
 <meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="Lottery这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。打开源码进行分析。关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2018/07/22/images/16/1.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/22/images/16/2.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/22/images/16/3.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/22/images/16/4.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/22/images/16/5.png">
-<meta property="og:updated_time" content="2018-07-24T05:32:36.307Z">
+<meta property="og:image" content="http://yoursite.com/images/16/1.png">
+<meta property="og:image" content="http://yoursite.com/images/16/2.png">
+<meta property="og:image" content="http://yoursite.com/images/16/3.png">
+<meta property="og:image" content="http://yoursite.com/images/16/4.png">
+<meta property="og:image" content="http://yoursite.com/images/16/5.png">
+<meta property="og:updated_time" content="2018-09-29T15:16:17.565Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="近期比赛学习到的一些知识">
 <meta name="twitter:description" content="Lottery这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。打开源码进行分析。关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/22/images/16/1.png">
+<meta name="twitter:image" content="http://yoursite.com/images/16/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -111,7 +111,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Lottery"><a href="#Lottery" class="headerlink" title="Lottery"></a>Lottery</h2><p>这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。<br><img src="../images/16/1.png" alt=""><br>题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。<br>一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。<br><img src="../images/16/2.png" alt=""><br>打开源码进行分析。<br>关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的初始金额都只有20美元，这里就有两个思路了。<br>我第一个想法就是看看在数据交互的时候能否更改我账户的金额，翻了翻源码发现这个不同一般网页，这个网页应用了Ajax技术，金额是在前端进行交互，没办法去抓包更改(可能是我技术太垃圾了)。所以思来想去，pass了这个思路。<br>第二个想法呢，是经过大师傅的指导才有的思路。这个题目既然说了买彩票，那么题目的做法一定和彩票有联系，不会无缘无故的设计一个博彩系统来迷惑我们，所以呢，我们需要搏一搏。<br>单纯的去买一堆彩票能中上千万是不现实的，所以肯定需要一些特殊的办法来发家致富。因此要关注这是如何验证彩票中奖情况的，所以重点锁定在了api.php里面的函数。<br><img src="../images/16/3.png" alt=""><br>这里可以看出彩票的数字生成是实实在在不可预测的，这个根据实时内存生成的函数基本无法预测。所以只有从如何比较的方向入手了。<br><img src="../images/16/4.png" alt=""><br>验证时分别获取我们输入的数字以及随机生成数字进行比较，本题关键就是在这，这里并没有用强类型比较，而是用了弱类型比较。在弱类型比较里面，非零数在与true比较时是返回true的，所以到这里思路就很明确了，只要在我们提交购买彩票时把我们数据改成7个true就行了，但是在做题目的时候发现了一个问题，json数据怎么改。经过post，用py发包无果后才发现，这用burp就可以了啊。。。。。。<br><img src="../images/16/5.png" alt=""><br>把数字改成true就行了，记得在读取数据的时候是以数组的形式，记得把numbers改为数组形式，要不然会以字符串形式读取字符，这就无法匹配了。<br><strong>PS:布尔型变量在很多验证都能起到绕过匹配的作用，多加以应用。</strong>  </p>
+        <h2 id="Lottery"><a href="#Lottery" class="headerlink" title="Lottery"></a>Lottery</h2><p>这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。<br><img src="/images/16/1.png" alt=""><br>题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。<br>一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。<br><img src="/images/16/2.png" alt=""><br>打开源码进行分析。<br>关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的初始金额都只有20美元，这里就有两个思路了。<br>我第一个想法就是看看在数据交互的时候能否更改我账户的金额，翻了翻源码发现这个不同一般网页，这个网页应用了Ajax技术，金额是在前端进行交互，没办法去抓包更改(可能是我技术太垃圾了)。所以思来想去，pass了这个思路。<br>第二个想法呢，是经过大师傅的指导才有的思路。这个题目既然说了买彩票，那么题目的做法一定和彩票有联系，不会无缘无故的设计一个博彩系统来迷惑我们，所以呢，我们需要搏一搏。<br>单纯的去买一堆彩票能中上千万是不现实的，所以肯定需要一些特殊的办法来发家致富。因此要关注这是如何验证彩票中奖情况的，所以重点锁定在了api.php里面的函数。<br><img src="/images/16/3.png" alt=""><br>这里可以看出彩票的数字生成是实实在在不可预测的，这个根据实时内存生成的函数基本无法预测。所以只有从如何比较的方向入手了。<br><img src="/images/16/4.png" alt=""><br>验证时分别获取我们输入的数字以及随机生成数字进行比较，本题关键就是在这，这里并没有用强类型比较，而是用了弱类型比较。在弱类型比较里面，非零数在与true比较时是返回true的，所以到这里思路就很明确了，只要在我们提交购买彩票时把我们数据改成7个true就行了，但是在做题目的时候发现了一个问题，json数据怎么改。经过post，用py发包无果后才发现，这用burp就可以了啊。。。。。。<br><img src="/images/16/5.png" alt=""><br>把数字改成true就行了，记得在读取数据的时候是以数组的形式，记得把numbers改为数组形式，要不然会以字符串形式读取字符，这就无法匹配了。<br><strong>PS:布尔型变量在很多验证都能起到绕过匹配的作用，多加以应用。</strong>  </p>
 <h2 id="Confusion1"><a href="#Confusion1" class="headerlink" title="Confusion1"></a>Confusion1</h2><h3 id="SSTI-模板注入"><a href="#SSTI-模板注入" class="headerlink" title="SSTI-模板注入"></a>SSTI-模板注入</h3><p>这也是根据一道题目所学来的知识点，虽然没有做出来，但是这里还是值得记录一下。题目解析就不写了，只是写写一些要点。<br>对于我来说，目前接触到了很多由于攻击者进行恶意输入导致网页信息泄露，被攻击者获取权限的注入手段。比如最常见的sql注入，xss，代码注入，以及命令注入等。SSTI–服务端模板注入还是第一次接触。<br>SSTI注入主要发生在用户请求的地方，这个和xss有点相似，网页把用户查询的信息未经过严格的处理直接回显到了页面，根据不同的服务端模板，如果我们调用模板中的函数，就能在特定情况下利用其读取文件或者写入shell等操作。<br>具体详细可以参考这一篇文章:<a href="http://www.freebuf.com/vuls/83999.html。" target="_blank" rel="noopener">http://www.freebuf.com/vuls/83999.html。</a>  </p>
 <h3 id="flask模板中request"><a href="#flask模板中request" class="headerlink" title="flask模板中request"></a>flask模板中request</h3><p>这道题目就是使用python的flask模板，在flask中前端需要发送不同的请求及各种带参数的方式，比如GET方法在URL后面带参数和POST在BODY带参数，有时候又是POST的表单提交方式，这个时候就需要从request提取参数。<br>下面是request可使用的属性，主要归纳一些常用的。<br><strong>form</strong>:一个从POST和PUT请求解析的 MultiDict（一键多值字典）。<br><strong>args</strong>:MultiDict，要操作 URL （如 ?key=value ）中提交的参数可以使用 args 属性:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.arg.key?key=value</span><br></pre></td></tr></table></figure></p>
 <p><strong>values</strong>:CombinedMultiDict，内容是form和args。可以使用values替代form和args。<br><strong>headers</strong>:请求头，字典类型。<br><strong>data</strong>:包含了请求的数据，并转换为字符串，除非是一个Flask无法处理的mimetype。<br><strong>method</strong>:请求方法，比如POST、GET。<br><strong>PS:在过滤了某些关键词时可以使用args属性绕过。</strong><br><strong>通过调用py类中函数对于的索引来读取或者写入文件</strong></p>

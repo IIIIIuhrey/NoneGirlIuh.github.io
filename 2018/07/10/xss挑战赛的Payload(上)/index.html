@@ -13,20 +13,20 @@
 <meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个xss.tv，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;g">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/1.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/2.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/3.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/4.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/5.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/6.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/7.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/8.png">
-<meta property="og:image" content="http://yoursite.com/2018/07/10/images/14/9.png">
-<meta property="og:updated_time" content="2018-07-12T17:53:24.805Z">
+<meta property="og:image" content="http://yoursite.com/images/14/1.png">
+<meta property="og:image" content="http://yoursite.com/images/14/2.png">
+<meta property="og:image" content="http://yoursite.com/images/14/3.png">
+<meta property="og:image" content="http://yoursite.com/images/14/4.png">
+<meta property="og:image" content="http://yoursite.com/images/14/5.png">
+<meta property="og:image" content="http://yoursite.com/images/14/6.png">
+<meta property="og:image" content="http://yoursite.com/images/14/7.png">
+<meta property="og:image" content="http://yoursite.com/images/14/8.png">
+<meta property="og:image" content="http://yoursite.com/images/14/9.png">
+<meta property="og:updated_time" content="2018-09-29T15:14:22.750Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="xss挑战赛的Payload(上)">
 <meta name="twitter:description" content="写在前面日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个xss.tv，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。   level 1打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。1&amp;lt;script&amp;g">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/10/images/14/1.png">
+<meta name="twitter:image" content="http://yoursite.com/images/14/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -112,24 +112,24 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个<strong>xss.tv</strong>，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。  </p>
-<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p><img src="../images/14/1.png" alt=""><br>打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p><img src="/images/14/1.png" alt=""><br>打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
 <p>很容易过关跳转到第二关。</p>
-<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>审查元素<br><img src="../images/14/2.png" alt=""><br>发现输入的字符被嵌入进了<strong>value=””</strong>，可以考虑闭合构造弹出提示框，然后注释掉后面的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt; //</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>测试一下发现在文本框输入<strong>‘</strong>是无法回显的，审查元素发现如下。<br><img src="../images/14/3.png" alt=""><br>针对这个为啥输入了一个’，源码就变成这样我还特地问了问前端狗大黄，这可能是浏览器的问题。我特地试试了几个不同的浏览器，发现输入相同，但是网站的源码并不一致，所以为了学好XSS，我就一直用一个特定的浏览器firefox。<br>接着测试一下’a’b确定输入的内容如何嵌入网站源码。<br><img src="../images/14/4.png" alt=""><br>那就照猫画虎构造Payload</p>
+<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>审查元素<br><img src="/images/14/2.png" alt=""><br>发现输入的字符被嵌入进了<strong>value=””</strong>，可以考虑闭合构造弹出提示框，然后注释掉后面的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt; //</span><br></pre></td></tr></table></figure></p>
+<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>测试一下发现在文本框输入<strong>‘</strong>是无法回显的，审查元素发现如下。<br><img src="/images/14/3.png" alt=""><br>针对这个为啥输入了一个’，源码就变成这样我还特地问了问前端狗大黄，这可能是浏览器的问题。我特地试试了几个不同的浏览器，发现输入相同，但是网站的源码并不一致，所以为了学好XSS，我就一直用一个特定的浏览器firefox。<br>接着测试一下’a’b确定输入的内容如何嵌入网站源码。<br><img src="/images/14/4.png" alt=""><br>那就照猫画虎构造Payload</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;onclick=alert(1)&gt;&apos;</span><br></pre></td></tr></table></figure>
 <p>源码就变为了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input onclick=&quot;alert(1)&gt;&apos;&apos;&quot;</span><br></pre></td></tr></table></figure>
 <p>这里由于浏览器解析问题这一段就直接解析成了一个事件，点击一下文本框就弹窗了。<br><strong>PS:具体原理我也搞不懂是为啥，问了前端狗也无果</strong></p>
-<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>这一题和上一题类似，就是把<strong>‘</strong>换成了<strong>“</strong>，试着输入Payload。<br><img src="../images/14/5.png" alt=""><br>发现回显出现了一个问题就是<strong>&gt;</strong>被吞了，既然这样我们可以试试实体编码<strong>&amp;gt</strong>来绕过。<br>点击文本框即可弹窗。  </p>
+<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>这一题和上一题类似，就是把<strong>‘</strong>换成了<strong>“</strong>，试着输入Payload。<br><img src="/images/14/5.png" alt=""><br>发现回显出现了一个问题就是<strong>&gt;</strong>被吞了，既然这样我们可以试试实体编码<strong>&amp;gt</strong>来绕过。<br>点击文本框即可弹窗。  </p>
 <h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>这题目多了一个难点就是on被强制转化为了o_n，就说明某些事件标签就不可以用了，但是可以换一个思路来构造xss的Payload，既然on不能用了，那我们试试a，href标签，构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;a href=&quot;javascript:alert(1)&quot;&gt;clickme&lt;&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="../images/14/6.png" alt=""><br>发现a标签被解析了，只要点击后面的clickme就能执行javascript伪协议后面的内容。</p>
+<p><img src="/images/14/6.png" alt=""><br>发现a标签被解析了，只要点击后面的clickme就能执行javascript伪协议后面的内容。</p>
 <h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>这一关相比较第五关就是过滤了href，目前过滤了on，script，href这三个关键词，我们可以尝试使用大小写来进行绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;sCript&gt;alert(1)&lt;/sCript&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
 <h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>这题目初步测试发现关键词on，script，src，href等关键词都被过滤了，无法回显我们输入的关键词，那么可以试试双写来绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;scrscriptipt&gt;alert(1)&lt;/scrscriptipt&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
 <h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>这一题过滤了很多东西，大写被自动转义成了小写，一些关键词中间都被强加了<strong>_</strong>，我们可以推测前端获取了信息返回给后端，后端是经过了一定处理的，所以呢，我们只要避开后端的检测就行了，这里可以使用实体编码来绕过，因为在后端是无法解析实体编码的，只有在前端页面才能进行解析，所以我们可以用实体编码来构造payload。<br>解决这个问题，再次观察题目发现我们输入的payload会被网页添加到<strong>a href</strong>标签中，所以我们最后的payload为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)</span><br></pre></td></tr></table></figure></p>
-<p><img src="../images/14/7.png" alt=""></p>
+<p><img src="/images/14/7.png" alt=""></p>
 <h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>说实话一开始我毫无头绪，测试了很多发现都无法改变友链的内容，知道看到解析才知道，原来合法链接的意思是要加上<strong>http://</strong>，这样就好构造了，把后面的<strong>http://</strong>注释掉就行了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)//http://</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>点进去发现什么都没给,但查看源码发现<br><img src="../images/14/8.png" alt=""><br>输入框被隐藏了，所以可以直接通过get把参数传过去，不过在测试的时候发现只有<strong>t_sort</strong>这个参数传过去才能更改源码。<br>不过测试发现<strong>&lt;&gt;</strong>这个标签被过滤了，并且我在尝试使用<strong>&amp;lt,&amp;gt</strong>绕过时发现，不仅左右括号被吞了，连内容也被吞了，不过好在on有用，构造如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://daka.whaledu.com/xss/level10.php?t_sort=&quot; type=&quot;button&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure></p>
-<p>最终的解析为<br><img src="../images/14/9.png" alt=""></p>
+<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>点进去发现什么都没给,但查看源码发现<br><img src="/images/14/8.png" alt=""><br>输入框被隐藏了，所以可以直接通过get把参数传过去，不过在测试的时候发现只有<strong>t_sort</strong>这个参数传过去才能更改源码。<br>不过测试发现<strong>&lt;&gt;</strong>这个标签被过滤了，并且我在尝试使用<strong>&amp;lt,&amp;gt</strong>绕过时发现，不仅左右括号被吞了，连内容也被吞了，不过好在on有用，构造如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://daka.whaledu.com/xss/level10.php?t_sort=&quot; type=&quot;button&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure></p>
+<p>最终的解析为<br><img src="/images/14/9.png" alt=""></p>
 <h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>由于考试周加上一些烦躁的事情要处理，博客没来得及更新，接下来博客会很勤的写。</p>
 
       
