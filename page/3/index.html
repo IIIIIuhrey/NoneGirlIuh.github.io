@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,65 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-初试Getshell" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/11/初试Getshell/" class="article-date">
+  <time class="post-time" datetime="2018-04-11T14:13:44.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br>
+    <span class="post-day">11</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/11/初试Getshell/">初试Getshell</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="文件管理系统"><a href="#文件管理系统" class="headerlink" title="文件管理系统"></a>文件管理系统</h3><p>在很久很久以前就想日站了，奈何自己的动力不足，一拖再拖导致现在的水平和其他人差距拉开太大了，不过庆幸的是在塔主的带领下，终于开始踏入了神秘的Getshell领域了。Getshell主要的手段就是上传文件，里面的文件需要具备这几个特点:<img src="/images/6/8.png" alt="">。根据塔主的提示，一般文件上传漏洞的思路如下：<img src="/images/6/6.png" alt="">  <img src="/images/6/7.png" alt="">要深入理解也只能实际操作才能得到效果。<br>第一天的网站:<a href="http://202.98.28.108:10014/2sdrewe4543sd/" target="_blank" rel="noopener">http://202.98.28.108:10014/2sdrewe4543sd/</a><br>在给了网站的同时，网站的源码也给了出来。这个就有点白盒审计的味道了。然后还给了一个hint，flag在SERVER_ADMIN下，也就是说我们传上一个包含phpinfo()函数的php文件然后让服务器解析执行就能得到flag了。<br>首先打开网址<img src="/images/6/1.png" alt="">毕竟是个给我们做题的网站，所以自然是有点简陋的了。观察网站发现有这么几个功能。<br><img src="/images/6/2.png" alt="">第一个是上传文件的功能，根据提示应该是只能上传图片文件，也就是说后缀名只能是jpg,png等等。的确在后面代码审计upload.php的时候发现了这个网站通过白名单验证限制了用户上传文件的类型<br><img src="/images/6/3.png" alt=""><br>接着看看rename的功能<br><img src="/images/6/4.png" alt=""><br>给出两个文本框一个要更名的文件名，一个更名后新的文件名，值得注意的是这里只是单纯的更改前面的文件名而已，并不能更改文件的后缀名，也就是说我们没办法通过把1.txt改成1.php来绕过Getshell。另一个删除功能并没有什么卵用，当然有用我也不会用。。。。<br>接下来查看源码看看用没有什么可以利用的东西。首先审计基础配置的文件—common.inc.php文件，<strong>一个主要的注意点</strong><img src="/images/6/5.png" alt="">由于加了addslashes()函数那么在参数方面注入是不太可能的（宽字节注入另当别论）所以可以考虑其他的方向。<br>审计一波主要的upload.php函数，发现有以下几个值得注意的地方<img src="/images/6/9.png" alt="">这里使用了白名单过滤，上面提过就不再提了，另外值得注意的地方是文件储存的方式，网站使用了两个数组来分别储存文件名和它所对应的后缀名。这就导致了我们无法通过00截断来绕过。而且这里也使用了addslashes()函数通过文件名来进行注入也是不可能的。<br>不过这个网站真的没用可以利用的地方了吗？这是不太可能的，接着往下看<img src="/images/6/10.png" alt="">这里是存在注入漏洞的，在更新插入的时候我们可以构造一个类似的语句来达到一些不可告人的目的。<br>接下来看看rename.php这个文件，这个文件是我们Getshell的关键<img src="/images/6/11.png" alt="">这里是从数据库中直接查询调用出来并没有经过什么过滤了，所以我们可以利用更新的语句进行二次注入。<img src="/images/6/12.png" alt="">这一段代码给我们提供了一个我们无法更改后缀名的信息，综合这以上的代码，可以分析出以下思路：<br>第一，我们需要上传一个php的文件让服务器解析，但是php的文件后缀名并不在白名单里面，所以问题简化为如何绕过过滤来达到我们想要的效果。<br>所以，我们需要使得我们一开始上传的图片类型文件更改为.php的文件，但是在更名文件里面，文件名和后缀名分开独立，我们无法达到更改后缀名的效果，那怎么办呢？其实还是有利用的地方的，还记得上面这个更新语句吗？<img src="/images/6/10.png" alt="">如果我们一开始上传的文件名是一个注入语句，那么我们是可以利用这一点把文件的后缀名更改为空的，然后更新文件名为我们的木马，那就可以通过后缀名为空来更改我们上传木马的后缀。<br>我们需要两个文件，一个文件的文件名是我们注入语句的文件名也就是<strong>‘,extension=’’,filename=’1000.jpg.jpg</strong>通过这个语句插进更新语句那就是这种效果:</p>
+<blockquote>
+<pre><code>update `file` set `filename`=&apos;1000.jpg&apos;, `oldname`=&apos;&apos;,extension=&apos;&apos;,filename=&apos;1000.jpg&apos; where `fid`={$result[&apos;fid&apos;]}  
+</code></pre><p>也就是说我们已经更新了数据库，有了一个1000.jpg.空的文件了，这样我们随意取一个名字，只要不和我们上传的重名例如250.jpg那就是说我们之前的文件上传为了250.jpg.jpg<br>那我们之前不是插入了一个1000.jpg.空的文件吗，这行代码有一点干扰<img src="/images/6/13.png" alt="">在查询的时候数据库需要一个1000.jpg的文件，也就是说我们需要再上传一个1000.jpg的文件，在这个文件里写入我们的phpinfo()函数，再通过rename功能把我们的1000.jpg.空改为1000.php.空，此时解析的就是1000.php也就是说成功解析了我们上传的shell文件，打开<a href="http://202.98.28.108:10014/2sdrewe4543sd/upload/1000.php" target="_blank" rel="noopener">http://202.98.28.108:10014/2sdrewe4543sd/upload/1000.php</a>就可以读出这个网站php的版本以及我们flag的信息了。<br>总体来说，这一次的Getshell让我学到了很多东西，一些基本的思路在之后会用挺大用处的，特别是一个bypass的思想，这个在之后做渗透测试的时候会很有帮助，希望能坚持下去，学习到更多的东西。</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjopao6hl001zlsvjvknxmayw" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-0x05-在蓝鲸打卡所学到的基本操作（Web篇）" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -116,7 +175,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjo725ja20008qgvjh7vnxw3k" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjopao6by000flsvj54juglby" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -167,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjo725ja20007qgvjv742knua" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjopao6by000klsvj46wm7hnt" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -223,7 +282,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjo725ja20006qgvjt8esm6bj" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjopao6an0005lsvjxwinb940" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -278,7 +337,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjo725j9m0003qgvjqms62jpd" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjopao6an0006lsvjzte92ykq" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -336,7 +395,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjo725j9m0002qgvjvaiogyjt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjopao6630001lsvjlek0j30y" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -388,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjo725j5a0001qgvjfz7mgfei" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjopao6a80002lsvj6sik8zmy" class="article-share-link">分享</a>
       
       
     </footer>
@@ -444,7 +503,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>26</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>27</strong><br>文章</div></a>
       <a href="/categories"><div><strong>2</strong><br>分类</div></a>
       <a href="/tags"><div><strong>12</strong><br>标签</div></a>
     </div>
