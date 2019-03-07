@@ -41,9 +41,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -68,6 +68,96 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-记录搭建docker时踩的一些列坑" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/03/07/记录搭建docker时踩的一些列坑/" class="article-date">
+  <time class="post-time" datetime="2019-03-07T08:46:15.000Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br>
+    <span class="post-day">07</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/07/记录搭建docker时踩的一些列坑/">记录搭建docker时踩的一些列坑</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于近期要利用docker搭建环境复现一些漏洞，因此就学习了一波docker，没想到遇上了一堆坑，所以利用这篇文章来记录下坑如何解决的。</p>
+<h2 id="环境选择"><a href="#环境选择" class="headerlink" title="环境选择"></a>环境选择</h2><p>我首推的还是在ubuntu下进行docker的安装，强烈不建议在centos的环境下，为什么要在ubuntu下呢，主要是因为centos太烂了，如果要在centos下安装ubuntu，首先得要求内核要大于3.10.0，查看内核命令如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<p>最低要求的3.10.0由于内核版本太低，例如overlay2这种功能就无法实现，这样会导致在后续安装中出现一系列的问题，解决一个又出另外一个。我就是迫于无奈才抛弃了centos，转而利用ubuntu安装了docker。这里ubuntu选用的是最新的18.04版本。</p>
+<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><p>首先得确保apt是最新版本，如果不是使用如下命令进行更新:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+<p>接着如果有旧版本的docker，使用以下命令移除:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove docker docker-engine docker.io</span><br></pre></td></tr></table></figure>
+<p>添加使用 HTTPS 传输的软件包以及 CA 证书</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install apt-transport-https ca-certificates curl software-properties-common</span><br></pre></td></tr></table></figure>
+<p>添加Docker的GPG密钥，由于官方的被墙了，只能使用国内源的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+<p>然后，我们需要向 source.list 中添加 Docker 软件源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository &quot;deb [arch=amd64] 	https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;</span><br></pre></td></tr></table></figure>
+<p>最后，我们安装docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update </span><br><span class="line">sudo apt-get install docker-ce</span><br></pre></td></tr></table></figure>
+<p>启动docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable docker</span><br><span class="line">sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<p>运行docker试试，如果出现以下内容，则说明成功安装了docker<br><img src="/images/24/1.png" alt=""></p>
+<h2 id="利用docker搭建环境"><a href="#利用docker搭建环境" class="headerlink" title="利用docker搭建环境"></a>利用docker搭建环境</h2><p>首先是获取镜像，这里获取的是原生的ubuntu</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull ubuntu:18.04</span><br></pre></td></tr></table></figure>
+<p>查看镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it -d --name 容器名称 -p 8000:80 /bin/bash ubuntu:18.04</span><br></pre></td></tr></table></figure>
+<p>简要说明一下参数的作用，-it实际是两个参数-t和-i的合成，-i是指交互式操作，-t则是终端的意思，-d则是让容器在后台挂起，并且可以看到返回的id，–name则是新建容器的名称，-p表示docker的80端口映射到虚拟机的8000端口，/bin/bash则是表示调用的命令，最后是你镜像的名字。<br>这里简要说明一下，镜像类似c++中的类，而容器则是类的实体化，你只能对容器进行操作，而不能直接对镜像进行操作，每次启用docker run这个命令时，都会产生一个新的容器。可以用如下命令看到所有的容器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container ls -a</span><br></pre></td></tr></table></figure>
+<p>这个可以看到运行的容器:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<p>查看了容器的id，可以通过以下命令进入容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器id前三到四位 /bin/bash</span><br></pre></td></tr></table></figure>
+<p>接着就能在docker里面配置你想要的环境了</p>
+<h2 id="遇到的某些问题"><a href="#遇到的某些问题" class="headerlink" title="遇到的某些问题"></a>遇到的某些问题</h2><h4 id="如果是在centos环境下，遇到的各种问题，建议之间换成ubuntu。"><a href="#如果是在centos环境下，遇到的各种问题，建议之间换成ubuntu。" class="headerlink" title="如果是在centos环境下，遇到的各种问题，建议之间换成ubuntu。"></a>如果是在centos环境下，遇到的各种问题，建议之间换成ubuntu。</h4><h4 id="在建立新容器时碰到如下错误"><a href="#在建立新容器时碰到如下错误" class="headerlink" title="在建立新容器时碰到如下错误"></a>在建立新容器时碰到如下错误</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error response from daemon: Conflict. The container name &quot;/test1&quot; is already in use by container &quot;d197fb61f61c1d1d7b605a49d3be658f9fa10f581bd02ff9574f8a39a62a716e&quot;. You have to remove (or rename) that container to be able to reuse that name.</span><br><span class="line">See &apos;docker run --help&apos;.</span><br></pre></td></tr></table></figure>
+<p>这是因为该名称的容器已存在，查看所有的容器把该名字容器删除即可，删除命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker container rm test1</span><br></pre></td></tr></table></figure>
+<p>如果是运行的容器，rm后面加个-rf参数</p>
+<h4 id="进入docker安装apache时遇到的问题"><a href="#进入docker安装apache时遇到的问题" class="headerlink" title="进入docker安装apache时遇到的问题"></a>进入docker安装apache时遇到的问题</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E: Unable to locate package apache2</span><br></pre></td></tr></table></figure>
+<p>需要更新apt，命令如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br></pre></td></tr></table></figure>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="https://blog.csdn.net/xiaogugood/article/details/18400669" target="_blank" rel="noopener">Linux新手入门：Unable to locate package错误解决办法</a><br><a href="https://legacy.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="noopener">Docker 从入门到实践</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/03/07/记录搭建docker时踩的一些列坑/" data-id="cjsyilyfw001gnsvjqw0lzx1q" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/踩坑记录/">踩坑记录</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-近期比赛题目复现" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -116,7 +206,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/25/近期比赛题目复现/" data-id="cjsk8gf1e001o5cvjmnn2uqan" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2019/02/25/近期比赛题目复现/" data-id="cjsyilyh7002hnsvje0ceh8ia" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛总结/">比赛总结</a></li></ul>
@@ -193,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/28/NCTF-Web-wp/" data-id="cjsk8gf08000g5cvjpvta41in" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/11/28/NCTF-Web-wp/" data-id="cjsyilyfh000qnsvjdumm9y90" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -264,7 +354,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/18/近期比赛的归纳总结/" data-id="cjsk8gf3n002r5cvjtz02zsih" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/11/18/近期比赛的归纳总结/" data-id="cjsyilygs0026nsvjthp5wqoa" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -329,7 +419,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/11/01/结合CVE的一道命令执行弹shell的题目/" data-id="cjsk8gf1s00215cvjuz8x6mnq" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/11/01/结合CVE的一道命令执行弹shell的题目/" data-id="cjsyilygs0024nsvj28dk2nzn" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -423,7 +513,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjsk8gf3i002o5cvjgqrqjjcw" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjsyilygs002ansvjugy7d9zc" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -489,7 +579,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjsk8gf1o001y5cvjyn7tmsz6" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/08/关于命令执行的学习/" data-id="cjsyilygc001pnsvji7221l3y" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/命令执行/">命令执行</a></li></ul>
@@ -564,7 +654,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjsk8gf1l001u5cvjgpb3tox7" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/09/27/绕过过滤getshell的一些骚操作/" data-id="cjsyilygc001rnsvj7z1d5aoa" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Getshell/">Getshell</a></li></ul>
@@ -628,7 +718,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjsk8gf0h000u5cvjoebu8gzn" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjsyilyfh0010nsvj7a7q4tie" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -701,69 +791,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjsk8gf1h001r5cvjfgnpbnpo" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjsyilygc001mnsvj9rlvv2pi" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-近期比赛学习到的一些知识" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/22/近期比赛学习到的一些知识/" class="article-date">
-  <time class="post-time" datetime="2018-07-22T01:33:46.000Z" itemprop="datePublished">
-    <span class="post-month">7月</span><br>
-    <span class="post-day">22</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/22/近期比赛学习到的一些知识/">近期比赛学习到的一些知识</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Lottery"><a href="#Lottery" class="headerlink" title="Lottery"></a>Lottery</h2><p>这是QCTF的一道题目，算是比较有新意的一道题目(对我来说….)。<br><img src="/images/16/1.png" alt=""><br>题目要求很简单啊，大致意思就是让你买7个数字，中了大概一千万就能买到flag了。<br>一开始先扫一发目录，果然发现了有.git源码泄露。先把源码下下来吧。<br><img src="/images/16/2.png" alt=""><br>打开源码进行分析。<br>关于大致流程是这样的，首先要求我们登入，只需要输入一个用户名，网页自动生成一个账户，其实这里账户是什么都无所谓，根本不会写入数据库进行交互，无论哪个账户的初始金额都只有20美元，这里就有两个思路了。<br>我第一个想法就是看看在数据交互的时候能否更改我账户的金额，翻了翻源码发现这个不同一般网页，这个网页应用了Ajax技术，金额是在前端进行交互，没办法去抓包更改(可能是我技术太垃圾了)。所以思来想去，pass了这个思路。<br>第二个想法呢，是经过大师傅的指导才有的思路。这个题目既然说了买彩票，那么题目的做法一定和彩票有联系，不会无缘无故的设计一个博彩系统来迷惑我们，所以呢，我们需要搏一搏。<br>单纯的去买一堆彩票能中上千万是不现实的，所以肯定需要一些特殊的办法来发家致富。因此要关注这是如何验证彩票中奖情况的，所以重点锁定在了api.php里面的函数。<br><img src="/images/16/3.png" alt=""><br>这里可以看出彩票的数字生成是实实在在不可预测的，这个根据实时内存生成的函数基本无法预测。所以只有从如何比较的方向入手了。<br><img src="/images/16/4.png" alt=""><br>验证时分别获取我们输入的数字以及随机生成数字进行比较，本题关键就是在这，这里并没有用强类型比较，而是用了弱类型比较。在弱类型比较里面，非零数在与true比较时是返回true的，所以到这里思路就很明确了，只要在我们提交购买彩票时把我们数据改成7个true就行了，但是在做题目的时候发现了一个问题，json数据怎么改。经过post，用py发包无果后才发现，这用burp就可以了啊。。。。。。<br><img src="/images/16/5.png" alt=""><br>把数字改成true就行了，记得在读取数据的时候是以数组的形式，记得把numbers改为数组形式，要不然会以字符串形式读取字符，这就无法匹配了。<br><strong>PS:布尔型变量在很多验证都能起到绕过匹配的作用，多加以应用。</strong>  </p>
-<h2 id="Confusion1"><a href="#Confusion1" class="headerlink" title="Confusion1"></a>Confusion1</h2><h3 id="SSTI-模板注入"><a href="#SSTI-模板注入" class="headerlink" title="SSTI-模板注入"></a>SSTI-模板注入</h3><p>这也是根据一道题目所学来的知识点，虽然没有做出来，但是这里还是值得记录一下。题目解析就不写了，只是写写一些要点。<br>对于我来说，目前接触到了很多由于攻击者进行恶意输入导致网页信息泄露，被攻击者获取权限的注入手段。比如最常见的sql注入，xss，代码注入，以及命令注入等。SSTI–服务端模板注入还是第一次接触。<br>SSTI注入主要发生在用户请求的地方，这个和xss有点相似，网页把用户查询的信息未经过严格的处理直接回显到了页面，根据不同的服务端模板，如果我们调用模板中的函数，就能在特定情况下利用其读取文件或者写入shell等操作。<br>具体详细可以参考这一篇文章:<a href="http://www.freebuf.com/vuls/83999.html。" target="_blank" rel="noopener">http://www.freebuf.com/vuls/83999.html。</a>  </p>
-<h3 id="flask模板中request"><a href="#flask模板中request" class="headerlink" title="flask模板中request"></a>flask模板中request</h3><p>这道题目就是使用python的flask模板，在flask中前端需要发送不同的请求及各种带参数的方式，比如GET方法在URL后面带参数和POST在BODY带参数，有时候又是POST的表单提交方式，这个时候就需要从request提取参数。<br>下面是request可使用的属性，主要归纳一些常用的。<br><strong>form</strong>:一个从POST和PUT请求解析的 MultiDict（一键多值字典）。<br><strong>args</strong>:MultiDict，要操作 URL （如 ?key=value ）中提交的参数可以使用 args 属性:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.arg.key?key=value</span><br></pre></td></tr></table></figure></p>
-<p><strong>values</strong>:CombinedMultiDict，内容是form和args。可以使用values替代form和args。<br><strong>headers</strong>:请求头，字典类型。<br><strong>data</strong>:包含了请求的数据，并转换为字符串，除非是一个Flask无法处理的mimetype。<br><strong>method</strong>:请求方法，比如POST、GET。<br><strong>PS:在过滤了某些关键词时可以使用args属性绕过。</strong><br><strong>通过调用py类中函数对于的索引来读取或者写入文件</strong></p>
-<h2 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order by注入"></a>order by注入</h2><p>只能说自己实力还是太弱了吧，碰到sql注入题目都要花很久才能做出来。这一次是一道关于order by注入的一道题目，题目提示了select flag from flag，只要爆破出字段就行了。<br>题目有提供id，name，price三个排序方式，对于mysql来说，排序方式转化为二进制，那么在使用id排序时，id=1对应的就是0001，id=2对于的就是0010，而假对应的是0000，也就是说不改变排序方式，而真对应的是0001，在与2位异或时，2变成了0011，3却变成了0001，所以这里我们可以使用位异或结合布尔型来更改排序方式。<br>贴下我的垃圾脚本吧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">list = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#123;&#125;_abcdefghijklmnopqrstuvwxyz0123456789&quot;</span><br><span class="line">r1 = &quot;&quot;</span><br><span class="line">text = &quot;&quot;</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,27):</span><br><span class="line">    for j in list:</span><br><span class="line">        url = &quot;http://101.71.29.5:10004/?order=id^(substr((select flag from flag),%d,1)=&apos;%s&apos;) &amp;button=submit&quot;%(i,j)</span><br><span class="line">        r1 = requests.get(url)</span><br><span class="line">        text = r1.content</span><br><span class="line">        if text[949] == &apos;3&apos;:</span><br><span class="line">            print j</span><br><span class="line">            flag = flag + j</span><br><span class="line">            break</span><br><span class="line">print flag</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjsk8gf3j002p5cvjldxcvon6" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
 
     </footer>
   </div>
@@ -818,9 +849,9 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>29</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
 
 
@@ -865,8 +896,9 @@
 </div>
 
   
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=541131&auto=1&height=66"></iframe>
 </aside>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=478384&auto=1&height=66"></iframe>
+
         
       </div>
       <footer id="footer">
