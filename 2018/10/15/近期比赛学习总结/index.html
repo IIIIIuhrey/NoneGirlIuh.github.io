@@ -17,7 +17,7 @@
 <meta property="og:image" content="http://yoursite.com/images/19/2.png">
 <meta property="og:image" content="http://yoursite.com/images/19/3.png">
 <meta property="og:image" content="http://yoursite.com/images/19/4.png">
-<meta property="og:updated_time" content="2018-10-25T07:19:46.440Z">
+<meta property="og:updated_time" content="2019-04-20T00:51:12.438Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="近期比赛学习总结">
 <meta name="twitter:description" content="前记最近又陷入了自闭自闭又自闭的环节，先是pico高中生比赛被吊打，接着又是inctf被吊打，周末又被护网杯题目弄自闭，对此只能说自己技术太菜，总结一下最近新学到的知识点吧（由于比赛打完之后环境关了，所以只能结合大师傅们的wp进行复现）。   easy tornado这是护网杯的签到题，说句实话一开始打就知道这一次比赛又是凶多吉少，点进去发现有三个文件：12345678Orz.txt render">
@@ -48,7 +48,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
@@ -149,12 +149,16 @@
 <li>查询字符串： ‘ and ( (select hex(substr(列名),1,1)) from users limit 1 offset 0) = hex(‘a’) ) – -</li>
 </ul>
 <p>这些操作也不用死记住，理解查询的语法就差不多了，复杂的到时写脚本直接套就行了。</p>
+<h2 id="Old-School-SQL"><a href="#Old-School-SQL" class="headerlink" title="Old School SQL"></a>Old School SQL</h2><p>这道sql注入的题目把我想到的绕过以及我没想到的绕过都过滤了。源码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">include &quot;./config.php&quot;;</span><br><span class="line">include &quot;./flag.php&quot;;</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">$black_list = &quot;/admin|guest|limit|by|substr|mid|like|or|char|union|select|greatest|%00|\&apos;|&quot;;</span><br><span class="line">$black_list .= &quot;=|_| |in|&lt;|&gt;|-|chal|_|\.|\(\)|#|and|if|database|where|concat|insert|having|sleep/i&quot;;</span><br><span class="line">if(preg_match($black_list, $_GET[&apos;user&apos;])) exit(&quot;:P&quot;); </span><br><span class="line">if(preg_match($black_list, $_GET[&apos;pw&apos;])) exit(&quot;:P&quot;); </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$query=&quot;select user from chal where user=&apos;$_GET[user]&apos; and pw=&apos;$_GET[pw]&apos;&quot;; </span><br><span class="line"></span><br><span class="line">$result = mysql_query($query);</span><br><span class="line">$result = mysql_fetch_array($result);</span><br><span class="line">$admin_pass = mysql_fetch_array(mysql_query(&quot;select pw from chal where user=&apos;admin&apos;&quot;));</span><br><span class="line">echo &quot;&lt;h1&gt;query : &lt;strong&gt;&lt;b&gt;&#123;$query&#125;&lt;/b&gt;&lt;/strong&gt;&lt;br&gt;&lt;/h1&gt;&quot;;</span><br><span class="line">if($result[&apos;user&apos;]) echo &quot;&lt;h2&gt;Welcome &#123;$result[&apos;user&apos;]&#125;&lt;/h2&gt;&quot;; </span><br><span class="line">if(($admin_pass[&apos;pw&apos;])&amp;&amp;($admin_pass[&apos;pw&apos;] === $_GET[&apos;pw&apos;]))&#123;</span><br><span class="line">    echo $flag;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(__FILE__); </span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>其实主要的重点就是这过滤的语句:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$black_list = &quot;/admin|guest|limit|by|substr|mid|like|or|char|union|select|greatest|%00|\&apos;|&quot;;</span><br><span class="line">$black_list .= &quot;=|_| |in|&lt;|&gt;|-|chal|_|\.|\(\)|#|and|if|database|where|concat|insert|having|sleep/i&quot;;</span><br></pre></td></tr></table></figure></p>
+<p>审查源码不难发现，我们需要通过注入得出密码才能得到flag，并不能通过注入直接得到flag。但是有几个问题需要解决:<br>第一个问题是’被过滤，如何造成单引号溢出是一个问题，第二个问题是如何注释掉后面的无关语句，但是三种过滤符号都被过滤了。第三个问题就是某些重要的关键词被过滤了，如何绕过通过查询语句来得到我们所要的密码。<br>第一个问题，我们可以发现black_list中并没有过滤\这个转义符，这里可以造成’逃逸。<br>第二个问题，在mysql中，查询语句一般需要用;作为结束的符号，也就是说我们把;嵌入查询语句，那;之后的语句都不会执行。所以可以使用;来作为替代注释符号。<br>第三个问题，or被过滤可以使用||来替代，然后&gt;，&lt;，=比较符被过滤，我们可以考虑like，但是like也被过滤了，再仔细看看黑名单，发现了regexp并没被过滤，也就是说我们可以用正则匹配来爆破出密码。发现查询成功就会返回welcome的字样，所以构造如下payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?user=\&amp;pw=||pw/**/regexp/**/&quot;^1&quot;;</span><br></pre></td></tr></table></figure></p>
+<p>通过改变查询值爆破即可得到flag。</p>
 <p>参考链接：<br><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/integeroverflow/intof/" target="_blank" rel="noopener">整数溢出原理介绍</a><br><a href="https://blog.csdn.net/Mary19920410/article/details/71518130?locationNum=4&amp;fps=1" target="_blank" rel="noopener">浅析C语言之uint8_t / uint16_t / uint32_t /uint64_t</a><br><a href="http://skysec.top/2018/10/13/2018%E6%8A%A4%E7%BD%91%E6%9D%AF-web-writeup/" target="_blank" rel="noopener">2018护网杯-web-writeup</a><br><a href="https://blog.csdn.net/qq_32400847/article/details/58756980" target="_blank" rel="noopener"><br>基于SQLite数据库的Web应用程序注入指南</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjsyilygs002ansvjugy7d9zc" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/10/15/近期比赛学习总结/" data-id="cjul6evq2002gw8vjs3njupko" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -231,7 +235,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>

